@@ -26,7 +26,7 @@ export const users = createTable(
         username: varchar("username", { length: 256 }).notNull(),
         password: varchar("password", { length: 256 }).notNull(),
         email: varchar("email", { length: 256 }).notNull(),
-        role: roleEnum("role"),
+        role: roleEnum("role").notNull(),
         firstName: varchar("first_name", { length: 100 }).notNull(),
         lastName: varchar("last_name", { length: 100 }).notNull(),
         licenseNumber: varchar("license_number", { length: 50 }),
