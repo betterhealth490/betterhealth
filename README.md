@@ -2,4 +2,4 @@
 
 ## Created and maintained by
 
-- Jesus Capellan
+- Tanvir Longia
