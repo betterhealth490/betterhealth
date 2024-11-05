@@ -2,4 +2,4 @@
 
 ## Created and maintained by
 
-- Jesus Capellan
+- David Zamora
