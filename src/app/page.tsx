@@ -1,11 +1,18 @@
 export default function HomePage() {
     return (
-        <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
-            <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16">
-                <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
-                    betterhealth
-                </h1>
+        <main className="bg-violet-600 text-white">
+            {/*Navbar*/}
+            <div className="w-full h-16 align-middle px-32 py-6 gap-x-3">
+                {/*Left*/}
+                <div className="space-x-1 gap-x-1">
+                    {/*Title*/}
+                    <div className="pr-8 h-2 gap-x-2">
+                        <span className="gap-x-2.5 align-middle font-">betterhealth</span>
+                    </div>
+                </div>
+                {/*Right*/}
             </div>
+            {/*Content*/}
         </main>
     );
 }
