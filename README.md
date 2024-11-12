@@ -4,3 +4,5 @@
 
 - Jesus Capellan
 - Alamdar Qanoongo
+- David Zamora
+- Tanvir Longia
