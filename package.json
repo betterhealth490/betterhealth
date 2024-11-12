@@ -14,9 +14,12 @@
     "start": "next start"
   },
   "dependencies": {
+    "@clerk/elements": "^0.19.1",
     "@clerk/nextjs": "^6.2.1",
     "@radix-ui/react-avatar": "^1.1.1",
+    "@radix-ui/react-label": "^2.1.0",
     "@radix-ui/react-slot": "^1.1.0",
+    "@radix-ui/react-tabs": "^1.1.1",
     "@t3-oss/env-nextjs": "^0.10.1",
     "@vercel/postgres": "^0.10.0",
     "class-variance-authority": "^0.7.0",

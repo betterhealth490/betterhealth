@@ -1,5 +1,0 @@
-import { Boilerplate } from "~/components/boilerplate";
-
-export default function LoginPage() {
-    return <Boilerplate>Login</Boilerplate>;
-}
