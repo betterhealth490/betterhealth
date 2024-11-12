@@ -1,6 +1,7 @@
-export default function HomePage() {
+export default function FaqPage() {
     return (
         <main className="bg-violet-600 text-white">
+            {/*FILLER CODE*/}
             {/*Navbar*/}
             <div className="w-full h-16 align-middle px-32 py-6 gap-x-3">
                 {/*Left*/}
