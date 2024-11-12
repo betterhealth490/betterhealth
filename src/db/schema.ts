@@ -29,39 +29,26 @@ export const appointmentStatusEnum = pgEnum("appointment_status", ["pending", "c
 export const billingStatusEnum = pgEnum("billing_status", ["pending", "paid"]);
 export const changeTypeEnum = pgEnum("change_type", ["insert", "update", "delete"]);
 
-// Users Table
+// Users Table with Authentication Fields
 export const users = createTable(
     "user",
     {
         userId: serial("user_id").primaryKey(),
+        username: varchar("username", { length: 255 }).notNull().unique(),
+        password: varchar("password", { length: 255 }).notNull(),
         email: varchar("email", { length: 255 }).notNull().unique(),
         role: roleEnum("role").notNull(),
         firstName: varchar("first_name", { length: 100 }).notNull(),
         lastName: varchar("last_name", { length: 100 }).notNull(),
         licenseNumber: varchar("license_number", { length: 50 }),
         isVerified: boolean("is_verified").default(false),
+        lastLogin: timestamp("last_login"),
         createdAt: timestamp("created_at").default(sql`CURRENT_TIMESTAMP`).notNull(),
         updatedAt: timestamp("updated_at").default(sql`CURRENT_TIMESTAMP`).$onUpdate(() => sql`CURRENT_TIMESTAMP`),
     },
     (user) => ({
         emailIndex: index("email_idx").on(user.email),
-    })
-);
-
-// Authentication Table
-export const authentication = createTable(
-    "authentication",
-    {
-        authId: serial("auth_id").primaryKey(),
-        userId: integer("user_id").notNull().references(() => users.userId, { onDelete: "cascade" }),
-        username: varchar("username", { length: 255 }).notNull().unique(),
-        password: varchar("password", { length: 255 }).notNull(),
-        lastLogin: timestamp("last_login"),
-        createdAt: timestamp("created_at").default(sql`CURRENT_TIMESTAMP`).notNull(),
-        updatedAt: timestamp("updated_at").default(sql`CURRENT_TIMESTAMP`).$onUpdate(() => sql`CURRENT_TIMESTAMP`),
-    },
-    (auth) => ({
-        usernameIndex: index("username_idx").on(auth.username),
+        usernameIndex: index("username_idx").on(user.username),
     })
 );
 
@@ -208,4 +195,3 @@ export const billingAudit = createTable(
         previousData: json("previous_data"),
     }
 );
-
