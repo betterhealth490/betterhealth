@@ -26,15 +26,17 @@ export interface GetJournalUpdateResult {
     updatedAt: Date;
 }
 
-export interface GetJournalListsInput {
+export interface ListJournalInput {
     journalId: number;
     userId: number;
 }
 
-export interface GetJournalListsResult {
+export interface ListJournalItem {
     journalId: number;
     userId: number;
     entryDate: Date;
     updatedAt: Date;
 }
+
+export type ListJournalResult = ListJournalItem[];
 
