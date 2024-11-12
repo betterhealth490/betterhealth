@@ -13,8 +13,14 @@ import {
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { Icons } from "~/components/ui/icons";
+import { Do_Hyeon } from "next/font/google";
 
-export function SignUpForm() {
+const doHyeon = Do_Hyeon({
+    weight: "400",
+    subsets: ["latin"],
+});
+
+export function SignInForm() {
     return (
         <SignIn.Root>
             <Clerk.Loading>
@@ -23,7 +29,14 @@ export function SignUpForm() {
                         <SignIn.Step name="start">
                             <Card className="w-full sm:w-96">
                                 <CardHeader>
-                                    <CardTitle>Sign in to Acme Co</CardTitle>
+                                    <CardTitle>
+                                        Log in to{" "}
+                                        <span
+                                            className={"text-3xl text-primary " + doHyeon.className}
+                                        >
+                                            betterhealth
+                                        </span>
+                                    </CardTitle>
                                     <CardDescription>
                                         Welcome back! Please sign in to continue
                                     </CardDescription>
@@ -117,15 +130,23 @@ export function SignUpForm() {
                             <SignIn.Strategy name="password">
                                 <Card className="w-full sm:w-96">
                                     <CardHeader>
-                                        <CardTitle>Check your email</CardTitle>
+                                        <CardTitle>
+                                            Log in to{" "}
+                                            <span
+                                                className={"text-3xl text-primary " + doHyeon.className}
+                                            >
+                                                betterhealth
+                                            </span>
+                                        </CardTitle>
                                         <CardDescription>
-                                            Enter the verification code sent to your email
+                                            Enter your password to finish logging in.
                                         </CardDescription>
-                                        <p className="text-sm text-muted-foreground">
-                                            Welcome back <SignIn.SafeIdentifier />
-                                        </p>
                                     </CardHeader>
                                     <CardContent className="grid gap-y-4">
+                                        <div>
+                                            <Label>Email</Label>
+                                            <Input disabled value={SignIn.SafeIdentifier({})} />
+                                        </div>
                                         <Clerk.Field name="password" className="space-y-2">
                                             <Clerk.Label asChild>
                                                 <Label>Password</Label>
@@ -149,92 +170,6 @@ export function SignUpForm() {
                                                             );
                                                         }}
                                                     </Clerk.Loading>
-                                                </Button>
-                                            </SignIn.Action>
-                                            <SignIn.Action navigate="choose-strategy" asChild>
-                                                <Button type="button" size="sm" variant="link">
-                                                    Use another method
-                                                </Button>
-                                            </SignIn.Action>
-                                        </div>
-                                    </CardFooter>
-                                </Card>
-                            </SignIn.Strategy>
-
-                            <SignIn.Strategy name="email_code">
-                                <Card className="w-full sm:w-96">
-                                    <CardHeader>
-                                        <CardTitle>Check your email</CardTitle>
-                                        <CardDescription>
-                                            Enter the verification code sent to your email
-                                        </CardDescription>
-                                        <p className="text-sm text-muted-foreground">
-                                            Welcome back <SignIn.SafeIdentifier />
-                                        </p>
-                                    </CardHeader>
-                                    <CardContent className="grid gap-y-4">
-                                        <Clerk.Field name="code">
-                                            <Clerk.Label className="sr-only">
-                                                Email verification code
-                                            </Clerk.Label>
-                                            <div className="grid items-center justify-center gap-y-2">
-                                                <div className="flex justify-center text-center">
-                                                    <Clerk.Input
-                                                        type="otp"
-                                                        autoSubmit
-                                                        className="flex justify-center has-[:disabled]:opacity-50"
-                                                        render={({ value, status }) => {
-                                                            return (
-                                                                <div
-                                                                    data-status={status}
-                                                                    className="relative flex h-9 w-9 items-center justify-center border-y border-r border-input text-sm shadow-sm transition-all first:rounded-l-md first:border-l last:rounded-r-md data-[status=cursor]:ring-1 data-[status=selected]:ring-1 data-[status=cursor]:ring-ring data-[status=selected]:ring-ring"
-                                                                >
-                                                                    {value}
-                                                                </div>
-                                                            );
-                                                        }}
-                                                    />
-                                                </div>
-                                                <Clerk.FieldError className="block text-center text-sm text-destructive" />
-                                                <SignIn.Action
-                                                    asChild
-                                                    resend
-                                                    className="text-muted-foreground"
-                                                    fallback={({ resendableAfter }) => (
-                                                        <Button variant="link" size="sm" disabled>
-                                                            Didn&apos;t receive a code? Resend (
-                                                            <span className="tabular-nums">
-                                                                {resendableAfter}
-                                                            </span>
-                                                            )
-                                                        </Button>
-                                                    )}
-                                                >
-                                                    <Button variant="link" size="sm">
-                                                        Didn&apos;t receive a code? Resend
-                                                    </Button>
-                                                </SignIn.Action>
-                                            </div>
-                                        </Clerk.Field>
-                                    </CardContent>
-                                    <CardFooter>
-                                        <div className="grid w-full gap-y-4">
-                                            <SignIn.Action submit asChild>
-                                                <Button disabled={isGlobalLoading}>
-                                                    <Clerk.Loading>
-                                                        {(isLoading) => {
-                                                            return isLoading ? (
-                                                                <Icons.spinner className="size-4 animate-spin" />
-                                                            ) : (
-                                                                "Continue"
-                                                            );
-                                                        }}
-                                                    </Clerk.Loading>
-                                                </Button>
-                                            </SignIn.Action>
-                                            <SignIn.Action navigate="choose-strategy" asChild>
-                                                <Button size="sm" variant="link">
-                                                    Use another method
                                                 </Button>
                                             </SignIn.Action>
                                         </div>
