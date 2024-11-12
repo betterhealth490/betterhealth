@@ -10,9 +10,6 @@ import { useState } from "react";
 export default function Page() {
     const { pending } = useFormStatus();
     const [message, setMessage] = useState<string>("");
-    if (process.env.NODE_ENV !== "development") {
-        notFound();
-    }
     return (
         <div className="m-96 flex gap-4">
             <Button
