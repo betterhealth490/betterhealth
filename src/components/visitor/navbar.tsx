@@ -5,6 +5,7 @@ import { Button } from "../ui/button";
 import { Ghost, HeartHandshake } from "lucide-react";
 import { Do_Hyeon } from "next/font/google"
 import { useEffect, useState } from "react";
+import { SignInButton, SignUpButton } from "@clerk/nextjs";
 
 const doHyeon = Do_Hyeon({weight: "400", subsets: ["latin"]})
 
@@ -25,8 +26,8 @@ export function Navbar(){
     }, []);
 
     return (
-      <header className={`sticky top-0 w-full ${scroll ? "bg-white border border-b border-border/40 text-primary" : "bg-primary text-white"}`}>
-        <div className="flex gap-x-3 px-32 py-6 align-middle">
+      <header className={`sticky top-0 w-full h-14 flex items-center ${scroll ? "bg-white border border-b border-border/40 text-primary" : "bg-primary text-white"}`}>
+        <div className="flex gap-x-3 px-32 align-middle justify-between w-full">
           <div className="flex gap-x-1 space-x-1">
             <Link href="/" className="flex items-center gap-x-2 pr-8">
               <HeartHandshake className="h-8 w-8" />
@@ -38,7 +39,7 @@ export function Navbar(){
             <Link href="/about">
               <Button
                 variant="link"
-                className={`${scroll ? "bg-white text-primary" : "bg-primary text-white"} text-lg transition-none`}
+                className={`${scroll ? "bg-white text-primary" : "bg-primary text-white"} transition-none`}
               >
                 About
               </Button>
@@ -47,7 +48,7 @@ export function Navbar(){
             <Link href="/faq">
               <Button
                 variant="link"
-                className={`${scroll ? "bg-white text-primary" : "bg-primary text-white"} text-lg transition-none`}
+                className={`${scroll ? "bg-white text-primary" : "bg-primary text-white"} transition-none`}
               >
                 FAQ
               </Button>
@@ -56,7 +57,7 @@ export function Navbar(){
             <Link href="/contact">
               <Button
                 variant="link"
-                className={`${scroll ? "bg-white text-primary" : "bg-primary text-white"} text-lg transition-none`}
+                className={`${scroll ? "bg-white text-primary" : "bg-primary text-white"} transition-none`}
               >
                 Contact Us
               </Button>
@@ -64,23 +65,22 @@ export function Navbar(){
           </div>
 
           <div className="flex w-full justify-end gap-x-5 space-x-1">
-            <Link href="/login">
+            <SignInButton>
               <Button
                 variant={scroll ? "landingScrollOutline" : "landingOutline"}
-                className="text-lg"
               >
                 Log In
               </Button>
-            </Link>
+            </SignInButton>
 
-            <Link href="/signup">
+            <SignUpButton>
               <Button
                 variant={scroll ? "default" : "landingDefault"}
-                className="text-lg transition-all"
+                className="transition-all"
               >
                 Sign Up
               </Button>
-            </Link>
+            </SignUpButton>
           </div>
         </div>
       </header>
