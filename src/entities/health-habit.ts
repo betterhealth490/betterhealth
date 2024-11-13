@@ -1,11 +1,8 @@
 export interface GetHealthHabitsInput {
-  waterIntake: number;
-  sleepHours: number;
-  mealsEaten: number;
-  feeling: "Excited" | "Happy" | "Okay" | "Mellow" | "Sad" | "I don't know";
+  habitId: number;
 }
 
-export interface GetHealthHabitsResults {
+export interface GetHealthHabitsResult {
   habitId: number;
   patientId: number;
   date: Date;
@@ -16,19 +13,18 @@ export interface GetHealthHabitsResults {
 
 export interface ListHealthHabitsInput {
   date: Date;
-  waterIntake: number;
-  sleepHours: number;
-  mealsEaten: number;
-  feeling: "Excited" | "Happy" | "Okay" | "Mellow" | "Sad" | "I don't know";
+  userId: number;
 }
 
-export interface ListHealthHabitsResult {
+export interface ListHealthHabitsItem {
   date: Date;
   waterIntake: number;
   sleepHours: number;
   mealsEaten: number;
   feeling: "Excited" | "Happy" | "Okay" | "Mellow" | "Sad" | "I don't know";
-}
+} 
+
+export type ListHealthHabitsResult = ListHealthHabitsItem[];
 
 export interface UpdateHealthHabitsInput {
   habitId: number;
