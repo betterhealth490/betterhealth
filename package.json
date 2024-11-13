@@ -14,6 +14,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@hookform/resolvers": "^3.9.1",
     "@clerk/elements": "^0.19.1",
     "@clerk/nextjs": "^6.2.1",
     "@radix-ui/react-avatar": "^1.1.1",
@@ -35,9 +36,10 @@
     "postgres": "^3.4.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-hook-form": "^7.53.2",
     "tailwind-merge": "^2.5.4",
     "tailwindcss-animate": "^1.0.7",
-    "zod": "^3.23.3"
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/eslint": "^8.56.10",
