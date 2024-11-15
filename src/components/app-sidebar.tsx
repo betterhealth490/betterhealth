@@ -44,11 +44,6 @@ const data = [
     },
 ];
 
-const doHyeon = Do_Hyeon({
-    weight: "400",
-    subsets: ["latin"],
-});
-
 const metadataSchema = z.object({
     role: z.enum(["therapist", "patient"]),
 });
@@ -69,7 +64,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     const userRole = parsedUser.success ? parsedUser.data.role : "patient";
 
     return (
-        <Sidebar variant="floating" {...props}>
+        <Sidebar collapsible="icon" {...props}>
             <SidebarHeader>
                 <SidebarMenu>
                     <SidebarMenuItem>
