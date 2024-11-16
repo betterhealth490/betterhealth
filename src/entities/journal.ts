@@ -23,7 +23,7 @@ export interface GetJournalUpdateResult {
     entryDate: Date;
     content: string;
     createdAt: Date;
-    updatedAt: Date;
+    updatedAt: Date | null;
 }
 
 export interface ListJournalInput {
