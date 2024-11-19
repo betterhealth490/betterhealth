@@ -6,6 +6,29 @@ import { type GetJournalInput, type GetJournalResult } from "~/entities/journal"
 import { type GetJournalUpdateInput, type GetJournalUpdateResult } from "~/entities/journal";
 import { type ListJournalInput, type ListJournalResult } from "~/entities/journal";
 
+export async function createJournal(input: { userId: number; entryDate: Date; content: string }): Promise<number> {
+    const result = await db
+        .insert(journals)
+        .values({
+            userId: input.userId,
+            entryDate: input.entryDate,
+            content: input.content,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+        })
+        .returning({
+            journalId: journals.journalId,
+        });
+
+    const journal = result.at(0);
+
+    if (!journal) {
+        throw new Error("Failed to create journal");
+    }
+
+    return journal.journalId; 
+}
+
 export async function getJournal(input: GetJournalInput): Promise<GetJournalResult> {
     const userId = typeof input.userId === "string" ? parseInt(input.userId, 10) : input.userId;
 
@@ -14,8 +37,8 @@ export async function getJournal(input: GetJournalInput): Promise<GetJournalResu
         .from(journals)
         .where(
             and(
-                eq(journals.userId, userId),
-                eq(journals.entryDate, input.date)
+                eq(journals.journalId, input.journalId),
+                eq(journals.userId, input.userId)
             )
         );
 
@@ -79,18 +102,4 @@ export async function listJournals(userId: number): Promise<ListJournalResult> {
     }));
 }
 
-
-export async function deleteJournal(input: { journalId: number; userId: number }): Promise<boolean> {
-    const result = await db
-        .delete(journals)
-        .where(
-            and(
-                eq(journals.journalId, input.journalId),
-                eq(journals.userId, input.userId)
-            )
-        )
-        .returning(); 
-
-    return result.length > 0; 
-}
 
