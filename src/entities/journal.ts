@@ -1,6 +1,16 @@
+export interface CreateJournalInput {
+    userId: number;
+    entryDate: Date;
+    content: string;
+}
+
+export interface CreateJournalResult {
+    journalId: number;
+}
+
 export interface GetJournalInput {
-    userId: string;
-    date: Date;
+    journalId: number;
+    userId: number;
 }
 
 export interface GetJournalResult {
@@ -23,7 +33,7 @@ export interface GetJournalUpdateResult {
     entryDate: Date;
     content: string;
     createdAt: Date;
-    updatedAt: Date;
+    updatedAt: Date | null;
 }
 
 export interface ListJournalInput {
