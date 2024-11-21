@@ -140,7 +140,7 @@ export const billing = createTable(
     "billing",
     {
         billId: serial("bill_id").primaryKey(),
-        userId: integer("user_id").notNull().references(() => use rs.userId),
+        userId: integer("user_id").notNull().references(() => users.userId),
         amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
         dueDate: timestamp("due_date").notNull(),
         status: billingStatusEnum("status").default("pending"),
