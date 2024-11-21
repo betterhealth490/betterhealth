@@ -12,7 +12,6 @@
 /prisma/db.sqlite
 /prisma/db.sqlite-journal
 db.sqlite
-/src/use-cases/appointment.test.tsx
 
 # next.js
 /.next/

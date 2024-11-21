@@ -55,7 +55,6 @@ export async function createAppointment(input: CreateAppointmentInput): Promise<
     const result = await db
         .insert(appointments)
         .values({
-            appointmentId: input.appointmentId,
             patientId: input.patientId,
             therapistId: input.therapistId,
             appointmentDate: input.appointmentDate,

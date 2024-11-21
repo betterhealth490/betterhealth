@@ -42,11 +42,9 @@ export interface UpdateAppointmentResult {
 
 export interface CreateAppointmentInput {
   appointmentDate: Date;
-  appointmentId: number;
   patientId: number;
   therapistId: number;
   notes: string;
-  status: "Pending" | "Confirmed" | "Cancelled";
 }
 
 export interface CreateAppointmentResult {
