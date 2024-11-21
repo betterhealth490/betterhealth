@@ -30,7 +30,7 @@ export async function getAppointment(input: GetAppointmentInput): Promise<GetApp
 
 module.exports = getAppointment;
 
-export async function updateAppointmentItem(input: UpdateAppointmentInput): Promise<UpdateAppointmentResult> {
+export async function updateAppointment(input: UpdateAppointmentInput): Promise<UpdateAppointmentResult> {
     const result = await db
         .update(appointments)
         .set({

@@ -28,6 +28,7 @@ export const relationshipStatusEnum = pgEnum("relationship_status", ["pending", 
 export const appointmentStatusEnum = pgEnum("appointment_status", ["Pending", "Confirmed", "Cancelled"]);
 export const billingStatusEnum = pgEnum("billing_status", ["pending", "paid"]);
 export const changeTypeEnum = pgEnum("change_type", ["insert", "update", "delete"]);
+export const feelingEnum = pgEnum("feeling", ["Excited", "Happy", "Okay", "Mellow", "Sad", "I don't know"]);
 
 // Users Table with Authentication Fields
 export const users = createTable(
@@ -68,11 +69,12 @@ export const healthHabits = createTable(
     "health_habits",
     {
         habitId: serial("habit_id").primaryKey(),
-        userId: integer("user_id").notNull().references(() => users.userId),
+        patientId: integer("user_id").notNull().references(() => users.userId),
         date: timestamp("date").notNull(),
-        waterIntake: integer("water_intake"),
-        sleepHours: integer("sleep_hours"),
-        mealsEaten: integer("meals_eaten"),
+        waterIntake: integer("water_intake").notNull(),
+        sleepHours: integer("sleep_hours").notNull(),
+        mealsEaten: integer("meals_eaten").notNull(),
+        feeling: feelingEnum("feeling").notNull(),
         createdAt: timestamp("created_at").default(sql`CURRENT_TIMESTAMP`).notNull(),
         updatedAt: timestamp("updated_at").default(sql`CURRENT_TIMESTAMP`).$onUpdate(() => sql`CURRENT_TIMESTAMP`),
     }
@@ -138,7 +140,7 @@ export const billing = createTable(
     "billing",
     {
         billId: serial("bill_id").primaryKey(),
-        userId: integer("user_id").notNull().references(() => users.userId),
+        userId: integer("user_id").notNull().references(() => use rs.userId),
         amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
         dueDate: timestamp("due_date").notNull(),
         status: billingStatusEnum("status").default("pending"),
