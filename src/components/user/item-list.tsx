@@ -9,6 +9,8 @@ import { useClerk } from "@clerk/nextjs";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { SearchIcon } from "lucide-react";
 import { Input } from "../ui/input";
+import { ChatBox } from "~/app/(user)/inbox/chat-box";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 interface InboxItem {
   profileImageUrl: string;
@@ -29,6 +31,20 @@ interface ItemListProps {
 export function ItemList({ items }: ItemListProps) {
   const [inboxItem, setInboxItem] = useState<InboxItem>();
   const clerk = useClerk();
+
+  const searchParams = useSearchParams()
+  const pathname = usePathname()
+  const {replace} = useRouter()
+
+  const handleSearch = (searchTerm: string) => {
+      const params = new URLSearchParams(searchParams)
+
+      if (searchTerm) {params.set("id", searchTerm)}
+      else {params.delete("id")}
+
+      replace (`${pathname}?${params.toString()}`)
+  }
+
 
   return (
     <div className="flex flex-col gap-2 p-4 pt-0 w-4/12">
@@ -52,7 +68,11 @@ export function ItemList({ items }: ItemListProps) {
               "flex items-center gap-2 rounded-lg mt-2 border p-3 text-left text-sm w-full transition-all hover:bg-accent",
               inboxItem?.id === item.id && "bg-muted",
             )}
-            onClick={() => setInboxItem(item)}
+            onClick={() => {
+              setInboxItem(item); 
+              item.unreadMessages = 0;
+              handleSearch(item.id.toString())
+            }}
           >
             <Avatar>
               <AvatarImage src={item.profileImageUrl} />
