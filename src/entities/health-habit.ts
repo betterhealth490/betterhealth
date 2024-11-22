@@ -43,6 +43,7 @@ export interface UpdateHealthHabitsResult {
 }
 
 export interface CreateHealthHabitsInput {
+  patientId: number;
   date: Date;
   waterIntake: number;
   sleepHours: number;
@@ -51,6 +52,7 @@ export interface CreateHealthHabitsInput {
 }
 
 export interface CreateHealthHabitsResult {
+  patientId: number;
   date: Date;
   waterIntake: number;
   sleepHours: number;
