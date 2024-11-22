@@ -57,7 +57,10 @@ export async function updateHealthHabit(input: UpdateHealthHabitsInput): Promise
             mealsEaten: input.mealsEaten
         })
         .where(
-            eq(healthHabits.patientId, input.patientId)
+            and(
+                eq(healthHabits.patientId, input.patientId),
+                eq(healthHabits.habitId, input.habitId)
+            )
         )
         .returning();
 
@@ -75,7 +78,7 @@ export async function createHealthHabit(input:CreateHealthHabitsInput): Promise<
     const result = await db
         .insert(healthHabits)
         .values({
-            date: sql`${input.date}`,
+            date: input.date,
             waterIntake: input.waterIntake,
             sleepHours: input.sleepHours,
             mealsEaten: input.mealsEaten,
