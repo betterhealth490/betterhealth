@@ -5,6 +5,7 @@ import { billing} from "~/db/schema";
 import { type GetBillingInput, type GetBillingResult } from "~/entities/billing";
 import { type CreateBillingInput, type CreateBillingResult } from "~/entities/billing";
 import { type UpdateBillingInput, type UpdateBillingResult } from "~/entities/billing";
+import { type ListBillingInput, type ListBillingResult } from "~/entities/billing";
 
 // Create billing
 export async function createBilling(input: CreateBillingInput): Promise<CreateBillingResult> {
@@ -83,30 +84,12 @@ export async function markBillAsPaid(input: UpdateBillingInput): Promise<void> {
     });
 }
 
+// Update billing record
 export async function updateBilling(input: UpdateBillingInput): Promise<UpdateBillingResult> {
-    const currentBilling = await db
-        .select()
-        .from(billing)
-        .where(
-            and(
-                eq(billing.billId, input.billId),
-                eq(billing.userId, input.userId)
-            )
-        )
-        .limit(1);
-
-    const existingBilling = currentBilling.at(0);
-
-    if (!existingBilling) {
-        throw new Error("Billing record not found");
-    }
-
-    const newAmount = existingBilling.amount + input.amount;
-
     const result = await db
         .update(billing)
         .set({
-            amount: newAmount,
+            amount: input.amount.toString(),
             status: input.status,
             updatedAt: new Date(),
         })
@@ -119,14 +102,34 @@ export async function updateBilling(input: UpdateBillingInput): Promise<UpdateBi
         .returning();
 
     const updatedBilling = result.at(0);
-
     if (updatedBilling) {
         return {
             ...updatedBilling,
-            amount: parseFloat(updatedBilling.amount as string),
-            status: updatedBilling.status ?? "pending", 
+            amount: parseFloat(updatedBilling.amount as string), 
+            status: updatedBilling.status ?? "pending", // Fallback to default status
         };
     } else {
         throw new Error("Failed to update billing record");
     }
+}
+
+// List all billing records for a user
+export async function listBillings(input: ListBillingInput): Promise<ListBillingResult> {
+    const result = await db
+        .select({
+            billId: billing.billId,
+            userId: billing.userId,
+            amount: billing.amount,
+            dueDate: billing.dueDate,
+            status: billing.status,
+            updatedAt: billing.updatedAt,
+        })
+        .from(billing)
+        .where(eq(billing.userId, input.userId));
+
+    return result.map((billingRecord) => ({
+        ...billingRecord,
+        amount: parseFloat(billingRecord.amount as string), 
+        updatedAt: billingRecord.updatedAt ?? new Date(),
+    }));
 }
