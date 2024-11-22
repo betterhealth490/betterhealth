@@ -58,31 +58,6 @@ export async function getBilling(input: GetBillingInput): Promise<GetBillingResu
     };
 }
 
-// Function to mark a bill as paid
-export async function markBillAsPaid(input: UpdateBillingInput): Promise<void> {
-    await db.transaction(async (trx) => {
-        const result = await trx
-            .update(billing)
-            .set({
-                status: "paid",
-                updatedAt: new Date(),
-            })
-            .where(
-                and(
-                    eq(billing.billId, input.billId),
-                    eq(billing.userId, input.userId),
-                    eq(billing.status, "pending")
-                )
-            )
-            .returning();
-
-        const updatedBilling = result.at(0);
-
-        if (!updatedBilling) {
-            throw new Error("Failed to update the billing status to paid.");
-        }
-    });
-}
 
 // Update billing record
 export async function updateBilling(input: UpdateBillingInput): Promise<UpdateBillingResult> {
