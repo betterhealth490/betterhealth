@@ -1,12 +1,12 @@
-import { Navbar } from "~/components/visitor/navbar";
+import { Navbar } from "~/app/(visitor)/navbar";
 
 export default function VisitorLayout({
-    children,
+  children,
 }: Readonly<{ children: React.ReactNode }>) {
-    return (
-        <div>
-            <Navbar />
-            {children}
-        </div>
-    );
+  return (
+    <div>
+      <Navbar />
+      {children}
+    </div>
+  );
 }

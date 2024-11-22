@@ -1,13 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { Button } from "../ui/button";
-import { Ghost, HeartHandshake } from "lucide-react";
-import { Do_Hyeon } from "next/font/google";
+import { Button } from "~/components/ui/button";
+import { HeartHandshake } from "lucide-react";
 import { useEffect, useState } from "react";
-import { SignInButton, SignUpButton } from "@clerk/nextjs";
-
-const doHyeon = Do_Hyeon({ weight: "400", subsets: ["latin"] });
+import { doHyeon } from "~/lib/utils";
 
 export function Navbar() {
   const [scroll, setScroll] = useState<boolean>(false);
@@ -69,13 +66,13 @@ export function Navbar() {
         </div>
 
         <div className="flex w-full justify-end gap-x-5 space-x-1">
-          <SignInButton>
+          <Link href="/login">
             <Button
               variant={scroll ? "landingScrollOutline" : "landingOutline"}
             >
               Log In
             </Button>
-          </SignInButton>
+          </Link>
 
           <Link href="/signup">
             <Button
