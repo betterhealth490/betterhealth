@@ -17,51 +17,53 @@ import { ChatBox } from "./chat-box";
 const mockInbox = [
   {
     profileImageUrl: "/demo.png",
-    firstName: "Joe",
-    lastName: "Biden",
-    email: "JoeBiden1@gmail.com",
-    messages: ["I love children more than I love people.", "I love children more than I love people.", "I love children more than I love people.", "I love children more than I love people."],
+    firstName: "Alex",
+    lastName: "Jones",
+    email: "AlexJones@gmail.com",
+    messages: ["Hey! I'm reaching out to let you know that I have plenty of available dates for appointments.", "Feel free to reach out to me with any problems you're having."],
     latestMessage: {
-      text: "I love children more than I love people.",
+      text: "Feel free to reach out to me with any problems you're having.",
       time: new Date(),
     },
-    unreadMessages: 9,
+    unreadMessages: 2,
+    id: 0,
+  },
+  {
+    profileImageUrl: "/demo.png",
+    firstName: "Eric",
+    lastName: "Xavier",
+    email: "EricXavier@gmail.com",
+    messages: ["Hey! I'm reaching out to let you know that I have plenty of available dates for appointments.", "Feel free to reach out to me with any problems you're having."],
+    latestMessage: {
+      text: "Feel free to reach out to me with any problems you're having.",
+      time: new Date(),
+    },
+    unreadMessages: 2,
     id: 1,
   },
   {
     profileImageUrl: "/demo.png",
-    firstName: "Joe",
-    lastName: "Biden",
-    email: "JoeBiden2@gmail.com",
-    messages: ["I love children more than I love people.", "I love children more than I love people.", "I love children more than I love people.", "I love children more than I love people."],
+    firstName: "Johnny",
+    lastName: "Jones",
+    email: "JohnnyJones@gmail.com",
+    messages: ["Hey! I'm reaching out to let you know that I have plenty of available dates for appointments.", "Feel free to reach out to me with any problems you're having."],
     latestMessage: {
-      text: "I love children more than I love people.",
+      text: "Feel free to reach out to me with any problems you're having.",
       time: new Date(),
     },
-    unreadMessages: 9,
+    unreadMessages: 2,
     id: 2,
-  },
-  {
-    profileImageUrl: "/demo.png",
-    firstName: "Joe",
-    lastName: "Biden",
-    email: "JoeBiden3@gmail.com",
-    messages: ["I love children more than I love people.", "I love children more than I love people.", "I love children more than I love people.", "I love children more than I love people."],
-    latestMessage: {
-      text: "I love children more than I love people.",
-      time: new Date(),
-    },
-    unreadMessages: 9,
-    id: 3,
   },
 ];
 
-export default function InboxPage() {
+export default function InboxPage({searchParams}: {searchParams?: {id?: string}}) {
+  const id = searchParams?.id || '0'
+
   return (
     <div>
       <div className="flex">
         <ItemList items={mockInbox}/>
-        <ChatBox item={mockInbox[0]}/>
+        <ChatBox item={mockInbox[parseInt(id)]}/>
       </div>
     </div>
   );

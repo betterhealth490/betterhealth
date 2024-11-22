@@ -16,6 +16,7 @@ interface ChatBoxProps {
 }
 
 export function ChatBox({item}: ChatBoxProps){
+
     return(
         <div className="w-full h-full">
             <div className="flex flex-col border rounded-[8px]">
@@ -36,7 +37,7 @@ export function ChatBox({item}: ChatBoxProps){
                     <div>
                         <div className="flex flex-col gap-10">
                             {item.messages.map((message) => (
-                                <span className="p-3 border rounded-[8px] w-4/5 bg-muted">
+                                <span key={item.id} className="p-3 border rounded-[8px] w-4/5 bg-muted">
                                     {message}
                                 </span>
                             ))}
