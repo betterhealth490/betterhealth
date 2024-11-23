@@ -1,4 +1,4 @@
-import { PlaneIcon, SendIcon } from "lucide-react";
+import { SendIcon } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Input } from "~/components/ui/input";
 import { ScrollArea } from "~/components/ui/scroll-area";
@@ -18,7 +18,7 @@ export function ChatBox({item}: ChatBoxProps){
     return(
         <div className="w-full h-full">
             <div className="flex flex-col border rounded-[8px]">
-                <div className="flex p-6 border-b-2">
+                <div className="flex p-6 border-b-2 gap-4">
                     <Avatar>
                         <AvatarImage src={item.profileImageUrl} />
                         <AvatarFallback>
