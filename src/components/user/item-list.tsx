@@ -1,17 +1,13 @@
 "use client";
 
-import { ComponentProps, useState } from "react";
-import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
 import { cn } from "~/lib/utils";
-import { ScrollArea } from "../ui/scroll-area";
-import Image from "next/image";
 import { useClerk } from "@clerk/nextjs";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { SearchIcon } from "lucide-react";
 import { Input } from "../ui/input";
-import { ChatBox } from "~/app/(user)/inbox/chat-box";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { InboxItem } from "~/app/(user)/inbox/page";
+import { ScrollArea } from "../ui/scroll-area";
+import { formatDistanceToNow } from "date-fns";
 
 interface ItemListProps {
   items: InboxItem[];
