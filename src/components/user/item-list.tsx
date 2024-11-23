@@ -11,43 +11,19 @@ import { SearchIcon } from "lucide-react";
 import { Input } from "../ui/input";
 import { ChatBox } from "~/app/(user)/inbox/chat-box";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-
-interface InboxItem {
-  profileImageUrl: string;
-  firstName: string;
-  lastName: string;
-  latestMessage: {
-    text: string;
-    time: Date;
-  };
-  unreadMessages: number;
-  id: number;
-}
+import { InboxItem } from "~/app/(user)/inbox/page";
 
 interface ItemListProps {
   items: InboxItem[];
+  currentItem: InboxItem | undefined;
+  onItemClick: (item: InboxItem) => void;
 }
 
-export function ItemList({ items }: ItemListProps) {
-  const [inboxItem, setInboxItem] = useState<InboxItem>();
+export function ItemList({ items, currentItem, onItemClick }: ItemListProps) {
   const clerk = useClerk();
 
-  const searchParams = useSearchParams()
-  const pathname = usePathname()
-  const {replace} = useRouter()
-
-  const handleSearch = (searchTerm: string) => {
-      const params = new URLSearchParams(searchParams)
-
-      if (searchTerm) {params.set("id", searchTerm)}
-      else {params.delete("id")}
-
-      replace (`${pathname}?${params.toString()}`)
-  }
-
-
   return (
-    <div className="flex flex-col gap-2 p-4 pt-0 w-4/12">
+    <div className="flex flex-col gap-2 p-4 pt-0 w-5/12">
       <div className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <form>
           <div className="relative">
@@ -66,12 +42,11 @@ export function ItemList({ items }: ItemListProps) {
             key={item.id}
             className={cn(
               "flex items-center gap-2 rounded-lg mt-2 border p-3 text-left text-sm w-full transition-all hover:bg-accent",
-              inboxItem?.id === item.id && "bg-muted",
+              item.id === currentItem?.id && "bg-muted",
             )}
             onClick={() => {
-              setInboxItem(item); 
               item.unreadMessages = 0;
-              handleSearch(item.id.toString())
+              onItemClick(item); 
             }}
           >
             <Avatar>
@@ -85,7 +60,7 @@ export function ItemList({ items }: ItemListProps) {
                 <div className="font-semibold capitalize">
                   {item.firstName + " " + item.lastName}
                 </div>
-                <div>
+                <div className="border rounded-full border-primary bg-primary text-white text-sm w-5 text-center">
                   {item.unreadMessages}
                 </div>
               </div>
@@ -96,7 +71,7 @@ export function ItemList({ items }: ItemListProps) {
                 <div
                   className={cn(
                     "ml-auto text-xs",
-                    inboxItem?.id === item.id
+                    item.id === currentItem?.id
                       ? "text-foreground"
                       : "text-muted-foreground",
                   )}

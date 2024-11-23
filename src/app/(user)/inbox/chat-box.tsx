@@ -1,21 +1,19 @@
-import { PlaneIcon } from "lucide-react";
+import { PlaneIcon, SendIcon } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Input } from "~/components/ui/input";
-
-interface ChatBoxItem {
-    profileImageUrl: string;
-    firstName: string;
-    lastName: string;
-    email: string;
-    messages: string[];
-    id: number;
-}
+import { ScrollArea } from "~/components/ui/scroll-area";
+import { InboxItem } from "./page";
+import { useEffect } from "react";
   
 interface ChatBoxProps {
-    item: ChatBoxItem;
+    item: InboxItem;
 }
 
 export function ChatBox({item}: ChatBoxProps){
+
+    useEffect(() => {
+        console.log(item);
+    }, []);
 
     return(
         <div className="w-full h-full">
@@ -32,9 +30,8 @@ export function ChatBox({item}: ChatBoxProps){
                         <span className="text-xs text-muted-foreground">{item.email}</span>
                     </div>
                 </div>
-                <line/>
-                <div className="flex flex-col p-6 h-[80vh] justify-between">
-                    <div>
+                <div className="flex flex-col p-6 h-[75vh] justify-between">
+                    <ScrollArea className="mt-2 border rounded-[8px] h-5/6">
                         <div className="flex flex-col gap-10">
                             {item.messages.map((message) => (
                                 <span key={item.id} className="p-3 border rounded-[8px] w-4/5 bg-muted">
@@ -42,12 +39,12 @@ export function ChatBox({item}: ChatBoxProps){
                                 </span>
                             ))}
                         </div>
-                    </div>
+                    </ScrollArea>
                     <form>
                         <div className="relative">
                             <Input placeholder="Send a message" className="pl-4"/>
                             <button className="border border-primary bg-primary rounded-full p-1 absolute right-4 top-[7px]">
-                                <PlaneIcon
+                                <SendIcon
                                 color="white"
                                 size="16"
                                 />

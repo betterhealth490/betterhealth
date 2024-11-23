@@ -1,14 +1,9 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { SearchIcon } from "lucide-react";
-import { useForm } from "react-hook-form";
-import { array, z } from "zod";
-import { Form } from "~/components/ui/form";
-import { Input } from "~/components/ui/input";
-import { TabsContent } from "~/components/ui/tabs";
+'use client'
+
 import { ItemList } from "~/components/user/item-list";
-import dynamic from "next/dynamic";
-import styles from "./chat-box.module.css";
 import { ChatBox } from "./chat-box";
+import { useState } from "react";
+import { isDefined } from "~/lib/utils";
 
 // const Chat = dynamic(() => import("~/app/(user)/inbox/chat"), {
 //   ssr: false,
@@ -56,14 +51,28 @@ const mockInbox = [
   },
 ];
 
-export default function InboxPage({searchParams}: {searchParams?: {id?: string}}) {
-  const id = searchParams?.id || '0'
+export interface InboxItem {
+  profileImageUrl: string;
+  firstName: string;
+  lastName: string;
+  latestMessage: {
+    text: string;
+    time: Date;
+  };
+  email: string;
+  messages: string[];
+  unreadMessages: number;
+  id: number;
+}
+
+export default function InboxPage() {
+  const [inboxItem, setInboxItem] = useState<InboxItem>();
 
   return (
     <div>
       <div className="flex">
-        <ItemList items={mockInbox}/>
-        <ChatBox item={mockInbox[parseInt(id)]}/>
+        <ItemList items={mockInbox} currentItem={inboxItem} onItemClick={setInboxItem}/>
+        { isDefined(inboxItem) && <ChatBox item={inboxItem}/> }
       </div>
     </div>
   );
