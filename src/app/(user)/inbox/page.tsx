@@ -5,11 +5,7 @@ import { ChatBox } from "./chat-box";
 import { useState } from "react";
 import { isDefined } from "~/lib/utils";
 
-// const Chat = dynamic(() => import("~/app/(user)/inbox/chat"), {
-//   ssr: false,
-// });
-
-const mockInbox = [
+export const mockInbox = [
   {
     profileImageUrl: "/demo.png",
     firstName: "Alex",
