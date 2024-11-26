@@ -1,5 +1,5 @@
 export interface GetAppointmentInput {
-    appointmentId: number;
+  appointmentId: number;
 }
 
 export interface GetAppointmentResult {

@@ -60,7 +60,7 @@ export const users = createTable(
     password: varchar("password", { length: 255 }).notNull(),
     role: roleEnum("role").notNull(),
     licenseNumber: varchar("license_number", { length: 12 }).unique(),
-    isVerified: boolean("is_verified").default(false),
+    isVerified: boolean("is_verified").default(false).notNull(),
     createdAt: timestamp("created_at")
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
