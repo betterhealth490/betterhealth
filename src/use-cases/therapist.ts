@@ -1,4 +1,5 @@
 import { eq, and } from "drizzle-orm";
+import { string } from "zod";
 import { db } from "~/db";
 import { users, therapistPatient } from "~/db/schema";
 import {
@@ -8,6 +9,8 @@ import {
   ListUserTherapistInput,
   ListUserTherapistItem,
   ListUserTherapistResult,
+  UpdateTherapistStatusInput,
+  UpdateTherapistStatusResult,
 } from "~/entities/therapist";
 
 export async function listTherapist(
@@ -47,4 +50,22 @@ export async function listUserTherapist(
     .where(eq(therapistPatient.patientId, input.userId));
 
   return result;
+}
+
+export async function setTherapistStatus(
+  input: UpdateTherapistStatusInput,
+): Promise<UpdateTherapistStatusResult> {
+
+  const result = await db
+    .update(users)
+    .set({activeStatus: input.activeStatus as "Active" | "Inactive"})
+    .where(eq(users.userId, input.therapistId))
+    .returning();
+
+  const update = result.at(0);
+  if (update) {
+    return update;
+  } else {
+    throw new Error("Could Not Update");
+  }
 }

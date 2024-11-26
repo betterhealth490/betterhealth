@@ -27,3 +27,12 @@ export interface ListUserTherapistItem {
 }
 
 export type ListUserTherapistResult = ListTherapistItem[];
+
+export interface UpdateTherapistStatusInput {
+  therapistId: number;
+  activeStatus: string | null;
+}
+
+export interface UpdateTherapistStatusResult {
+  activeStatus: string | null;
+}

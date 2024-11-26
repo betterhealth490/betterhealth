@@ -48,6 +48,10 @@ export const feelingEnum = pgEnum("feeling", [
   "Sad",
   "I don't know",
 ]);
+export const therapistStatusEnum = pgEnum("therapist_status", [
+  "Active",
+  "Inactive",
+]);
 
 // Users Table with Authentication Fields
 export const users = createTable(
@@ -61,6 +65,7 @@ export const users = createTable(
     role: roleEnum("role").notNull(),
     licenseNumber: varchar("license_number", { length: 12 }).unique(),
     isVerified: boolean("is_verified").default(false).notNull(),
+    activeStatus: therapistStatusEnum("therapist_status"),
     createdAt: timestamp("created_at")
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
