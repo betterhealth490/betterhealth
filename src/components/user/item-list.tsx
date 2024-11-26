@@ -44,7 +44,7 @@ export function ItemList({ items, currentItem, onItemClick }: ItemListProps) {
           </div>
         </form>
       </div>
-      <ScrollArea className="h-screen border rounded-[8px]">
+      <ScrollArea className="h-screen">
         {items
           .filter((li) => itemIncludes(li, search))
           .map((item) => (

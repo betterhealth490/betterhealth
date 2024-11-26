@@ -41,7 +41,7 @@ export function ChatBox({item}: ChatBoxProps){
                     </div>
                 </div>
                 <div className="flex flex-col p-6 h-[80vh] justify-between">
-                    <ScrollArea className="mt-2 border rounded-[8px] h-[90%]">
+                    <ScrollArea className="mt-2 h-[90%]">
                         <div className="flex flex-col gap-5 w-full">
                             {item.sentMessages.map((message) => (
                                 <span key={id++} className="p-3 border rounded-[8px] bg-muted w-fit max-w-[80%] m-2">
