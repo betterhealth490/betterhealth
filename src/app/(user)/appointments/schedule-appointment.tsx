@@ -33,14 +33,31 @@ import {
   NavigationMenuTrigger,
 } from "~/components/ui/navigation-menu";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select";
-import { cn } from "~/lib/utils";
+import { cn, formatName } from "~/lib/utils";
 import { PageWrapper } from "../page-wrapper";
+import { listTherapistByPatient } from "~/data-access/therapist";
+import { currentUser } from "@clerk/nextjs/server";
+import { currentUserAction, listTherapistsByPatientAction } from "./actions";
+import { useUser } from "@clerk/nextjs";
 
 interface ScheduleAppointmentProps {
   date: Date | undefined;
 }
 
+interface AppointmentValues {
+  date: string,
+  therapist: string,
+  timeslot: string,
+  duration: string,
+  status: string,
+  notes: string
+}
+
+// const {user} = useUser()
+// const userId = parseInt(user?.unsafeMetadata.databaseId as string);
+
 const formSchema = z.object({
+  date: z.string(),
   therapist: z.string({
     errorMap: () => {
       return { message: "Please select a therapist." };
@@ -64,13 +81,15 @@ const therapistNames = [
   "Jonathan",
 ];
 const timeslots = ["12:00 AM", "1:00 AM", "2:00 AM", "3:00 AM", "4:00 AM"];
+const appointments: AppointmentValues[] = [];
 
 export function ScheduleAppointment({ date }: ScheduleAppointmentProps) {
-  const router = useRouter();
+  // const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      date: date?.toDateString(),
       therapist: undefined,
       timeslot: undefined,
       duration: "30 minutes",
@@ -80,27 +99,14 @@ export function ScheduleAppointment({ date }: ScheduleAppointmentProps) {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+    appointments.push(values);
+    console.log(appointments[0])
   }
-
-  const [therapist, setTherapist] = useState("Select an available therapist");
-  const [timeslot, setTimeslot] = useState("Select an available timeslot");
-  const [notes, setNotes] = useState("");
-
-  const therapistClick = (tName: string) => {
-    setTherapist(tName);
-  };
-  const timeslotClick = (time: string) => {
-    setTimeslot(time);
-  };
-  const notesChange = (note: string) => {
-    setNotes(note);
-  };
 
   return (
     <Card className="h-full w-full">
       <CardHeader>
-        <CardTitle>Create Your Appointment</CardTitle>
+        <CardTitle>View Your Appointment</CardTitle>
         <CardDescription>{date?.toDateString()}</CardDescription>
       </CardHeader>
       <CardContent>
@@ -120,8 +126,8 @@ export function ScheduleAppointment({ date }: ScheduleAppointmentProps) {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {therapistNames.map((name) => (
-                            <SelectItem value={name}>{name}</SelectItem>
+                          {therapistNames.map((values) => (
+                            <SelectItem value={values}>{values}</SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
