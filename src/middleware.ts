@@ -1,32 +1,57 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
+import { isDefined } from "./lib/utils";
 
 const isPublicRoute = createRouteMatcher([
-    "/",
-    "/about",
-    "/faq",
-    "/contact",
-    "/login(.*)",
-    "/signup(.*)",
+  "/",
+  "/about",
+  "/faq",
+  "/contact",
+  "/login(.*)",
+  "/signup(.*)",
 ]);
 
+type MemberMetadata = {
+  role: "member";
+  databaseId: string;
+  initialSurveyCompleted: boolean;
+};
+
+type TherapistMetadata = {
+  role: "therapist";
+  databaseId: string;
+  licenseNumber: string;
+};
+
+export type UserMetadata = MemberMetadata | TherapistMetadata;
+
 export default clerkMiddleware(async (auth, request) => {
-    const { userId, redirectToSignIn } = await auth();
-    if (userId && isPublicRoute(request)) {
-        const url = request.nextUrl.clone();
-        url.pathname = "/dashboard";
-        return NextResponse.redirect(url);
+  const { userId, sessionClaims, redirectToSignIn } = await auth();
+  // Redirect visitors when accessing protected pages
+  if (!isDefined(userId) && !isPublicRoute(request)) {
+    return redirectToSignIn();
+  }
+  const userMetadata = sessionClaims?.unsafeMetadata as UserMetadata;
+  if (isDefined(userId) && isDefined(userMetadata)) {
+    // Redirect to the startup page if member hasn't completed the initial survey
+    // otherwise redirect to the dashboard
+    if (
+      userMetadata.role === "member" &&
+      !userMetadata.initialSurveyCompleted &&
+      !request.url.includes("/startup")
+    ) {
+      return NextResponse.redirect(new URL("/startup", request.url));
+    } else if (isPublicRoute(request)) {
+      return NextResponse.redirect(new URL("/dashboard", request.url));
     }
-    if (!userId && !isPublicRoute(request)) {
-        return redirectToSignIn();
-    }
+  }
 });
 
 export const config = {
-    matcher: [
-        // Skip Next.js internals and all static files, unless found in search params
-        "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
-        // Always run for API routes
-        "/(api|trpc)(.*)",
-    ],
+  matcher: [
+    // Skip Next.js internals and all static files, unless found in search params
+    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
+    // Always run for API routes
+    "/(api|trpc)(.*)",
+  ],
 };
