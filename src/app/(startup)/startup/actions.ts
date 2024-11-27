@@ -1,6 +1,6 @@
 "use server";
 
-import { createSurvey } from "~/use-cases/survey";
+import { createSurvey } from "~/data-access/survey";
 
 export const createInitialSurveyAction = async (
   userId: number,
