@@ -25,20 +25,20 @@ export const createTable = pgTableCreator((name) => `betterhealth_${name}`);
 export const roleEnum = pgEnum("role", ["therapist", "member"]);
 export const surveyTypeEnum = pgEnum("survey_type", ["initial", "daily"]);
 export const relationshipStatusEnum = pgEnum("relationship_status", [
-  "pending",
-  "approved",
-  "declined",
+  "Pending",
+  "Approved",
+  "Declined",
 ]);
 export const appointmentStatusEnum = pgEnum("appointment_status", [
   "Pending",
   "Confirmed",
   "Cancelled",
 ]);
-export const billingStatusEnum = pgEnum("billing_status", ["pending", "paid"]);
+export const billingStatusEnum = pgEnum("billing_status", ["Pending", "Paid"]);
 export const changeTypeEnum = pgEnum("change_type", [
-  "insert",
-  "update",
-  "delete",
+  "Insert",
+  "Update",
+  "Delete",
 ]);
 export const feelingEnum = pgEnum("feeling", [
   "Excited",
@@ -47,10 +47,6 @@ export const feelingEnum = pgEnum("feeling", [
   "Mellow",
   "Sad",
   "I don't know",
-]);
-export const therapistStatusEnum = pgEnum("therapist_status", [
-  "Active",
-  "Inactive",
 ]);
 
 // Users Table with Authentication Fields
@@ -123,7 +119,7 @@ export const therapistPatient = createTable("therapist_patient", {
   therapistId: integer("therapist_id")
     .notNull()
     .references(() => users.userId),
-  status: relationshipStatusEnum("status").default("pending"),
+  status: relationshipStatusEnum("status").default("Pending").notNull(),
   createdAt: timestamp("created_at")
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
@@ -178,7 +174,7 @@ export const billing = createTable("billing", {
     .references(() => users.userId),
   amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
   dueDate: timestamp("due_date").notNull(),
-  status: billingStatusEnum("status").default("pending"),
+  status: billingStatusEnum("status").default("Pending"),
   createdAt: timestamp("created_at")
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),

@@ -9,8 +9,6 @@ import {
   ListUserTherapistResult,
   UpdateTherapistStatusInput,
   UpdateTherapistStatusResult,
-  FilterTherapistInput,
-  FilterTherapistResult,
 } from "~/entities/therapist";
 
 export async function listTherapist(
@@ -21,17 +19,21 @@ export async function listTherapist(
       firstName: users.firstName,
       lastName: users.lastName,
       isVerified: users.isVerified,
+      email: users.email
     })
     .from(users)
     .where(
-      and(
-        eq(users.userId, input.userId),
-        // eq(users.licenseNumber, input.licenseNumber)
-      ),
+      or(
+        eq(users.role, input.role),
+        eq(users.firstName, input.firstName),
+        eq(users.lastName, input.lastName),
+        eq(users.email, input.email),
+      )
     );
   return result;
 }
 
+//List therapists that the user has had since registering
 export async function listUserTherapist(
   input: ListUserTherapistInput,
 ): Promise<ListUserTherapistResult> {
@@ -69,25 +71,4 @@ export async function setTherapistStatus(
   }
 }
 
-export async function filterTherapist(
-  input: FilterTherapistInput,
-): Promise<FilterTherapistResult> {
-  const result = await db
-    .select({
-      firstName: users.firstName,
-      lastName: users.lastName,
-      email: users.email,
-      isVerified: users.isVerified,
-      active: users.active
-    })
-    .from(users)
-    .where(
-      or(
-        eq(users.firstName, input.firstName),
-        eq(users.lastName, input.lastName),
-      ),
-    )
 
-  const res = result.at(0);
-  return res!;
-}
