@@ -30,9 +30,22 @@ export type ListUserTherapistResult = ListTherapistItem[];
 
 export interface UpdateTherapistStatusInput {
   therapistId: number;
-  activeStatus: string | null;
+  active: boolean | null;
 }
 
 export interface UpdateTherapistStatusResult {
-  activeStatus: string | null;
+  active: boolean | null;
+}
+
+export interface FilterTherapistInput {
+  firstName: string;
+  lastName: string;
+}
+
+export interface FilterTherapistResult {
+  firstName: string;
+  lastName: string;
+  email: string;
+  isVerified: boolean;
+  active: boolean | null;
 }

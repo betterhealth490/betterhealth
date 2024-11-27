@@ -1,7 +1,7 @@
 "use server";
 
 import { unauthenticatedAction } from "~/lib/safe-action";
-import { createMemberUseCase, createTherapistUseCase } from "~/use-cases/user";
+import { createMemberUseCase, createTherapistUseCase } from "~/data-access/user";
 import { memberFormSchema, therapistFormSchema } from "./schema";
 
 export const createMemberAction = unauthenticatedAction

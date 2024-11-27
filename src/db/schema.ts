@@ -65,7 +65,7 @@ export const users = createTable(
     role: roleEnum("role").notNull(),
     licenseNumber: varchar("license_number", { length: 12 }).unique(),
     isVerified: boolean("is_verified").default(false).notNull(),
-    activeStatus: therapistStatusEnum("therapist_status"),
+    active: boolean('active').default(true),
     createdAt: timestamp("created_at")
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),

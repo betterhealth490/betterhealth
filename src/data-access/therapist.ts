@@ -1,16 +1,16 @@
-import { eq, and } from "drizzle-orm";
+import { eq, and, or, SQL } from "drizzle-orm";
 import { string } from "zod";
 import { db } from "~/db";
 import { users, therapistPatient } from "~/db/schema";
 import {
   ListTherapistInput,
-  ListTherapistItem,
   ListTherapistResult,
   ListUserTherapistInput,
-  ListUserTherapistItem,
   ListUserTherapistResult,
   UpdateTherapistStatusInput,
   UpdateTherapistStatusResult,
+  FilterTherapistInput,
+  FilterTherapistResult,
 } from "~/entities/therapist";
 
 export async function listTherapist(
@@ -55,10 +55,9 @@ export async function listUserTherapist(
 export async function setTherapistStatus(
   input: UpdateTherapistStatusInput,
 ): Promise<UpdateTherapistStatusResult> {
-
   const result = await db
     .update(users)
-    .set({activeStatus: input.activeStatus as "Active" | "Inactive"})
+    .set({ active: input.active })
     .where(eq(users.userId, input.therapistId))
     .returning();
 
@@ -68,4 +67,27 @@ export async function setTherapistStatus(
   } else {
     throw new Error("Could Not Update");
   }
+}
+
+export async function filterTherapist(
+  input: FilterTherapistInput,
+): Promise<FilterTherapistResult> {
+  const result = await db
+    .select({
+      firstName: users.firstName,
+      lastName: users.lastName,
+      email: users.email,
+      isVerified: users.isVerified,
+      active: users.active
+    })
+    .from(users)
+    .where(
+      or(
+        eq(users.firstName, input.firstName),
+        eq(users.lastName, input.lastName),
+      ),
+    )
+
+  const res = result.at(0);
+  return res!;
 }
