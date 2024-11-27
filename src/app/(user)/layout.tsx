@@ -11,10 +11,10 @@ export default function UserLayout({
     return (
         <SidebarProvider defaultOpen={defaultOpen}>
             <AppSidebar />
-            <SidebarInset>
+            <div className="flex flex-col h-screen">
                 <Breadcrumbs />
-                <div className="h-full p-4">{children}</div>
-            </SidebarInset>
+                <div className="flex-1 p-4">{children}</div>
+            </div>
         </SidebarProvider>
     );
 }
