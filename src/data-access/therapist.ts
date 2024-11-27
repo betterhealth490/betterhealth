@@ -23,12 +23,15 @@ export async function listTherapist(
     })
     .from(users)
     .where(
-      or(
+      and(
         eq(users.role, input.role),
-        eq(users.firstName, input.firstName),
-        eq(users.lastName, input.lastName),
-        eq(users.email, input.email),
+        or(
+          eq(users.firstName, input.firstName),
+          eq(users.lastName, input.lastName),
+          eq(users.email, input.email),
+        )
       )
+      
     );
   return result;
 }
