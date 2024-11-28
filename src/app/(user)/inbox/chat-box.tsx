@@ -26,8 +26,8 @@ export function ChatBox({item}: ChatBoxProps){
     }
 
     return(
-        <div className="w-[98%] h-full">
-            <div className="flex flex-col h-full border rounded-[8px]">
+        <div className="h-full">
+            <div className="flex flex-col h-full">
                 <div className="flex p-6 border-b-2 gap-4">
                     <Avatar>
                         <AvatarImage src={item.profileImageUrl} />
@@ -40,7 +40,7 @@ export function ChatBox({item}: ChatBoxProps){
                         <span className="text-xs text-muted-foreground">{item.email}</span>
                     </div>
                 </div>
-                <div className="flex flex-col p-6 h-[80vh] justify-between">
+                <div className="flex flex-col p-6 h-[80%] justify-between">
                     <ScrollArea className="mt-2 h-[90%]">
                         <div className="flex flex-col gap-5 w-full">
                             {item.sentMessages.map((message) => (

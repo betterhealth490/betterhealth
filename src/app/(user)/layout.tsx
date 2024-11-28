@@ -11,9 +11,9 @@ export default function UserLayout({
     return (
         <SidebarProvider defaultOpen={defaultOpen}>
             <AppSidebar />
-            <div className="flex flex-col h-screen">
+            <div className="flex flex-col h-dvh w-full">
                 <Breadcrumbs />
-                <div className="flex-1 p-4">{children}</div>
+                <div className="flex-auto">{children}</div>
             </div>
         </SidebarProvider>
     );

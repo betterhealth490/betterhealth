@@ -27,8 +27,8 @@ export function ItemList({ items, currentItem, onItemClick }: ItemListProps) {
   const [search, setSearch] = useState('@');
 
   return (
-    <div className="flex flex-col gap-2 pr-4 pt-0 w-[45%]">
-      <div className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <div className="flex flex-col gap-2 h-[80%]">
+      <div className="bg-background/95 backdrop-blur mt-4 mx-4 supports-[backdrop-filter]:bg-background/60">
         <form onSubmit={(e)=>e.preventDefault()}>
           <div className="relative">
             <SearchIcon
@@ -44,14 +44,14 @@ export function ItemList({ items, currentItem, onItemClick }: ItemListProps) {
           </div>
         </form>
       </div>
-      <ScrollArea className="h-screen">
+      <ScrollArea className="h-[60%] w-full">
         {items
           .filter((li) => itemIncludes(li, search))
           .map((item) => (
             <button
               key={item.id}
               className={cn(
-                "flex items-center gap-2 rounded-lg border p-2 text-left text-sm m-2 w-[97%] transition-all hover:bg-accent",
+                "flex items-center gap-2 rounded-lg border w-[95%] p-2 text-left text-sm mt-2 ml-4 transition-all hover:bg-accent",
                 item.id === currentItem?.id && "bg-muted",
               )}
               onClick={() => {
@@ -65,14 +65,14 @@ export function ItemList({ items, currentItem, onItemClick }: ItemListProps) {
                 {item.firstName.charAt(0) + item.lastName.charAt(0)}
               </AvatarFallback>
             </Avatar>
-            <div className="flex w-full flex-col gap-2">
+            <div className="flex w-full flex-col gap-2 h-full">
               <div className="flex w-full justify-between">
                 <div className="font-semibold capitalize">
                   {item.firstName + " " + item.lastName}
                 </div>
-                <div className="border rounded-full border-primary bg-primary text-white text-sm w-5 text-center">
+                { item.unreadMessages > 0 && <div className="border rounded-full border-primary bg-primary text-white text-sm w-5 text-center">
                   {item.unreadMessages}
-                </div>
+                </div>}
               </div>
               <div className="flex w-full justify-between text-xs text-muted-foreground">
                 <div>
@@ -80,7 +80,7 @@ export function ItemList({ items, currentItem, onItemClick }: ItemListProps) {
                 </div>
                 <div
                   className={cn(
-                    "ml-auto text-xs",
+                    "text-xs",
                     item.id === currentItem?.id
                       ? "text-foreground"
                       : "text-muted-foreground",
