@@ -46,7 +46,16 @@ export interface ListJournalItem {
     userId: number;
     entryDate: Date;
     updatedAt: Date;
+    content: string;
 }
+ 
+export interface Journal {
+    journalId: number;
+    entryDate: Date;
+    title: string;
+    content: string;
+  }
+  
 
 export type ListJournalResult = ListJournalItem[];
 
