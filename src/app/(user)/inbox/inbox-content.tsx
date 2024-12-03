@@ -1,6 +1,6 @@
 "use client";
 
-import { PencilLine } from "lucide-react";
+import { Loader } from "lucide-react";
 import { Input } from "~/components/ui/input";
 import {
   ResizableHandle,
@@ -9,25 +9,28 @@ import {
 } from "~/components/ui/resizable";
 import { InboxList } from "./inbox-list";
 import { PageWrapper } from "../page-wrapper";
-import { Button } from "~/components/ui/button";
-import { InboxDisplay } from "./inbox-detail";
+import { InboxDisplay } from "./inbox-display";
 import { type Message } from "./message";
 import { useState } from "react";
+import { CreateMessageButton } from "./create-message-button";
+import { useUser } from "@clerk/nextjs";
 
 interface InboxContentProps {
   messages: Message[];
 }
 
 export function InboxContent({ messages }: InboxContentProps) {
+  const { user, isLoaded } = useUser();
   const [message, setMessage] = useState<Message | null>(null);
+  if (!isLoaded) {
+    return <Loader className="animate-spin text-muted-foreground" />;
+  }
+  const userId = parseInt(user?.unsafeMetadata.databaseId as string);
   return (
     <PageWrapper
       actions={
         <div className="flex items-center">
-          <Button>
-            <PencilLine />
-            Start new message
-          </Button>
+          <CreateMessageButton userId={userId} />
         </div>
       }
     >
@@ -38,11 +41,12 @@ export function InboxContent({ messages }: InboxContentProps) {
             items={messages}
             selected={message}
             onSelect={setMessage}
+            userId={userId}
           />
         </ResizablePanel>
         <ResizableHandle withHandle />
         <ResizablePanel minSize={30} className="p-4">
-          <InboxDisplay message={message} />
+          <InboxDisplay item={message} />
         </ResizablePanel>
       </ResizablePanelGroup>
     </PageWrapper>
