@@ -30,9 +30,9 @@ export const relationshipStatusEnum = pgEnum("relationship_status", [
   "declined",
 ]);
 export const appointmentStatusEnum = pgEnum("appointment_status", [
-  "Pending",
-  "Confirmed",
-  "Cancelled",
+  "pending",
+  "confirmed",
+  "cancelled",
 ]);
 export const billingStatusEnum = pgEnum("billing_status", ["pending", "paid"]);
 export const changeTypeEnum = pgEnum("change_type", [
@@ -155,7 +155,7 @@ export const appointments = createTable("appointments", {
     .notNull()
     .references(() => users.userId),
   appointmentDate: timestamp("appointment_date").notNull(),
-  status: appointmentStatusEnum("status").default("Pending").notNull(),
+  status: appointmentStatusEnum("status").default("pending").notNull(),
   notes: varchar("notes", { length: 500 }).notNull(),
   createdAt: timestamp("created_at")
     .default(sql`CURRENT_TIMESTAMP`)
@@ -245,23 +245,23 @@ export const billingAudit = createTable("billing_audit", {
 });
 
 // Messages Table
-export const messages = createTable("messages", {
-    messageId: serial("message_id").primaryKey(),
-    senderId: integer("sender_id")
-      .notNull()
-      .references(() => users.userId), 
-    recipientId: integer("recipient_id")
-      .notNull()
-      .references(() => users.userId), 
-    message: text("content").notNull(), 
-    isRead: boolean("is_read").default(false), 
-    sentAt: timestamp("sent_at")
-      .default(sql`CURRENT_TIMESTAMP`)
-      .notNull(), 
-    createdAt: timestamp("created_at")
-      .default(sql`CURRENT_TIMESTAMP`)
-      .notNull(),
-    updatedAt: timestamp("updated_at")
-      .default(sql`CURRENT_TIMESTAMP`)
-      .$onUpdate(() => sql`CURRENT_TIMESTAMP`), 
-  });
+export const messages = createTable("message", {
+  messageId: serial("message_id").primaryKey(),
+  senderId: integer("sender_id")
+    .notNull()
+    .references(() => users.userId),
+  recipientId: integer("recipient_id")
+    .notNull()
+    .references(() => users.userId),
+  message: text("content").notNull(),
+  isRead: boolean("is_read").default(false).notNull(),
+  sentAt: timestamp("sent_at")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+  createdAt: timestamp("created_at")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+  updatedAt: timestamp("updated_at")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .$onUpdate(() => sql`CURRENT_TIMESTAMP`),
+});

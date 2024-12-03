@@ -1,19 +1,30 @@
 import {
-    areAllBillsPaid,
-    isUserTherapist,
-    deleteUserRelatedData,
-    deleteUser,
-    DeleteUserInput,
-    DeleteUserResult,
-    InitialSurveyData,
-    ListTherapistPatientsInput,
-    ListTherapistPatientsResult,
-  } from "~/entities/patient";
+  areAllBillsPaid,
+  isUserTherapist,
+  deleteUserRelatedData,
+  deleteUser,
+  type DeleteUserInput,
+  type DeleteUserResult,
+  type InitialSurveyData,
+  type ListTherapistPatientsInput,
+  type ListTherapistPatientsResult,
+} from "~/entities/patient";
 
 import { db } from "~/db";
 import { eq, and } from "drizzle-orm";
-import { users, therapistPatient, therapistComments, surveys } from "~/db/schema";
-import { SelectTherapistInput, SelectTherapistResult, ChangeTherapistInput, ChangeTherapistResult } from "~/entities/patient";
+import {
+  users,
+  therapistPatient,
+  therapistComments,
+  surveys,
+} from "~/db/schema";
+import {
+  type SelectTherapistInput,
+  type SelectTherapistResult,
+  type ChangeTherapistInput,
+  type ChangeTherapistResult,
+} from "~/entities/patient";
+import { alias } from "drizzle-orm/pg-core";
 
 export async function listTherapistPatients(
   input: ListTherapistPatientsInput,
@@ -34,8 +45,9 @@ export async function listTherapistPatients(
   return result;
 }
 
-  
-export async function deleteUserall(input: DeleteUserInput): Promise<DeleteUserResult> {
+export async function deleteUserall(
+  input: DeleteUserInput,
+): Promise<DeleteUserResult> {
   const { userId } = input;
 
   const therapist = await isUserTherapist(userId);
@@ -70,7 +82,9 @@ export async function deleteUserall(input: DeleteUserInput): Promise<DeleteUserR
   };
 }
 
-export async function selectTherapist(input: SelectTherapistInput): Promise<SelectTherapistResult> {
+export async function selectTherapist(
+  input: SelectTherapistInput,
+): Promise<SelectTherapistResult> {
   const { patientId, therapistId } = input;
 
   const result = await db
@@ -97,86 +111,126 @@ export async function selectTherapist(input: SelectTherapistInput): Promise<Sele
   };
 }
 
-export async function changeTherapist(input: ChangeTherapistInput): Promise<ChangeTherapistResult> {
-  const { patientId, currentTherapistId, newTherapistId, shareComments, redoInitialSurvey } = input;
+export async function changeTherapist(
+  input: ChangeTherapistInput,
+): Promise<ChangeTherapistResult> {
+  const {
+    patientId,
+    currentTherapistId,
+    newTherapistId,
+    shareComments,
+    redoInitialSurvey,
+  } = input;
 
   let previousTherapistComments: string[] | undefined;
   if (shareComments) {
-      const comments = await db
-          .select({
-              commentId: therapistComments.commentId,
-              comment: therapistComments.comment,
-              createdAt: therapistComments.createdAt,
-          })
-          .from(therapistComments)
-          .where(
-              and(
-                  eq(therapistComments.patientId, patientId),
-                  eq(therapistComments.therapistId, currentTherapistId)
-              )
-          );
+    const comments = await db
+      .select({
+        commentId: therapistComments.commentId,
+        comment: therapistComments.comment,
+        createdAt: therapistComments.createdAt,
+      })
+      .from(therapistComments)
+      .where(
+        and(
+          eq(therapistComments.patientId, patientId),
+          eq(therapistComments.therapistId, currentTherapistId),
+        ),
+      );
 
-      previousTherapistComments = comments
-          .map((c) => c.comment)
-          .filter((comment): comment is string => comment !== null); 
+    previousTherapistComments = comments
+      .map((c) => c.comment)
+      .filter((comment): comment is string => comment !== null);
   }
 
   await db
-      .update(therapistPatient)
-      .set({ status: "declined", updatedAt: new Date() })
-      .where(
-          and(
-              eq(therapistPatient.patientId, patientId),
-              eq(therapistPatient.therapistId, currentTherapistId)
-          )
-      );
+    .update(therapistPatient)
+    .set({ status: "declined", updatedAt: new Date() })
+    .where(
+      and(
+        eq(therapistPatient.patientId, patientId),
+        eq(therapistPatient.therapistId, currentTherapistId),
+      ),
+    );
 
   const newRelationshipResult = await db
-      .insert(therapistPatient)
-      .values({
-          patientId,
-          therapistId: newTherapistId,
-          status: "pending",
-          createdAt: new Date(),
-          updatedAt: new Date(),
-      })
-      .returning();
+    .insert(therapistPatient)
+    .values({
+      patientId,
+      therapistId: newTherapistId,
+      status: "pending",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    })
+    .returning();
 
   const newRelationship = newRelationshipResult.at(0);
   if (!newRelationship) {
-      throw new Error("Failed to create new therapist-patient relationship");
+    throw new Error("Failed to create new therapist-patient relationship");
   }
 
   let initialSurveyData: InitialSurveyData | undefined;
   if (redoInitialSurvey) {
-      const surveyResult = await db
-          .select({
-              surveyId: surveys.surveyId,
-              surveyData: surveys.surveyData,
-              createdAt: surveys.createdAt,
-          })
-          .from(surveys)
-          .where(
-              and(
-                  eq(surveys.userId, patientId),
-                  eq(surveys.surveyType, "initial")
-              )
-          )
-          .limit(1);
+    const surveyResult = await db
+      .select({
+        surveyId: surveys.surveyId,
+        surveyData: surveys.surveyData,
+        createdAt: surveys.createdAt,
+      })
+      .from(surveys)
+      .where(
+        and(eq(surveys.userId, patientId), eq(surveys.surveyType, "initial")),
+      )
+      .limit(1);
 
-      const fetchedSurvey = surveyResult.at(0);
-      if (fetchedSurvey) {
-          initialSurveyData = {
-              surveyId: fetchedSurvey.surveyId,
-              surveyData: fetchedSurvey.surveyData as object,
-              createdAt: fetchedSurvey.createdAt,
-          };
-      }
+    const fetchedSurvey = surveyResult.at(0);
+    if (fetchedSurvey) {
+      initialSurveyData = {
+        surveyId: fetchedSurvey.surveyId,
+        surveyData: fetchedSurvey.surveyData as object,
+        createdAt: fetchedSurvey.createdAt,
+      };
+    }
   }
 
   return {
-      relationshipId: newRelationship.relationshipId,
-      previousTherapistComments,
-      initialSurveyData: redoInitialSurvey ? initialSurveyData?.surveyData : undefined,
+    relationshipId: newRelationship.relationshipId,
+    previousTherapistComments,
+    initialSurveyData: redoInitialSurvey
+      ? initialSurveyData?.surveyData
+      : undefined,
   };
+}
+
+export async function listPatientsByTherapist({
+  therapistId,
+  limit = 5,
+  offset = 0,
+}: {
+  therapistId: number;
+  limit?: number;
+  offset?: number;
+}) {
+  const patients = alias(users, "patients");
+  const therapists = alias(users, "therapists");
+
+  return await db
+    .select({
+      patient: {
+        id: patients.userId,
+        firstName: patients.firstName,
+        lastName: patients.lastName,
+      },
+      therapist: {
+        id: therapists.userId,
+        firstName: therapists.firstName,
+        lastName: therapists.lastName,
+      },
+    })
+    .from(therapistPatient)
+    .innerJoin(patients, eq(patients.userId, therapistPatient.patientId))
+    .innerJoin(therapists, eq(therapists.userId, therapistPatient.therapistId))
+    .where(eq(therapistPatient.therapistId, therapistId))
+    .limit(limit)
+    .offset(offset);
 }
