@@ -21,19 +21,27 @@ import { useRef, useState } from "react";
 import { Input } from "~/components/ui/input";
 
 interface InboxSearchProps {
-  therapists: InboxUser[];
+  role: "therapist" | "patient";
+  users: InboxUser[];
   value: string;
   setValue: (value: string) => void;
 }
 
-export function InboxSearch({ therapists, value, setValue }: InboxSearchProps) {
+export function InboxSearch({
+  role,
+  users,
+  value,
+  setValue,
+}: InboxSearchProps) {
   const [open, setOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   return (
     <Command>
       <Input
         ref={inputRef}
-        placeholder="Search therapists..."
+        placeholder={
+          role === "therapist" ? "Search patients..." : "Search therapists..."
+        }
         value={value}
         onChange={(e) => setValue(e.target.value)}
         onBlur={() => setOpen(false)}
@@ -48,31 +56,29 @@ export function InboxSearch({ therapists, value, setValue }: InboxSearchProps) {
           )}
         >
           {isDefined(
-            therapists.find((therapist) =>
-              containsQuery(therapist.name, value),
-            ),
+            users.find((therapist) => containsQuery(therapist.name, value)),
           ) && (
             <CommandList className="rounded-lg ring-1 ring-slate-200">
               <CommandGroup>
-                {therapists.map((therapist) => (
+                {users.map((user) => (
                   <CommandItem
-                    key={therapist.id}
-                    value={therapist.name}
+                    key={user.id}
+                    value={user.name}
                     onMouseDown={(event) => {
                       event.preventDefault();
                       event.stopPropagation();
                     }}
                     onSelect={() => {
-                      setValue(therapist.name);
+                      setValue(user.name);
                       setOpen(false);
                       inputRef.current?.blur();
                     }}
                   >
-                    {therapist.name}
+                    {user.name}
                     <Check
                       className={cn(
                         "ml-auto",
-                        value === therapist.name ? "opacity-100" : "opacity-0",
+                        value === user.name ? "opacity-100" : "opacity-0",
                       )}
                     />
                   </CommandItem>

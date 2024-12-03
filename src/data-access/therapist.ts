@@ -3,24 +3,24 @@ import { alias } from "drizzle-orm/pg-core";
 import { db } from "~/db";
 import { therapistPatient, users } from "~/db/schema";
 
-export async function listTherapistsByMember({
-  memberId,
+export async function listTherapistByPatient({
+  patientId,
   limit = 5,
   offset = 0,
 }: {
-  memberId: number;
+  patientId: number;
   limit?: number;
   offset?: number;
 }) {
-  const members = alias(users, "members");
+  const patients = alias(users, "patients");
   const therapists = alias(users, "therapists");
 
   return await db
     .select({
       patient: {
-        id: members.userId,
-        firstName: members.firstName,
-        lastName: members.lastName,
+        id: patients.userId,
+        firstName: patients.firstName,
+        lastName: patients.lastName,
       },
       therapist: {
         id: therapists.userId,
@@ -29,9 +29,9 @@ export async function listTherapistsByMember({
       },
     })
     .from(therapistPatient)
-    .innerJoin(members, eq(members.userId, therapistPatient.patientId))
+    .innerJoin(patients, eq(patients.userId, therapistPatient.patientId))
     .innerJoin(therapists, eq(therapists.userId, therapistPatient.therapistId))
-    .where(eq(therapistPatient.patientId, memberId))
+    .where(eq(therapistPatient.patientId, patientId))
     .limit(limit)
     .offset(offset);
 }

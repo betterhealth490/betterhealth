@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader, PencilLine } from "lucide-react";
+import { Loader, PencilLine, Send } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "~/components/ui/button";
@@ -44,12 +44,14 @@ const formSchema = z.object({
 
 interface CreateMessageButtonProps {
   userId: number;
-  therapists: InboxUser[];
+  role: "therapist" | "patient";
+  users: InboxUser[];
 }
 
 export function CreateMessageButton({
   userId,
-  therapists,
+  role,
+  users,
 }: CreateMessageButtonProps) {
   const [open, setOpen] = useState(false);
   const router = useRouter();
@@ -87,13 +89,19 @@ export function CreateMessageButton({
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select a therapist" />
+                          <SelectValue
+                            placeholder={
+                              role === "therapist"
+                                ? "Select a patient"
+                                : "Select a therapist"
+                            }
+                          />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {therapists.map((therapist) => (
-                          <SelectItem value={therapist.id.toString()}>
-                            {therapist.name}
+                        {users.map((user) => (
+                          <SelectItem value={user.id.toString()}>
+                            {user.name}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -125,7 +133,10 @@ export function CreateMessageButton({
                   <Loader className="animate-spin" /> Submit
                 </Button>
               ) : (
-                <Button type="submit">Submit</Button>
+                <Button type="submit">
+                  <Send />
+                  Send
+                </Button>
               )}
             </DialogFooter>
           </form>

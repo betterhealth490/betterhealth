@@ -20,10 +20,11 @@ import { containsQuery } from "~/lib/utils";
 
 interface InboxContentProps {
   messages: Message[];
-  therapists: InboxUser[];
+  role: "therapist" | "patient";
+  users: InboxUser[];
 }
 
-export function InboxContent({ messages, therapists }: InboxContentProps) {
+export function InboxContent({ messages, role, users }: InboxContentProps) {
   const { user, isLoaded } = useUser();
   const [message, setMessage] = useState<Message | null>(null);
   const [search, setSearch] = useState<string>("");
@@ -35,12 +36,14 @@ export function InboxContent({ messages, therapists }: InboxContentProps) {
     <PageWrapper
       actions={
         <div className="flex items-center">
-          {therapists.length > 0 ? (
-            <CreateMessageButton userId={userId} therapists={therapists} />
+          {users.length > 0 ? (
+            <CreateMessageButton userId={userId} role={role} users={users} />
           ) : (
             <Button disabled>
               <PencilLineIcon />
-              No therapists added
+              {role === "therapist"
+                ? "No patients added"
+                : "No therapists added"}
             </Button>
           )}
         </div>
@@ -49,7 +52,8 @@ export function InboxContent({ messages, therapists }: InboxContentProps) {
       <ResizablePanelGroup direction="horizontal">
         <ResizablePanel className="flex flex-col gap-4 p-4" minSize={30}>
           <InboxSearch
-            therapists={therapists}
+            role={role}
+            users={users}
             value={search}
             setValue={setSearch}
           />

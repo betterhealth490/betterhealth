@@ -2,11 +2,13 @@ import { InboxContent } from "./inbox-content";
 import { listMessages } from "~/data-access/message";
 import { currentUser } from "@clerk/nextjs/server";
 import { formatName } from "~/lib/utils";
-import { listTherapistsByMember } from "~/data-access/therapist";
+import { listTherapistByPatient } from "~/data-access/therapist";
+import { listPatientsByTherapist } from "~/data-access/patient";
 
 export default async function InboxPage() {
   const user = await currentUser();
   const userId = parseInt(user?.unsafeMetadata.databaseId as string);
+  const role = user?.unsafeMetadata.role as "therapist" | "patient";
   const messages = (
     await listMessages({
       userId,
@@ -25,11 +27,17 @@ export default async function InboxPage() {
     date: message.sentAt,
     text: message.message,
   }));
-  const therapists = (await listTherapistsByMember({ memberId: userId })).map(
-    (result) => ({
-      id: result.therapist.id,
-      name: formatName(result.therapist),
-    }),
-  );
-  return <InboxContent messages={messages} therapists={therapists} />;
+  const users =
+    role === "therapist"
+      ? (await listPatientsByTherapist({ therapistId: userId })).map(
+          (result) => ({
+            id: result.patient.id,
+            name: formatName(result.patient),
+          }),
+        )
+      : (await listTherapistByPatient({ patientId: userId })).map((result) => ({
+          id: result.therapist.id,
+          name: formatName(result.therapist),
+        }));
+  return <InboxContent messages={messages} users={users} role={role} />;
 }
