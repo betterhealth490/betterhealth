@@ -41,4 +41,8 @@ export function formatInitialsByString(str: string) {
     .join("");
 }
 
+export function containsQuery(value: string, query: string) {
+  return value.toLowerCase().includes(query.toLowerCase());
+}
+
 export const doHyeon = Do_Hyeon({ weight: "400", subsets: ["latin"] });

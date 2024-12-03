@@ -2,6 +2,7 @@ import { InboxContent } from "./inbox-content";
 import { listMessages } from "~/data-access/message";
 import { currentUser } from "@clerk/nextjs/server";
 import { formatName } from "~/lib/utils";
+import { listTherapistsByMember } from "~/data-access/therapist";
 
 export default async function InboxPage() {
   const user = await currentUser();
@@ -24,5 +25,11 @@ export default async function InboxPage() {
     date: message.sentAt,
     text: message.message,
   }));
-  return <InboxContent messages={messages} />;
+  const therapists = (await listTherapistsByMember({ memberId: userId })).map(
+    (result) => ({
+      id: result.therapist.id,
+      name: formatName(result.therapist),
+    }),
+  );
+  return <InboxContent messages={messages} therapists={therapists} />;
 }

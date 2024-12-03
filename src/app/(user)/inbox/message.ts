@@ -1,13 +1,13 @@
 export interface Message {
   id: number;
-  recipient: User;
-  sender: User;
+  recipient: InboxUser;
+  sender: InboxUser;
   read: boolean;
   date: Date;
   text: string;
 }
 
-interface User {
+export interface InboxUser {
   id: number;
   name: string;
 }

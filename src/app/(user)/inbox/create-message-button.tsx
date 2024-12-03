@@ -26,6 +26,16 @@ import { createMessageAction } from "./actions";
 import { Textarea } from "~/components/ui/textarea";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { InboxUser } from "./message";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "~/components/ui/select";
 
 const formSchema = z.object({
   recipientId: z.coerce.number(),
@@ -34,9 +44,13 @@ const formSchema = z.object({
 
 interface CreateMessageButtonProps {
   userId: number;
+  therapists: InboxUser[];
 }
 
-export function CreateMessageButton({ userId }: CreateMessageButtonProps) {
+export function CreateMessageButton({
+  userId,
+  therapists,
+}: CreateMessageButtonProps) {
   const [open, setOpen] = useState(false);
   const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
@@ -53,7 +67,7 @@ export function CreateMessageButton({ userId }: CreateMessageButtonProps) {
         <DialogTrigger asChild>
           <Button>
             <PencilLine />
-            Start new message
+            Send a message
           </Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[925px]">
@@ -67,9 +81,23 @@ export function CreateMessageButton({ userId }: CreateMessageButtonProps) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Recipient</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Select a recipient" {...field} />
-                    </FormControl>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a therapist" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {therapists.map((therapist) => (
+                          <SelectItem value={therapist.id.toString()}>
+                            {therapist.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}

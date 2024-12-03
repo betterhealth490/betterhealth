@@ -30,7 +30,7 @@ export function InboxList({
                   selected?.id === item.id && "bg-muted",
                 )}
                 onClick={async () => {
-                  if (!item.read) {
+                  if (!item.read && item.sender.id !== userId) {
                     item.read = true;
                     await readMessageAction(item.id);
                   }
