@@ -11,10 +11,7 @@ export default function UserLayout({
   return (
     <SidebarProvider defaultOpen={defaultOpen}>
       <AppSidebar />
-      <SidebarInset>
-        <Breadcrumbs />
-        <div className="h-full px-4">{children}</div>
-      </SidebarInset>
+      {children}
     </SidebarProvider>
   );
 }

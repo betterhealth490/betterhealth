@@ -3,17 +3,17 @@ import {
     isUserTherapist,
     deleteUserRelatedData,
     deleteUser,
-    DeleteUserInput,
-    DeleteUserResult,
-    InitialSurveyData,
-    ListTherapistPatientsInput,
-    ListTherapistPatientsResult,
+    type DeleteUserInput,
+    type DeleteUserResult,
+    type InitialSurveyData,
+    type ListTherapistPatientsInput,
+    type ListTherapistPatientsResult,
   } from "~/entities/patient";
 
 import { db } from "~/db";
 import { eq, and } from "drizzle-orm";
 import { users, therapistPatient, therapistComments, surveys } from "~/db/schema";
-import { SelectTherapistInput, SelectTherapistResult, ChangeTherapistInput, ChangeTherapistResult } from "~/entities/patient";
+import { type SelectTherapistInput, type SelectTherapistResult, type ChangeTherapistInput, type ChangeTherapistResult } from "~/entities/patient";
 
 export async function listTherapistPatients(
   input: ListTherapistPatientsInput,

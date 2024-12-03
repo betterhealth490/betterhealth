@@ -1,5 +1,6 @@
-import { Boilerplate } from "~/components/boilerplate";
+import { mockMessages } from "./message";
+import { InboxContent } from "./inbox-content";
 
 export default function InboxPage() {
-  return <Boilerplate>Inbox</Boilerplate>;
+  return <InboxContent messages={mockMessages} />;
 }

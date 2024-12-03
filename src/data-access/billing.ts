@@ -53,7 +53,7 @@ export async function getBilling(input: GetBillingInput): Promise<GetBillingResu
 
     return {
         ...billingRecord,
-        amount: parseFloat(billingRecord.amount as string), 
+        amount: parseFloat(billingRecord.amount), 
         status: billingRecord.status ?? "pending",
     };
 }
@@ -80,7 +80,7 @@ export async function updateBilling(input: UpdateBillingInput): Promise<UpdateBi
     if (updatedBilling) {
         return {
             ...updatedBilling,
-            amount: parseFloat(updatedBilling.amount as string), 
+            amount: parseFloat(updatedBilling.amount), 
             status: updatedBilling.status ?? "pending", // Fallback to default status
         };
     } else {
@@ -104,7 +104,7 @@ export async function listBillings(input: ListBillingInput): Promise<ListBilling
 
     return result.map((billingRecord) => ({
         ...billingRecord,
-        amount: parseFloat(billingRecord.amount as string), 
+        amount: parseFloat(billingRecord.amount), 
         updatedAt: billingRecord.updatedAt ?? new Date(),
     }));
 }
