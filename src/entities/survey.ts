@@ -1,8 +1,8 @@
-export interface GetHealthHabitsInput {
+export interface GetSurveyInput {
   habitId: number;
 }
 
-export interface GetHealthHabitsResult {
+export interface GetSurveyResult {
   habitId: number;
   patientId: number;
   date: Date;
@@ -11,12 +11,12 @@ export interface GetHealthHabitsResult {
   mealsEaten: number;
 }
 
-export interface ListHealthHabitsInput {
+export interface ListSurveyInput {
   date: Date;
   userId: number;
 }
 
-export interface ListHealthHabitsItem {
+export interface ListSurveyItem {
   date: Date;
   waterIntake: number;
   sleepHours: number;
@@ -24,9 +24,9 @@ export interface ListHealthHabitsItem {
   feeling: "Excited" | "Happy" | "Okay" | "Mellow" | "Sad" | "I don't know";
 } 
 
-export type ListHealthHabitsResult = ListHealthHabitsItem[];
+export type ListSurveyResult = ListSurveyItem[];
 
-export interface UpdateHealthHabitsInput {
+export interface UpdateSurveyInput {
   habitId: number;
   patientId: number;
   date: Date;
@@ -35,14 +35,14 @@ export interface UpdateHealthHabitsInput {
   mealsEaten: number;
 }
 
-export interface UpdateHealthHabitsResult {
+export interface UpdateSurveyResult {
   waterIntake: number;
   sleepHours: number;
   mealsEaten: number;
   feeling: "Excited" | "Happy" | "Okay" | "Mellow" | "Sad" | "I don't know";
 }
 
-export interface CreateHealthHabitsInput {
+export interface CreateSurveyInput {
   patientId: number;
   date: Date;
   waterIntake: number;
@@ -51,7 +51,7 @@ export interface CreateHealthHabitsInput {
   feeling: "Excited" | "Happy" | "Okay" | "Mellow" | "Sad" | "I don't know";
 }
 
-export interface CreateHealthHabitsResult {
+export interface CreateSurveyResult {
   patientId: number;
   date: Date;
   waterIntake: number;

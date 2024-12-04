@@ -1,24 +1,24 @@
 import { eq, and, sql } from "drizzle-orm";
 import { db } from "~/db";
-import { healthHabits } from "~/db/schema";
+import { survey } from "~/db/schema";
 import { 
-    type GetHealthHabitsInput,
-    type GetHealthHabitsResult,
-    type ListHealthHabitsInput,
-    type ListHealthHabitsItem,
-    type ListHealthHabitsResult,
-    type UpdateHealthHabitsInput,
-    type UpdateHealthHabitsResult,
-    type CreateHealthHabitsInput,
-    type CreateHealthHabitsResult
- } from "~/entities/health-habit";
+    type GetSurveyInput,
+    type GetSurveyResult,
+    type ListSurveyInput,
+    type ListSurveyItem,
+    type ListSurveyResult,
+    type UpdateSurveyInput,
+    type UpdateSurveyResult,
+    type CreateSurveyInput,
+    type CreateSurveyResult
+ } from "~/entities/survey";
 
-export async function getHealthHabit(input:GetHealthHabitsInput): Promise<GetHealthHabitsResult> {
+export async function getHealthHabit(input:GetSurveyInput): Promise<GetSurveyResult> {
     const result = await db
         .select()
-        .from(healthHabits)
+        .from(survey)
         .where(
-            eq(healthHabits.habitId, input.habitId)
+            eq(survey.habitId, input.habitId)
         );
     
     const habit = result.at(0);
@@ -30,12 +30,12 @@ export async function getHealthHabit(input:GetHealthHabitsInput): Promise<GetHea
     }       
 }
 
-export async function listHealthHabit(input:ListHealthHabitsInput): Promise<ListHealthHabitsResult> {
+export async function listHealthHabit(input:ListSurveyInput): Promise<ListSurveyResult> {
     const result = await db
         .select()
-        .from(healthHabits)
+        .from(survey)
         .where(
-            eq(healthHabits.patientId, input.userId )
+            eq(survey.patientId, input.userId )
         );
     
     const habit = result;
@@ -47,9 +47,9 @@ export async function listHealthHabit(input:ListHealthHabitsInput): Promise<List
     }
 }
 
-export async function updateHealthHabit(input: UpdateHealthHabitsInput): Promise<UpdateHealthHabitsResult> {
+export async function updateHealthHabit(input: UpdateSurveyInput): Promise<UpdateSurveyResult> {
     const result = db
-        .update(healthHabits)
+        .update(survey)
         .set({
             date: input.date,
             waterIntake: input.waterIntake,
@@ -58,8 +58,8 @@ export async function updateHealthHabit(input: UpdateHealthHabitsInput): Promise
         })
         .where(
             and(
-                eq(healthHabits.patientId, input.patientId),
-                eq(healthHabits.habitId, input.habitId)
+                eq(survey.patientId, input.patientId),
+                eq(survey.habitId, input.habitId)
             )
         )
         .returning();
@@ -74,9 +74,9 @@ export async function updateHealthHabit(input: UpdateHealthHabitsInput): Promise
 
 }
 
-export async function createHealthHabit(input:CreateHealthHabitsInput): Promise<CreateHealthHabitsResult> {
+export async function createHealthHabit(input:CreateSurveyInput): Promise<CreateSurveyResult> {
     const result = await db
-        .insert(healthHabits)
+        .insert(survey)
         .values({
             date: input.date,
             waterIntake: input.waterIntake,

@@ -25,14 +25,14 @@ export const createTable = pgTableCreator((name) => `betterhealth_${name}`);
 export const roleEnum = pgEnum("role", ["therapist", "member"]);
 export const surveyTypeEnum = pgEnum("survey_type", ["initial", "daily"]);
 export const relationshipStatusEnum = pgEnum("relationship_status", [
-  "pending",
-  "approved",
-  "declined",
+  "Pending",
+  "Approved",
+  "Declined",
 ]);
 export const appointmentStatusEnum = pgEnum("appointment_status", [
-  "pending",
-  "confirmed",
-  "cancelled",
+  "Pending",
+  "Confirmed",
+  "Cancelled",
 ]);
 export const billingStatusEnum = pgEnum("billing_status", ["pending", "paid"]);
 export const changeTypeEnum = pgEnum("change_type", [
@@ -74,7 +74,7 @@ export const users = createTable(
 );
 
 // HealthHabits Table
-export const healthHabits = createTable("health_habits", {
+export const survey = createTable("health_habits", {
   habitId: serial("habit_id").primaryKey(),
   patientId: integer("user_id")
     .notNull()
@@ -93,7 +93,7 @@ export const healthHabits = createTable("health_habits", {
 });
 
 // Surveys Table
-export const surveys = createTable("surveys", {
+export const questionare = createTable("surveys", {
   surveyId: serial("survey_id").primaryKey(),
   userId: integer("user_id")
     .notNull()
@@ -118,7 +118,7 @@ export const therapistPatient = createTable("therapist_patient", {
   therapistId: integer("therapist_id")
     .notNull()
     .references(() => users.userId),
-  status: relationshipStatusEnum("status").default("pending"),
+  status: relationshipStatusEnum("status").default("Pending"),
   createdAt: timestamp("created_at")
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
@@ -155,7 +155,7 @@ export const appointments = createTable("appointments", {
     .notNull()
     .references(() => users.userId),
   appointmentDate: timestamp("appointment_date").notNull(),
-  status: appointmentStatusEnum("status").default("pending").notNull(),
+  status: appointmentStatusEnum("status").default("Pending").notNull(),
   notes: varchar("notes", { length: 500 }).notNull(),
   createdAt: timestamp("created_at")
     .default(sql`CURRENT_TIMESTAMP`)
@@ -199,11 +199,11 @@ export const journals = createTable("journals", {
 });
 
 // Audit Tables
-export const healthHabitsAudit = createTable("health_habits_audit", {
+export const surveyAudit = createTable("health_habits_audit", {
   auditId: serial("audit_id").primaryKey(),
   habitId: integer("habit_id")
     .notNull()
-    .references(() => healthHabits.habitId),
+    .references(() => survey.habitId),
   userId: integer("user_id")
     .notNull()
     .references(() => users.userId),
@@ -218,7 +218,7 @@ export const surveysAudit = createTable("surveys_audit", {
   auditId: serial("audit_id").primaryKey(),
   surveyId: integer("survey_id")
     .notNull()
-    .references(() => surveys.surveyId),
+    .references(() => questionare.surveyId),
   userId: integer("user_id")
     .notNull()
     .references(() => users.userId),
