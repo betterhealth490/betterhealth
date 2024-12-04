@@ -20,7 +20,8 @@ const buttonVariants = cva(
         link: "text-primary underline-offset-4 hover:underline",
         landingDefault: "bg-primary-foreground text-primary hover:bg-primary-foreground/90",
         landingOutline: "border border-primary-foreground hover:bg-primary-foreground/10",
-        landingScrollOutline: "border border-input bg-background hover:bg-accent"
+        landingScrollOutline: "border border-input bg-background hover:bg-accent",
+        appointmentsDefault: "bg-primary text-primary-foreground hover:bg-primary/90 text-2xl"
       },
       size: {
         default: "h-10 px-4 py-2",
