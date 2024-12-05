@@ -40,7 +40,17 @@ interface ScheduleAppointmentProps {
   date: Date | undefined;
 }
 
+interface AppointmentValues {
+  date: string,
+  therapist: string,
+  timeslot: string,
+  duration: string,
+  status: string,
+  notes: string
+}
+
 const formSchema = z.object({
+  date: z.string(),
   therapist: z.string({
     errorMap: () => {
       return { message: "Please select a therapist." };
@@ -64,6 +74,7 @@ const therapistNames = [
   "Jonathan",
 ];
 const timeslots = ["12:00 AM", "1:00 AM", "2:00 AM", "3:00 AM", "4:00 AM"];
+const appointments = [];
 
 export function ScheduleAppointment({ date }: ScheduleAppointmentProps) {
   const router = useRouter();
@@ -71,6 +82,7 @@ export function ScheduleAppointment({ date }: ScheduleAppointmentProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      date: date?.toDateString(),
       therapist: undefined,
       timeslot: undefined,
       duration: "30 minutes",
@@ -80,22 +92,9 @@ export function ScheduleAppointment({ date }: ScheduleAppointmentProps) {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+    appointments.push({values});
+    console.log(appointments[0])
   }
-
-  const [therapist, setTherapist] = useState("Select an available therapist");
-  const [timeslot, setTimeslot] = useState("Select an available timeslot");
-  const [notes, setNotes] = useState("");
-
-  const therapistClick = (tName: string) => {
-    setTherapist(tName);
-  };
-  const timeslotClick = (time: string) => {
-    setTimeslot(time);
-  };
-  const notesChange = (note: string) => {
-    setNotes(note);
-  };
 
   return (
     <Card className="h-full w-full">
