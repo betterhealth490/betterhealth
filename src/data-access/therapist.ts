@@ -1,7 +1,7 @@
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 import { db } from "~/db";
-import { therapistPatient, users } from "~/db/schema";
+import { therapistPatient, users, availability } from "~/db/schema";
 
 export async function listTherapistByPatient({
   patientId,
@@ -34,4 +34,58 @@ export async function listTherapistByPatient({
     .where(eq(therapistPatient.patientId, patientId))
     .limit(limit)
     .offset(offset);
+}
+
+export async function listAvailability({
+  therapistId,
+  date,
+}: {
+  therapistId: number;
+  date: string;
+}) {
+  return await db
+    .select({
+      availabilityId: availability.availabilityId,
+      startTime: availability.startTime,
+      endTime: availability.endTime,
+      isBooked: availability.isBooked,
+    })
+    .from(availability)
+    .where(
+      and(
+        eq(availability.therapistId, therapistId),
+        eq(availability.availableDate, date),
+        eq(availability.isBooked, false),
+      ),
+    );
+}
+
+export async function bookAvailabileSlot({
+  availabilityId,
+}: {
+  availabilityId: number;
+}) {
+  return await db
+    .update(availability)
+    .set({ isBooked: true })
+    .where(eq(availability.availabilityId, availabilityId));
+}
+
+export async function setTherapistAvailability({
+  therapistId,
+  availableDate,
+  startTime,
+  endTime,
+}: {
+  therapistId: number;
+  availableDate: string;
+  startTime: string;
+  endTime: string;
+}) {
+  return await db.insert(availability).values({
+    therapistId,
+    availableDate,
+    startTime,
+    endTime,
+  });
 }
