@@ -1,84 +1,98 @@
-import { asc, eq } from "drizzle-orm";
+import { eq, and, sql } from "drizzle-orm";
 import { db } from "~/db";
-import { surveys } from "~/db/schema";
+import { survey } from "~/db/schema";
+import { 
+    type GetSurveyInput,
+    type GetSurveyResult,
+    type ListSurveyInput,
+    type ListSurveyItem,
+    type ListSurveyResult,
+    type UpdateSurveyInput,
+    type UpdateSurveyResult,
+    type CreateSurveyInput,
+    type CreateSurveyResult
+ } from "~/entities/survey";
 
-export async function getSurvey({ surveyId }: { surveyId: number }) {
-  const [survey] = await db
-    .select()
-    .from(surveys)
-    .where(eq(surveys.surveyId, surveyId));
-  return survey;
+export async function getHealthHabit(input:GetSurveyInput): Promise<GetSurveyResult> {
+    const result = await db
+        .select()
+        .from(survey)
+        .where(
+            eq(survey.habitId, input.habitId)
+        );
+    
+    const habit = result.at(0);
+    if(habit){
+        return habit;
+    }
+    else{
+        throw new Error("No habits found")
+    }       
 }
 
-export async function listSurveys({
-  userId,
-  limit = 10,
-  offset = 0,
-}: {
-  userId: number;
-  limit?: number;
-  offset?: number;
-}) {
-  return db
-    .select({
-      surveyId: surveys.surveyId,
-    })
-    .from(surveys)
-    .where(eq(surveys.userId, userId))
-    .orderBy(asc(surveys.surveyId))
-    .limit(limit)
-    .offset(offset);
+export async function listHealthHabit(input:ListSurveyInput): Promise<ListSurveyResult> {
+    const result = await db
+        .select()
+        .from(survey)
+        .where(
+            eq(survey.patientId, input.userId )
+        );
+    
+    const habit = result;
+    if(habit){
+        return habit;
+    }
+    else{
+        throw new Error("Cannot list health habits");
+    }
 }
 
-export async function createSurvey({
-  userId,
-  date,
-  type,
-  data,
-}: {
-  userId: number;
-  date: Date;
-  type: "initial" | "daily";
-  data: Record<string, string | number | object>;
-}) {
-  const [survey] = await db
-    .insert(surveys)
-    .values({
-      surveyDate: date,
-      surveyType: type,
-      surveyData: data,
-      userId,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    })
-    .returning();
-  return survey;
+export async function updateHealthHabit(input: UpdateSurveyInput): Promise<UpdateSurveyResult> {
+    const result = db
+        .update(survey)
+        .set({
+            date: input.date,
+            waterIntake: input.waterIntake,
+            sleepHours: input.sleepHours,
+            mealsEaten: input.mealsEaten
+        })
+        .where(
+            and(
+                eq(survey.patientId, input.patientId),
+                eq(survey.habitId, input.habitId)
+            )
+        )
+        .returning();
+
+    const updated = (await result).at(0);
+    if(updated){
+        return updated
+    }
+    else{
+        throw new Error("Could not updated")
+    }
+
 }
 
-export async function updateSurvey({
-  surveyId,
-  userId,
-  date,
-  type,
-  data,
-}: {
-  surveyId: number;
-  userId: number;
-  date: Date;
-  type: "initial" | "daily";
-  data: Record<string, string | number | object>;
-}) {
-  const [survey] = await db
-    .update(surveys)
-    .set({
-      surveyDate: date,
-      surveyType: type,
-      surveyData: data,
-      userId,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    })
-    .where(eq(surveys.surveyId, surveyId))
-    .returning();
-  return survey;
+export async function createHealthHabit(input:CreateSurveyInput): Promise<CreateSurveyResult> {
+    const result = await db
+        .insert(survey)
+        .values({
+            date: input.date,
+            waterIntake: input.waterIntake,
+            sleepHours: input.sleepHours,
+            mealsEaten: input.mealsEaten,
+            feeling: input.feeling,
+            patientId: input.patientId
+        })
+        .returning();
+
+    const created = result.at(0);
+    if (created){
+        return created;
+    }
+    else{
+        throw new Error("Could not create Health Habit");
+    }
 }
+
