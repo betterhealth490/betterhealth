@@ -273,7 +273,7 @@ export const availability = createTable("availability", {
   therapistId: integer("therapist_id")
     .notNull()
     .references(() => users.userId),
-  availableDate: date("available_date").notNull(),
+  availableDate: date("date").notNull(),
   startTime: time("start_time").notNull(),
   endTime: time("end_time").notNull(),
   isBooked: boolean("is_booked").default(false).notNull(),

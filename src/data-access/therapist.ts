@@ -36,7 +36,7 @@ export async function listTherapistByPatient({
     .offset(offset);
 }
 
-export async function therapistAvailability({
+export async function listAvailability({
   therapistId,
   date,
 }: {
@@ -60,7 +60,7 @@ export async function therapistAvailability({
     );
 }
 
-export async function bookAvailabilitySlot({
+export async function bookAvailabileSlot({
   availabilityId,
 }: {
   availabilityId: number;
