@@ -16,7 +16,7 @@ import {
   users,
   therapistPatient,
   therapistComments,
-  surveys,
+  questionare,
 } from "~/db/schema";
 import {
   type SelectTherapistInput,
@@ -92,7 +92,7 @@ export async function selectTherapist(
     .values({
       patientId,
       therapistId,
-      status: "pending",
+      status: "Pending",
       createdAt: new Date(),
       updatedAt: new Date(),
     })
@@ -145,7 +145,7 @@ export async function changeTherapist(
 
   await db
     .update(therapistPatient)
-    .set({ status: "declined", updatedAt: new Date() })
+    .set({ status: "Declined", updatedAt: new Date() })
     .where(
       and(
         eq(therapistPatient.patientId, patientId),
@@ -158,7 +158,7 @@ export async function changeTherapist(
     .values({
       patientId,
       therapistId: newTherapistId,
-      status: "pending",
+      status: "Pending",
       createdAt: new Date(),
       updatedAt: new Date(),
     })
@@ -173,13 +173,13 @@ export async function changeTherapist(
   if (redoInitialSurvey) {
     const surveyResult = await db
       .select({
-        surveyId: surveys.surveyId,
-        surveyData: surveys.surveyData,
-        createdAt: surveys.createdAt,
+        surveyId: questionare.surveyId,
+        surveyData: questionare.surveyData,
+        createdAt: questionare.createdAt,
       })
-      .from(surveys)
+      .from(questionare)
       .where(
-        and(eq(surveys.userId, patientId), eq(surveys.surveyType, "initial")),
+        and(eq(questionare.userId, patientId), eq(questionare.surveyType, "initial")),
       )
       .limit(1);
 
