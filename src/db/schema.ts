@@ -11,6 +11,8 @@ import {
   varchar,
   integer,
   decimal,
+  date,
+  time
 } from "drizzle-orm/pg-core";
 
 /**
@@ -258,6 +260,23 @@ export const messages = createTable("message", {
   sentAt: timestamp("sent_at")
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
+  createdAt: timestamp("created_at")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+  updatedAt: timestamp("updated_at")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .$onUpdate(() => sql`CURRENT_TIMESTAMP`),
+});
+
+export const availability = createTable("availability", {
+  availabilityId: serial("availability_id").primaryKey(),
+  therapistId: integer("therapist_id")
+    .notNull()
+    .references(() => users.userId),
+  availableDate: date("available_date").notNull(),
+  startTime: time("start_time").notNull(),
+  endTime: time("end_time").notNull(),
+  isBooked: boolean("is_booked").default(false).notNull(),
   createdAt: timestamp("created_at")
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
