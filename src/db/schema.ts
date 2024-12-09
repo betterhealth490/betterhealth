@@ -12,7 +12,7 @@ import {
   integer,
   decimal,
   date,
-  time
+  time,
 } from "drizzle-orm/pg-core";
 
 /**
@@ -51,18 +51,11 @@ export const feelingEnum = pgEnum("feeling", [
   "I don't know",
 ]);
 
-// Users Table with Authentication Fields
 export const users = createTable(
-  "user",
+  "users",
   {
     userId: serial("user_id").primaryKey(),
-    firstName: varchar("first_name", { length: 100 }).notNull(),
-    lastName: varchar("last_name", { length: 100 }).notNull(),
     email: varchar("email", { length: 255 }).notNull().unique(),
-    password: varchar("password", { length: 255 }).notNull(),
-    role: roleEnum("role").notNull(),
-    licenseNumber: varchar("license_number", { length: 12 }).unique(),
-    isVerified: boolean("is_verified").default(false),
     createdAt: timestamp("created_at")
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
@@ -75,12 +68,48 @@ export const users = createTable(
   }),
 );
 
+// Therapist Table with Authentication Fields
+export const therapist = createTable("therapist", {
+  therapitId: serial("user_id").primaryKey(),
+  firstName: varchar("first_name", { length: 100 }).notNull(),
+  lastName: varchar("last_name", { length: 100 }).notNull(),
+  email: varchar("email", { length: 255 })
+    .notNull()
+    .references(() => users.email),
+  password: varchar("password", { length: 255 }).notNull(),
+  licenseNumber: varchar("license_number", { length: 12 }).unique(),
+  isVerified: boolean("is_verified").default(false),
+  createdAt: timestamp("created_at")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+  updatedAt: timestamp("updated_at")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .$onUpdate(() => sql`CURRENT_TIMESTAMP`),
+});
+
+// Patient Table
+export const patient = createTable("patient", {
+  patientId: serial("user_id").primaryKey(),
+  firstName: varchar("first_name", { length: 100 }).notNull(),
+  lastName: varchar("last_name", { length: 100 }).notNull(),
+  email: varchar("email", { length: 255 })
+    .notNull()
+    .references(() => users.email),
+  password: varchar("password", { length: 255 }).notNull(),
+  createdAt: timestamp("created_at")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+  updatedAt: timestamp("updated_at")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .$onUpdate(() => sql`CURRENT_TIMESTAMP`),
+});
+
 // HealthHabits Table
 export const healthHabits = createTable("health_habits", {
   habitId: serial("habit_id").primaryKey(),
-  patientId: integer("user_id")
+  patientId: integer("patient_id")
     .notNull()
-    .references(() => users.userId),
+    .references(() => patient.patientId),
   date: timestamp("date").notNull(),
   waterIntake: integer("water_intake").notNull(),
   sleepHours: integer("sleep_hours").notNull(),
@@ -94,14 +123,46 @@ export const healthHabits = createTable("health_habits", {
     .$onUpdate(() => sql`CURRENT_TIMESTAMP`),
 });
 
-// Surveys Table
-export const surveys = createTable("surveys", {
+// Initial Patient Survey Table
+export const initialPatientSurvey = createTable("initial_patient_survey", {
   surveyId: serial("survey_id").primaryKey(),
-  userId: integer("user_id")
+  patientId: integer("patient_id")
     .notNull()
-    .references(() => users.userId),
+    .references(() => patient.patientId),
   surveyDate: timestamp("survey_date").notNull(),
-  surveyType: surveyTypeEnum("survey_type").notNull(),
+  surveyType: surveyTypeEnum("survey_type").default("initial").notNull(),
+  surveyData: json("survey_data"),
+  createdAt: timestamp("created_at")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+  updatedAt: timestamp("updated_at")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .$onUpdate(() => sql`CURRENT_TIMESTAMP`),
+});
+
+export const dailySurvey = createTable("daily_survey", {
+  surveyId: serial("survey_id").primaryKey(),
+  patientId: integer("patient_id")
+    .notNull()
+    .references(() => patient.patientId),
+  surveyDate: timestamp("survey_date").notNull(),
+  surveyType: surveyTypeEnum("survey_type").default("daily").notNull(),
+  surveyData: json("survey_data"),
+  createdAt: timestamp("created_at")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+  updatedAt: timestamp("updated_at")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .$onUpdate(() => sql`CURRENT_TIMESTAMP`),
+});
+
+// Therapist Survey Table
+export const therapistSurvey = createTable("therapist_survey", {
+  surveyId: serial("survey_id").primaryKey(),
+  therapistId: integer("therapist_id")
+    .notNull()
+    .references(() => therapist.therapitId),
+  surveyDate: timestamp("survey_date").notNull(),
   surveyData: json("survey_data"),
   createdAt: timestamp("created_at")
     .default(sql`CURRENT_TIMESTAMP`)
@@ -116,10 +177,10 @@ export const therapistPatient = createTable("therapist_patient", {
   relationshipId: serial("relationship_id").primaryKey(),
   patientId: integer("patient_id")
     .notNull()
-    .references(() => users.userId),
+    .references(() => patient.patientId),
   therapistId: integer("therapist_id")
     .notNull()
-    .references(() => users.userId),
+    .references(() => therapist.therapitId),
   status: relationshipStatusEnum("status").default("pending"),
   createdAt: timestamp("created_at")
     .default(sql`CURRENT_TIMESTAMP`)
@@ -134,10 +195,10 @@ export const therapistComments = createTable("therapist_comments", {
   commentId: serial("comment_id").primaryKey(),
   patientId: integer("patient_id")
     .notNull()
-    .references(() => users.userId),
+    .references(() => patient.patientId),
   therapistId: integer("therapist_id")
     .notNull()
-    .references(() => users.userId),
+    .references(() => therapist.therapitId),
   comment: text("comment"),
   createdAt: timestamp("created_at")
     .default(sql`CURRENT_TIMESTAMP`)
@@ -152,10 +213,10 @@ export const appointments = createTable("appointments", {
   appointmentId: serial("appointment_id").primaryKey(),
   patientId: integer("patient_id")
     .notNull()
-    .references(() => users.userId),
+    .references(() => patient.patientId),
   therapistId: integer("therapist_id")
     .notNull()
-    .references(() => users.userId),
+    .references(() => therapist.therapitId),
   appointmentDate: timestamp("appointment_date").notNull(),
   status: appointmentStatusEnum("status").default("pending").notNull(),
   notes: varchar("notes", { length: 500 }).notNull(),
@@ -170,9 +231,9 @@ export const appointments = createTable("appointments", {
 // Billing Table
 export const billing = createTable("billing", {
   billId: serial("bill_id").primaryKey(),
-  userId: integer("user_id")
+  patientId: integer("patient_id")
     .notNull()
-    .references(() => users.userId),
+    .references(() => patient.patientId),
   amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
   dueDate: timestamp("due_date").notNull(),
   status: billingStatusEnum("status").default("pending"),
@@ -187,9 +248,9 @@ export const billing = createTable("billing", {
 // Journals Table
 export const journals = createTable("journals", {
   journalId: serial("journal_id").primaryKey(),
-  userId: integer("user_id")
+  patientId: integer("patient_id")
     .notNull()
-    .references(() => users.userId),
+    .references(() => patient.patientId),
   entryDate: timestamp("entry_date").notNull(),
   content: text("content"),
   createdAt: timestamp("created_at")
@@ -201,50 +262,50 @@ export const journals = createTable("journals", {
 });
 
 // Audit Tables
-export const healthHabitsAudit = createTable("health_habits_audit", {
-  auditId: serial("audit_id").primaryKey(),
-  habitId: integer("habit_id")
-    .notNull()
-    .references(() => healthHabits.habitId),
-  userId: integer("user_id")
-    .notNull()
-    .references(() => users.userId),
-  changeType: changeTypeEnum("change_type").notNull(),
-  changedAt: timestamp("changed_at")
-    .default(sql`CURRENT_TIMESTAMP`)
-    .notNull(),
-  previousData: json("previous_data"),
-});
+// export const healthHabitsAudit = createTable("health_habits_audit", {
+//   auditId: serial("audit_id").primaryKey(),
+//   habitId: integer("habit_id")
+//     .notNull()
+//     .references(() => healthHabits.habitId),
+//     patientId: integer("patient_id")
+//     .notNull()
+//     .references(() => patient.patientId),
+//   changeType: changeTypeEnum("change_type").notNull(),
+//   changedAt: timestamp("changed_at")
+//     .default(sql`CURRENT_TIMESTAMP`)
+//     .notNull(),
+//   previousData: json("previous_data"),
+// });
 
-export const surveysAudit = createTable("surveys_audit", {
-  auditId: serial("audit_id").primaryKey(),
-  surveyId: integer("survey_id")
-    .notNull()
-    .references(() => surveys.surveyId),
-  userId: integer("user_id")
-    .notNull()
-    .references(() => users.userId),
-  changeType: changeTypeEnum("change_type").notNull(),
-  changedAt: timestamp("changed_at")
-    .default(sql`CURRENT_TIMESTAMP`)
-    .notNull(),
-  previousData: json("previous_data"),
-});
+// export const surveysAudit = createTable("surveys_audit", {
+//   auditId: serial("audit_id").primaryKey(),
+//   surveyId: integer("survey_id")
+//     .notNull()
+//     .references(() => surveys.surveyId),
+//   patientId: integer("patient_id")
+//     .notNull()
+//     .references(() => patient.patientId),
+//   changeType: changeTypeEnum("change_type").notNull(),
+//   changedAt: timestamp("changed_at")
+//     .default(sql`CURRENT_TIMESTAMP`)
+//     .notNull(),
+//   previousData: json("previous_data"),
+// });
 
-export const billingAudit = createTable("billing_audit", {
-  auditId: serial("audit_id").primaryKey(),
-  billId: integer("bill_id")
-    .notNull()
-    .references(() => billing.billId),
-  userId: integer("user_id")
-    .notNull()
-    .references(() => users.userId),
-  changeType: changeTypeEnum("change_type").notNull(),
-  changedAt: timestamp("changed_at")
-    .default(sql`CURRENT_TIMESTAMP`)
-    .notNull(),
-  previousData: json("previous_data"),
-});
+// export const billingAudit = createTable("billing_audit", {
+//   auditId: serial("audit_id").primaryKey(),
+//   billId: integer("bill_id")
+//     .notNull()
+//     .references(() => billing.billId),
+//     patientId: integer("patient_id")
+//     .notNull()
+//     .references(() => patient.patientId),
+//   changeType: changeTypeEnum("change_type").notNull(),
+//   changedAt: timestamp("changed_at")
+//     .default(sql`CURRENT_TIMESTAMP`)
+//     .notNull(),
+//   previousData: json("previous_data"),
+// });
 
 // Messages Table
 export const messages = createTable("message", {
@@ -272,7 +333,7 @@ export const availability = createTable("availability", {
   availabilityId: serial("availability_id").primaryKey(),
   therapistId: integer("therapist_id")
     .notNull()
-    .references(() => users.userId),
+    .references(() => therapist.therapitId),
   availableDate: date("date").notNull(),
   startTime: time("start_time").notNull(),
   endTime: time("end_time").notNull(),
