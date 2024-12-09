@@ -133,8 +133,6 @@ export const patient = createTable("patient", {
 });
 
 // Daily Survey Table
-// sleepTime
-
 export const survey = createTable("survey", {
   habitId: serial("habit_id").primaryKey(),
   patientId: integer("patient_id")

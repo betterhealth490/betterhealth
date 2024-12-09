@@ -24,7 +24,6 @@ export async function createMemberUseCase(
         password,
         createdAt: new Date(),
         updatedAt: new Date(),
-        role: "member",
       })
       .returning();
     if (!isDefined(user)) {
@@ -58,7 +57,6 @@ export async function createTherapistUseCase(
         password,
         createdAt: new Date(),
         updatedAt: new Date(),
-        role: "therapist",
       })
       .returning();
     if (!isDefined(user)) {

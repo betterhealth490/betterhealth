@@ -10,7 +10,7 @@ export async function createJournal(input: { userId: number; entryDate: Date; co
     const result = await db
         .insert(journals)
         .values({
-            userId: input.userId,
+            patientId: input.userId,
             entryDate: input.entryDate,
             content: input.content,
             createdAt: new Date(),
@@ -30,7 +30,7 @@ export async function createJournal(input: { userId: number; entryDate: Date; co
 }
 
 export async function getJournal(input: GetJournalInput): Promise<GetJournalResult> {
-    const userId = typeof input.userId === "string" ? parseInt(input.userId, 10) : input.userId;
+    const userId = typeof input.patientId === "string" ? parseInt(input.patientId, 10) : input.patientId;
 
     const result = await db
         .select()
@@ -38,7 +38,7 @@ export async function getJournal(input: GetJournalInput): Promise<GetJournalResu
         .where(
             and(
                 eq(journals.journalId, input.journalId),
-                eq(journals.userId, input.userId)
+                eq(journals.patientId, input.patientId)
             )
         );
 
@@ -49,7 +49,7 @@ export async function getJournal(input: GetJournalInput): Promise<GetJournalResu
             journalId: journal.journalId,
             entryDate: journal.entryDate,
             content: journal.content ?? '', 
-            userId: journal.userId,
+            patientId: journal.patientId,
             createdAt: journal.createdAt,
             updatedAt: journal.updatedAt ?? new Date(),
         };
@@ -69,7 +69,7 @@ export async function updateJournal(
         .where(
             and(
                 eq(journals.journalId, input.journalId),
-                eq(journals.userId, input.userId)
+                eq(journals.patientId, input.patientId)
             )
         )
         .returning();
@@ -89,12 +89,12 @@ export async function listJournals(userId: number): Promise<ListJournalResult> {
     const result = await db
         .select({
             journalId: journals.journalId,
-            userId: journals.userId,
+            patientId: journals.patientId,
             entryDate: journals.entryDate,
             updatedAt: journals.updatedAt,
         })
         .from(journals)
-        .where(eq(journals.userId, userId));
+        .where(eq(journals.patientId, userId));
 
     return result.map((journal) => ({
         ...journal,
