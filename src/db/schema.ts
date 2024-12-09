@@ -86,6 +86,7 @@ export const users = createTable(
     gender: genderEnum("gender"),
     email: varchar("email", { length: 255 }).notNull().unique(),
     password: varchar("password", { length: 255 }).notNull(),
+    role: roleEnum("role").notNull(),
     createdAt: timestamp("created_at")
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
