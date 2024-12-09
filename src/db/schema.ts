@@ -77,6 +77,7 @@ export const therapist = createTable("therapist", {
     .notNull()
     .references(() => users.email),
   password: varchar("password", { length: 255 }).notNull(),
+  specialy: varchar("specialty", {length: 50}).notNull(),
   licenseNumber: varchar("license_number", { length: 12 }).unique(),
   isVerified: boolean("is_verified").default(false),
   createdAt: timestamp("created_at")
