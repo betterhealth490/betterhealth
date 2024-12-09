@@ -2,7 +2,7 @@ export interface CreateBillingInput {
     userId: number;
     amount: number;
     dueDate: Date;
-    status?: "pending" | "paid";
+    status?: "Pending" | "Paid";
 }
 
 export interface CreateBillingResult {
@@ -19,7 +19,7 @@ export interface GetBillingResult {
     userId: number;
     amount: number;
     dueDate: Date;
-    status: "pending" | "paid" | null;
+    status: "Pending" | "Paid" | null;
     createdAt: Date;
     updatedAt: Date | null;
 }
@@ -28,14 +28,14 @@ export interface UpdateBillingInput {
     billId: number;
     userId: number;
     amount: number;
-    status: "pending" | "paid"  | null;
+    status: "Pending" | "Paid"  | null;
 }
 
 export interface UpdateBillingResult {
     billId: number;
     userId: number;
     amount: number;
-    status: "pending" | "paid"  | null;
+    status: "Pending" | "Paid"  | null;
     createdAt: Date;
     updatedAt: Date| null;
     dueDate: Date;
@@ -50,7 +50,7 @@ export interface ListBillingItem {
     userId: number;
     amount: number;
     dueDate: Date;
-    status: "pending" | "paid"  | null;
+    status: "Pending" | "Paid"  | null;
     updatedAt: Date;
 }
 
