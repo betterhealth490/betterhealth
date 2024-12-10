@@ -51,7 +51,7 @@ export async function updateHealthHabit(input: UpdateSurveyInput): Promise<Updat
     const result = db
         .update(survey)
         .set({
-            createdAt: input.date,
+            createdAt: input.createdAt,
             waterIntake: input.waterIntake,
             sleepLength: input.sleepLength,
             stressLevel: input.stressLevel,

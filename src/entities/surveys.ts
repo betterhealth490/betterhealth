@@ -10,7 +10,11 @@ export interface GetSurveyResult {
   sleepLength: number;
   stressLevel: number;
   foodIntake: number;
+  sleepTime: number;
+  foodHealthQuality: number;
   mood: "Excited" | "Happy" | "Okay" | "Mellow" | "Sad" | "I don't know";
+  sleepQuality: number;
+  selfImage: number;
 }
 
 export interface ListSurveyInput {
@@ -24,7 +28,11 @@ export interface ListSurveyItem {
   sleepLength: number;
   stressLevel: number;
   foodIntake: number;
+  sleepTime: number;
+  foodHealthQuality: number;
   mood: "Excited" | "Happy" | "Okay" | "Mellow" | "Sad" | "I don't know";
+  sleepQuality: number;
+  selfImage: number;
 } 
 
 export type ListSurveyResult = ListSurveyItem[];
@@ -32,11 +40,16 @@ export type ListSurveyResult = ListSurveyItem[];
 export interface UpdateSurveyInput {
   surveyId: number;
   patientId: number;
-  date: Date;
+  createdAt: Date;
   waterIntake: number;
   sleepLength: number;
   stressLevel: number;
   foodIntake: number;
+  sleepTime: number;
+  foodHealthQuality: number;
+  mood: "Excited" | "Happy" | "Okay" | "Mellow" | "Sad" | "I don't know";
+  sleepQuality: number;
+  selfImage: number;
 }
 
 export interface UpdateSurveyResult {
@@ -44,7 +57,11 @@ export interface UpdateSurveyResult {
   sleepLength: number;
   stressLevel: number;
   foodIntake: number;
+  sleepTime: number;
+  foodHealthQuality: number;
   mood: "Excited" | "Happy" | "Okay" | "Mellow" | "Sad" | "I don't know";
+  sleepQuality: number;
+  selfImage: number;
 }
 
 export interface CreateSurveyInput {
@@ -54,11 +71,11 @@ export interface CreateSurveyInput {
   sleepLength: number;
   stressLevel: number;
   foodIntake: number;
-  sleepTime: "Before 8 PM" | "8 PM - 10 PM" | "10 PM - Midnight" | "After Midnight";
-  foodHealthQuality: "Low" | "Medium" | "High";
+  sleepTime: number;
+  foodHealthQuality: number;
   mood: "Excited" | "Happy" | "Okay" | "Mellow" | "Sad" | "I don't know";
-  sleepQuality: "Poor" | "Fair" | "Good" | "Excellent";
-  selfImage: "Negative" | "Neutral" | "Positive"
+  sleepQuality: number;
+  selfImage: number;
 }
 
 export interface CreateSurveyResult {
@@ -68,9 +85,9 @@ export interface CreateSurveyResult {
   sleepLength: number;
   stressLevel: number;
   foodIntake: number;
-  sleepTime: "Before 8 PM" | "8 PM - 10 PM" | "10 PM - Midnight" | "After Midnight";
-  foodHealthQuality: "Low" | "Medium" | "High";
+  sleepTime: number;
+  foodHealthQuality: number;
   mood: "Excited" | "Happy" | "Okay" | "Mellow" | "Sad" | "I don't know";
-  sleepQuality: "Poor" | "Fair" | "Good" | "Excellent";
-  selfImage: "Negative" | "Neutral" | "Positive"
+  sleepQuality: number;
+  selfImage: number;
 }
