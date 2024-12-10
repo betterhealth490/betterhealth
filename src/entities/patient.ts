@@ -1,6 +1,6 @@
 import { eq, and, sql } from "drizzle-orm";
 import { db } from "~/db";
-import { users, billing, initialPatientQuestionnare, journals, therapistPatient } from "~/db/schema";
+import { users, billing, initialQuestionnare, journals, therapistPatient } from "~/db/schema";
 
 export interface SelectTherapistInput {
   patientId: number;
@@ -9,7 +9,7 @@ export interface SelectTherapistInput {
 
 export interface SelectTherapistResult {
   relationshipId: number;
-  status: "Pending" | "Approved" | "Declined" | null;
+  status: "pending" | "approved" | "declined" | null;
   createdAt: Date;
   updatedAt: Date | null;
 }
@@ -62,7 +62,7 @@ export interface ListTherapistPatientsItem {
   patientId: number;
   firstName: string;
   lastName: string;
-  status: "Pending" | "Approved" | "Declined" | null;
+  status: "pending" | "approved" | "declined" | null;
   createdAt: Date;
   updatedAt: Date | null;
 }
@@ -84,7 +84,7 @@ export async function areAllBillsPaid(userId: number): Promise<boolean> {
     .from(billing)
     .where(eq(billing.patientId, userId));
 
-  return result.every((bill) => bill.status === "Paid");
+  return result.every((bill) => bill.status === "paid");
 }
 
 export async function isUserTherapist(userId: number): Promise<boolean> {
@@ -99,7 +99,7 @@ export async function isUserTherapist(userId: number): Promise<boolean> {
 }
 
 export async function deleteUserRelatedData(userId: number): Promise<void> {
-  await db.delete(initialPatientQuestionnare).where(eq(initialPatientQuestionnare.patientId, userId));
+  await db.delete(initialQuestionnare).where(eq(initialQuestionnare.userId, userId));
   await db.delete(journals).where(eq(journals.patientId, userId));
   await db.delete(therapistPatient).where(eq(therapistPatient.patientId, userId));
   await db.delete(billing).where(eq(billing.patientId, userId));

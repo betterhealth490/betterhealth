@@ -15,7 +15,7 @@ export async function createBilling(input: CreateBillingInput): Promise<CreateBi
             patientId: input.patientId,
             amount: input.amount.toString(),
             dueDate: input.dueDate,
-            status: input.status ?? "Pending",
+            status: input.status ?? "pending",
             createdAt: new Date(),
             updatedAt: new Date(),
         })
@@ -54,7 +54,7 @@ export async function getBilling(input: GetBillingInput): Promise<GetBillingResu
     return {
         ...billingRecord,
         amount: parseFloat(billingRecord.amount), 
-        status: billingRecord.status ?? "Pending",
+        status: billingRecord.status ?? "pending",
     };
 }
 
@@ -81,7 +81,7 @@ export async function updateBilling(input: UpdateBillingInput): Promise<UpdateBi
         return {
             ...updatedBilling,
             amount: parseFloat(updatedBilling.amount), 
-            status: updatedBilling.status ?? "Pending", // Fallback to default status
+            status: updatedBilling.status ?? "pending", // Fallback to default status
         };
     } else {
         throw new Error("Failed to update billing record");

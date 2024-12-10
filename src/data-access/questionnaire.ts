@@ -1,12 +1,12 @@
 import { asc, eq } from "drizzle-orm";
 import { db } from "~/db";
-import { initialPatientQuestionnare } from "~/db/schema";
+import { initialQuestionnare } from "~/db/schema";
 
 export async function getSurvey({ questionnaireId }: { questionnaireId: number }) {
   const [survey] = await db
     .select()
-    .from(initialPatientQuestionnare)
-    .where(eq(initialPatientQuestionnare.questionnaireId, questionnaireId));
+    .from(initialQuestionnare)
+    .where(eq(initialQuestionnare.questionnaireId, questionnaireId));
   return survey;
 }
 
@@ -21,33 +21,32 @@ export async function listSurveys({
 }) {
   return db
     .select({
-      questionnaireId: initialPatientQuestionnare.questionnaireId,
+      questionnaireId: initialQuestionnare.questionnaireId,
     })
-    .from(initialPatientQuestionnare)
-    .where(eq(initialPatientQuestionnare.patientId, patientId))
-    .orderBy(asc(initialPatientQuestionnare.questionnaireId))
+    .from(initialQuestionnare)
+    .where(eq(initialQuestionnare.userId, patientId))
+    .orderBy(asc(initialQuestionnare.questionnaireId))
     .limit(limit)
     .offset(offset);
 }
 
 export async function createSurvey({
-  patientId,
+  userId,
   date,
   type,
   data,
 }: {
-  patientId: number;
+  userId: number;
   date: Date;
   type: "initial" | "daily";
   data: Record<string, string | number | object>;
 }) {
   const [survey] = await db
-    .insert(initialPatientQuestionnare)
+    .insert(initialQuestionnare)
     .values({
       questionnaireDate: date,
-      questionnaireType: type,
       questionnaireData: data,
-      patientId,
+      userId,
       createdAt: new Date(),
       updatedAt: new Date(),
     })
@@ -57,28 +56,27 @@ export async function createSurvey({
 
 export async function updateSurvey({
   questionnaireId,
-  patientId,
+  userId,
   date,
   type,
   data,
 }: {
   questionnaireId: number;
-  patientId: number;
+  userId: number;
   date: Date;
   type: "initial" | "daily";
   data: Record<string, string | number | object>;
 }) {
   const [survey] = await db
-    .update(initialPatientQuestionnare)
+    .update(initialQuestionnare)
     .set({
       questionnaireDate: date,
-      questionnaireType: type,
       questionnaireData: data,
-      patientId,
+      userId,
       createdAt: new Date(),
       updatedAt: new Date(),
     })
-    .where(eq(initialPatientQuestionnare.questionnaireId, questionnaireId))
+    .where(eq(initialQuestionnare.questionnaireId, questionnaireId))
     .returning();
   return survey;
 }

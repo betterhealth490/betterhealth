@@ -16,7 +16,7 @@ import {
   users,
   therapistPatient,
   therapistComments,
-  initialPatientQuestionnare,
+  initialQuestionnare,
 } from "~/db/schema";
 import {
   type SelectTherapistInput,
@@ -92,7 +92,7 @@ export async function selectTherapist(
     .values({
       patientId,
       therapistId,
-      status: "Pending",
+      status: "pending",
       createdAt: new Date(),
       updatedAt: new Date(),
     })
@@ -145,7 +145,7 @@ export async function changeTherapist(
 
   await db
     .update(therapistPatient)
-    .set({ status: "Declined", updatedAt: new Date() })
+    .set({ status: "declined", updatedAt: new Date() })
     .where(
       and(
         eq(therapistPatient.patientId, patientId),
@@ -158,7 +158,7 @@ export async function changeTherapist(
     .values({
       patientId,
       therapistId: newTherapistId,
-      status: "Pending",
+      status: "pending",
       createdAt: new Date(),
       updatedAt: new Date(),
     })
@@ -173,13 +173,13 @@ export async function changeTherapist(
   if (redoInitialSurvey) {
     const surveyResult = await db
       .select({
-        surveyId: initialPatientQuestionnare.questionnaireId,
-        surveyData: initialPatientQuestionnare.questionnaireData,
-        createdAt: initialPatientQuestionnare.createdAt,
+        surveyId:   initialQuestionnare.questionnaireId,
+        surveyData:   initialQuestionnare.questionnaireData,
+        createdAt:   initialQuestionnare.createdAt,
       })
-      .from(initialPatientQuestionnare)
+      .from(  initialQuestionnare)
       .where(
-        and(eq(initialPatientQuestionnare.patientId, patientId), eq(initialPatientQuestionnare.questionnaireType, "initial")),
+        eq(initialQuestionnare.userId, patientId),
       )
       .limit(1);
 

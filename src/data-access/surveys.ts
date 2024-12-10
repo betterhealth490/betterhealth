@@ -18,7 +18,7 @@ export async function getHealthHabit(input:GetSurveyInput): Promise<GetSurveyRes
         .select()
         .from(survey)
         .where(
-            eq(survey.habitId, input.habitId)
+            eq(survey.surveyId, input.surveyId)
         );
     
     const habit = result.at(0);
@@ -60,7 +60,7 @@ export async function updateHealthHabit(input: UpdateSurveyInput): Promise<Updat
         .where(
             and(
                 eq(survey.patientId, input.patientId),
-                eq(survey.habitId, input.habitId)
+                eq(survey.surveyId, input.surveyId)
             )
         )
         .returning();

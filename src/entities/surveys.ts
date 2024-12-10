@@ -1,9 +1,9 @@
 export interface GetSurveyInput {
-  habitId: number;
+  surveyId: number;
 }
 
 export interface GetSurveyResult {
-  habitId: number;
+  surveyId: number;
   patientId: number;
   createdAt: Date;
   waterIntake: number;
@@ -30,7 +30,7 @@ export interface ListSurveyItem {
 export type ListSurveyResult = ListSurveyItem[];
 
 export interface UpdateSurveyInput {
-  habitId: number;
+  surveyId: number;
   patientId: number;
   date: Date;
   waterIntake: number;
