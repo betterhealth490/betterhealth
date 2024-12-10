@@ -59,14 +59,21 @@ export const ageEnum = pgEnum("age", [
   "65+",
 ]);
 export const specialtyEnum = pgEnum("specialty", [
-  "Anxiety",
-  "Depression",
-  "PTSD",
-  "Bipolar Disorder",
-  "Obsessive-Compulsive Disorder",
+  "Addiction Counseling",
+  "Family Therapy",
+  "Marriage Counseling",
   "Stress Management",
   "Anger Management",
+  "Grief Counseling",
+  "Life Coaching",
+  "Career Counseling",
+  "Trauma Therapy",
+  "Substance Abuse Counseling",
+  "Eating Disorders Counseling",
+  "Behavioral Therapy",
+  "Self-Esteem Building",
 ]);
+
 
 export const users = createTable(
   "users",
