@@ -142,7 +142,6 @@ export const survey = createTable("survey", {
   foodIntake: integer("food_intake").notNull(),
   sleepTime: integer("sleep_time").notNull(),
   foodHealthQuality: integer("food_quality").notNull(),
-  mood: feelingEnum("feeling").notNull(),
   sleepQuality: integer("sleep_quality").notNull(),
   selfImage: integer("self_image").notNull(),
   createdAt: timestamp("created_at")

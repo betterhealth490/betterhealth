@@ -13,7 +13,7 @@ import {
     type CreateSurveyResult
  } from "~/entities/surveys";
 
-export async function getHealthHabit(input:GetSurveyInput): Promise<GetSurveyResult> {
+export async function getSurvey(input:GetSurveyInput): Promise<GetSurveyResult> {
     const result = await db
         .select()
         .from(survey)
@@ -30,7 +30,7 @@ export async function getHealthHabit(input:GetSurveyInput): Promise<GetSurveyRes
     }       
 }
 
-export async function listHealthHabit(input:ListSurveyInput): Promise<ListSurveyResult> {
+export async function listSurvey(input:ListSurveyInput): Promise<ListSurveyResult> {
     const result = await db
         .select()
         .from(survey)
@@ -47,7 +47,7 @@ export async function listHealthHabit(input:ListSurveyInput): Promise<ListSurvey
     }
 }
 
-export async function updateHealthHabit(input: UpdateSurveyInput): Promise<UpdateSurveyResult> {
+export async function updateSurvey(input: UpdateSurveyInput): Promise<UpdateSurveyResult> {
     const result = db
         .update(survey)
         .set({
@@ -55,7 +55,11 @@ export async function updateHealthHabit(input: UpdateSurveyInput): Promise<Updat
             waterIntake: input.waterIntake,
             sleepLength: input.sleepLength,
             stressLevel: input.stressLevel,
-            foodIntake: input.foodIntake
+            foodIntake: input.foodIntake,
+            sleepTime: input.sleepTime,
+            foodHealthQuality: input.foodHealthQuality,
+            sleepQuality: input.sleepQuality,
+            selfImage: input.selfImage
         })
         .where(
             and(
@@ -75,7 +79,7 @@ export async function updateHealthHabit(input: UpdateSurveyInput): Promise<Updat
 
 }
 
-export async function createHealthHabit(input:CreateSurveyInput): Promise<CreateSurveyResult> {
+export async function createSurvey(input:CreateSurveyInput): Promise<CreateSurveyResult> {
     const result = await db
         .insert(survey)
         .values({
@@ -87,7 +91,6 @@ export async function createHealthHabit(input:CreateSurveyInput): Promise<Create
             foodIntake: input.foodIntake,
             sleepTime: input.sleepTime,
             foodHealthQuality: input.foodHealthQuality,
-            mood: input.mood,
             sleepQuality: input.sleepQuality,
             selfImage: input.selfImage
         })

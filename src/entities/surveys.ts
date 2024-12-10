@@ -12,7 +12,6 @@ export interface GetSurveyResult {
   foodIntake: number;
   sleepTime: number;
   foodHealthQuality: number;
-  mood: "Excited" | "Happy" | "Okay" | "Mellow" | "Sad" | "I don't know";
   sleepQuality: number;
   selfImage: number;
 }
@@ -30,7 +29,6 @@ export interface ListSurveyItem {
   foodIntake: number;
   sleepTime: number;
   foodHealthQuality: number;
-  mood: "Excited" | "Happy" | "Okay" | "Mellow" | "Sad" | "I don't know";
   sleepQuality: number;
   selfImage: number;
 } 
@@ -47,7 +45,6 @@ export interface UpdateSurveyInput {
   foodIntake: number;
   sleepTime: number;
   foodHealthQuality: number;
-  mood: "Excited" | "Happy" | "Okay" | "Mellow" | "Sad" | "I don't know";
   sleepQuality: number;
   selfImage: number;
 }
@@ -59,7 +56,6 @@ export interface UpdateSurveyResult {
   foodIntake: number;
   sleepTime: number;
   foodHealthQuality: number;
-  mood: "Excited" | "Happy" | "Okay" | "Mellow" | "Sad" | "I don't know";
   sleepQuality: number;
   selfImage: number;
 }
@@ -73,7 +69,6 @@ export interface CreateSurveyInput {
   foodIntake: number;
   sleepTime: number;
   foodHealthQuality: number;
-  mood: "Excited" | "Happy" | "Okay" | "Mellow" | "Sad" | "I don't know";
   sleepQuality: number;
   selfImage: number;
 }
@@ -87,7 +82,6 @@ export interface CreateSurveyResult {
   foodIntake: number;
   sleepTime: number;
   foodHealthQuality: number;
-  mood: "Excited" | "Happy" | "Okay" | "Mellow" | "Sad" | "I don't know";
   sleepQuality: number;
   selfImage: number;
 }
