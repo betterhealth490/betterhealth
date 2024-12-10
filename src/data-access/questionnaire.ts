@@ -2,7 +2,7 @@ import { asc, eq } from "drizzle-orm";
 import { db } from "~/db";
 import { initialQuestionnare } from "~/db/schema";
 
-export async function getSurvey({ questionnaireId }: { questionnaireId: number }) {
+export async function getQuestionnaire({ questionnaireId }: { questionnaireId: number }) {
   const [survey] = await db
     .select()
     .from(initialQuestionnare)
@@ -10,7 +10,7 @@ export async function getSurvey({ questionnaireId }: { questionnaireId: number }
   return survey;
 }
 
-export async function listSurveys({
+export async function listQuestionnaires({
   patientId,
   limit = 10,
   offset = 0,
@@ -30,7 +30,7 @@ export async function listSurveys({
     .offset(offset);
 }
 
-export async function createSurvey({
+export async function createQuestionnaire({
   userId,
   date,
   type,
@@ -54,7 +54,7 @@ export async function createSurvey({
   return survey;
 }
 
-export async function updateSurvey({
+export async function updateQuestionnaire({
   questionnaireId,
   userId,
   date,
