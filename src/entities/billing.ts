@@ -1,5 +1,5 @@
 export interface CreateBillingInput {
-    userId: number;
+    patientId: number;
     amount: number;
     dueDate: Date;
     status?: "pending" | "paid";
@@ -11,12 +11,12 @@ export interface CreateBillingResult {
 
 export interface GetBillingInput {
     billId: number;
-    userId: number;
+    patientId: number;
 }
 
 export interface GetBillingResult {
     billId: number;
-    userId: number;
+    patientId: number;
     amount: number;
     dueDate: Date;
     status: "pending" | "paid" | null;
@@ -26,14 +26,14 @@ export interface GetBillingResult {
 
 export interface UpdateBillingInput {
     billId: number;
-    userId: number;
+    patientId: number;
     amount: number;
     status: "pending" | "paid"  | null;
 }
 
 export interface UpdateBillingResult {
     billId: number;
-    userId: number;
+    patientId: number;
     amount: number;
     status: "pending" | "paid"  | null;
     createdAt: Date;
@@ -42,12 +42,12 @@ export interface UpdateBillingResult {
 }
 
 export interface ListBillingInput {
-    userId: number;
+    patientId: number;
 }
 
 export interface ListBillingItem {
     billId: number;
-    userId: number;
+    patientId: number;
     amount: number;
     dueDate: Date;
     status: "pending" | "paid"  | null;

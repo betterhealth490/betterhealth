@@ -12,7 +12,7 @@ export async function createBilling(input: CreateBillingInput): Promise<CreateBi
     const result = await db
         .insert(billing)
         .values({
-            userId: input.userId,
+            patientId: input.patientId,
             amount: input.amount.toString(),
             dueDate: input.dueDate,
             status: input.status ?? "pending",
@@ -40,7 +40,7 @@ export async function getBilling(input: GetBillingInput): Promise<GetBillingResu
         .where(
             and(
                 eq(billing.billId, input.billId),
-                eq(billing.userId, input.userId)
+                eq(billing.patientId, input.patientId)
             )
         )
         .limit(1);
@@ -71,7 +71,7 @@ export async function updateBilling(input: UpdateBillingInput): Promise<UpdateBi
         .where(
             and(
                 eq(billing.billId, input.billId),
-                eq(billing.userId, input.userId)
+                eq(billing.patientId, input.patientId)
             )
         )
         .returning();
@@ -93,14 +93,14 @@ export async function listBillings(input: ListBillingInput): Promise<ListBilling
     const result = await db
         .select({
             billId: billing.billId,
-            userId: billing.userId,
+            patientId: billing.patientId,
             amount: billing.amount,
             dueDate: billing.dueDate,
             status: billing.status,
             updatedAt: billing.updatedAt,
         })
         .from(billing)
-        .where(eq(billing.userId, input.userId));
+        .where(eq(billing.patientId, input.patientId));
 
     return result.map((billingRecord) => ({
         ...billingRecord,
