@@ -8,7 +8,7 @@ export interface GetAppointmentResult {
   therapistId: number;
   patientId: number;
   notes: string;
-  status: "Pending" | "Confirmed" | "Cancelled";
+  status: "pending" | "confirmed" | "cancelled";
 }
 
 export interface ListAppointmentsInput {
@@ -29,7 +29,7 @@ export interface UpdateAppointmentInput {
   appointmentDate: Date;
   appointmentId: number;
   notes: string;
-  status: "Pending" | "Confirmed" | "Cancelled";
+  status: "pending" | "confirmed" | "cancelled";
 }
 
 export interface UpdateAppointmentResult {
@@ -37,7 +37,7 @@ export interface UpdateAppointmentResult {
   appointmentId: number;
   therapistId: number;
   patientId: number;
-  status: "Pending" | "Confirmed" | "Cancelled";
+  status: "pending" | "confirmed" | "cancelled";
 }
 
 export interface CreateAppointmentInput {
@@ -53,5 +53,5 @@ export interface CreateAppointmentResult {
   patientId: number;
   therapistId: number;
   notes: string;
-  status: "Pending" | "Confirmed" | "Cancelled";
+  status: "pending" | "confirmed" | "cancelled";
 }
