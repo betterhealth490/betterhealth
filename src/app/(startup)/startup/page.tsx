@@ -56,7 +56,7 @@ export default function StartupPage() {
         await user.update({
           unsafeMetadata: {
             ...user.unsafeMetadata,
-            initialSurveyCompleted: true,
+            questionnaireCompleted: true,
           },
         });
         router.push("/dashboard");
@@ -80,7 +80,10 @@ export default function StartupPage() {
           {surveyQuestions.map(
             (question, index) =>
               page === index && (
-                <Card className="flex h-[400px] w-[500px] flex-col">
+                <Card
+                  key={question.question}
+                  className="flex h-[400px] w-[500px] flex-col"
+                >
                   <CardHeader>
                     <CardTitle>{question.question}</CardTitle>
                     <CardDescription>Select all that apply</CardDescription>
@@ -93,7 +96,10 @@ export default function StartupPage() {
                           <FormItem className="space-y-3">
                             <div className="flex flex-col gap-4">
                               {question.answers.map((answer) => (
-                                <FormItem className="flex items-center space-x-3 space-y-0">
+                                <FormItem
+                                  key={answer}
+                                  className="flex items-center space-x-3 space-y-0"
+                                >
                                   <FormControl>
                                     <Checkbox
                                       checked={(field.value as string[][])[

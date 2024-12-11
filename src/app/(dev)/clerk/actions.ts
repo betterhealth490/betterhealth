@@ -2,57 +2,60 @@
 
 import { clerkClient, type User } from "@clerk/nextjs/server";
 import { db } from "~/db";
+import { users } from "~/db/schema";
 
-type ServerResponse = { ok: true } | { ok: false; error: string };
+type ServerResponse =
+  | { ok: true; result: User[] }
+  | { ok: false; error: string };
 
 export const migrateUsersAction: () => Promise<ServerResponse> = async () => {
-    try {
-        const promises: Promise<User>[] = [];
-        const users = await db.query.users.findMany();
-        users.forEach(async (user) => {
-            const client = await clerkClient();
-            promises.push(
-                client.users.createUser({
-                    firstName: user.firstName,
-                    lastName: user.lastName,
-                    password: user.password,
-                    emailAddress: [user.email],
-                    createdAt: user.createdAt,
-                    externalId: user.userId.toString(),
-                    privateMetadata: {
-                        role: user.role,
-                        licenseNumber: user.licenseNumber,
-                        isVerified: user.isVerified,
-                    },
-                }),
-            );
-        });
-        await Promise.all(promises);
-        return { ok: true };
-    } catch (err) {
-        if (err instanceof Error) {
-            return { ok: false, error: err.message };
-        } else {
-            return { ok: false, error: "Unknown error occurred" };
-        }
+  try {
+    const clerkUsers = [];
+    const dbUsers = await db.select().from(users);
+    for (const user of dbUsers) {
+      const client = await clerkClient();
+      clerkUsers.push(
+        await client.users.createUser({
+          firstName: user.firstName,
+          lastName: user.lastName,
+          password: user.password,
+          emailAddress: [user.email],
+          createdAt: user.createdAt,
+          unsafeMetadata: {
+            role: user.role,
+            databaseId: user.userId,
+            initialSurveyCompleted: true,
+            questionnaireCompleted: true,
+          },
+        }),
+      );
+      await new Promise((resolve) => setTimeout(resolve, 100));
     }
+    return { ok: true, result: clerkUsers };
+  } catch (err) {
+    if (err instanceof Error) {
+      return { ok: false, error: err.message };
+    } else {
+      return { ok: false, error: "Unknown error occurred" };
+    }
+  }
 };
 
 export const deleteUsersAction: () => Promise<ServerResponse> = async () => {
-    try {
-        const client = await clerkClient();
-        const users = await client.users.getUserList({ limit: 100 });
-        const promises: Promise<User>[] = [];
-        users.data.forEach(async (user) => {
-            promises.push(client.users.deleteUser(user.id));
-        });
-        await Promise.all(promises);
-        return { ok: true };
-    } catch (err) {
-        if (err instanceof Error) {
-            return { ok: false, error: err.message };
-        } else {
-            return { ok: false, error: "Unknown error occurred" };
-        }
+  try {
+    const client = await clerkClient();
+    const users = await client.users.getUserList({ limit: 100 });
+    const promises: Promise<User>[] = [];
+    for (const user of users.data) {
+      promises.push(client.users.deleteUser(user.id));
     }
+    await Promise.all(promises);
+    return { ok: true, result: [] };
+  } catch (err) {
+    if (err instanceof Error) {
+      return { ok: false, error: err.message };
+    } else {
+      return { ok: false, error: "Unknown error occurred" };
+    }
+  }
 };

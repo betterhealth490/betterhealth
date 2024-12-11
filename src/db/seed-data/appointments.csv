@@ -1,0 +1,32 @@
+appointment_id,patient_id,therapist_id,appointment_date,status,notes
+1,13,20,12/5/2024 10:00,confirmed,
+2,19,3,12/8/2024 13:00,cancelled,It says you're only available from 1:00 PM to 2:00 PM but could we do this at 12:00 PM?
+3,25,20,12/9/2024 10:00,confirmed,I will be bringing my dog.
+4,27,21,12/9/2024 16:15,confirmed,
+5,19,3,12/9/2024 18:00,confirmed,
+6,13,20,12/11/2024 10:00,confirmed,
+7,9,21,12/11/2024 12:00,confirmed,I think I just need to sort my thoughts.
+8,7,3,12/11/2024 18:00,confirmed,please help me
+9,6,20,12/12/2024 10:00,confirmed,
+10,11,21,12/12/2024 16:30,confirmed,I need to put an end to my substance abuse as soon as possible...it's just so difficult.
+11,13,20,12/13/2024 11:30,cancelled,
+12,11,21,12/13/2024 12:15,confirmed,
+13,25,20,12/14/2024 10:00,pending,
+14,29,3,12/14/2024 13:30,cancelled,"I'll be bringing my husband and some friends, hopefully thats fine with you."
+15,19,3,12/15/2024 18:00,pending,
+16,17,20,12/16/2024 10:00,confirmed,
+17,6,20,12/18/2024 11:30,cancelled,Could we extend the session?
+18,11,21,12/18/2024 12:00,confirmed,
+19,7,3,12/18/2024 18:00,pending,
+20,13,20,12/19/2024 10:00,cancelled,
+21,25,20,12/20/2024 10:00,confirmed,
+22,17,20,12/21/2024 10:00,confirmed,
+23,29,3,12/21/2024 13:30,pending,
+24,23,20,12/25/2024 10:00,confirmed,
+25,25,20,12/25/2024 11:30,pending,
+26,16,21,12/25/2024 12:00,confirmed,
+27,7,3,12/25/2024 18:00,pending,
+28,6,20,12/26/2024 10:00,confirmed,
+29,27,21,1/1/2025 12:00,pending,
+30,27,21,1/5/2025 15:30,pending,
+31,27,21,1/12/2025 15:30,pending,

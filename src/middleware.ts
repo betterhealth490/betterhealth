@@ -9,12 +9,13 @@ const isPublicRoute = createRouteMatcher([
   "/contact",
   "/login(.*)",
   "/signup(.*)",
+  "/clerk",
 ]);
 
 type MemberMetadata = {
   role: "member";
   databaseId: string;
-  initialSurveyCompleted: boolean;
+  questionnaireCompleted: boolean;
 };
 
 type TherapistMetadata = {
@@ -37,7 +38,7 @@ export default clerkMiddleware(async (auth, request) => {
     // otherwise redirect to the dashboard
     if (
       userMetadata.role === "member" &&
-      !userMetadata.initialSurveyCompleted &&
+      !userMetadata.questionnaireCompleted &&
       !request.url.includes("/startup")
     ) {
       return NextResponse.redirect(new URL("/startup", request.url));
