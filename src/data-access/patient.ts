@@ -16,7 +16,7 @@ import {
   users,
   therapistPatient,
   therapistComments,
-  surveys,
+  initialQuestionnare,
 } from "~/db/schema";
 import {
   type SelectTherapistInput,
@@ -173,13 +173,13 @@ export async function changeTherapist(
   if (redoInitialSurvey) {
     const surveyResult = await db
       .select({
-        surveyId: surveys.surveyId,
-        surveyData: surveys.surveyData,
-        createdAt: surveys.createdAt,
+        surveyId:   initialQuestionnare.questionnaireId,
+        surveyData:   initialQuestionnare.questionnaireData,
+        createdAt:   initialQuestionnare.createdAt,
       })
-      .from(surveys)
+      .from(  initialQuestionnare)
       .where(
-        and(eq(surveys.userId, patientId), eq(surveys.surveyType, "initial")),
+        eq(initialQuestionnare.userId, patientId),
       )
       .limit(1);
 

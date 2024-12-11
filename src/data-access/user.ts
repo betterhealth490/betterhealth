@@ -53,7 +53,6 @@ export async function createTherapistUseCase(
       .values({
         firstName,
         lastName,
-        licenseNumber,
         email,
         password,
         createdAt: new Date(),

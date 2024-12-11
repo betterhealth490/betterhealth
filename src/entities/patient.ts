@@ -1,6 +1,6 @@
 import { eq, and, sql } from "drizzle-orm";
 import { db } from "~/db";
-import { users, billing, healthHabits, journals, therapistPatient } from "~/db/schema";
+import { users, billing, initialQuestionnare, journals, therapistPatient } from "~/db/schema";
 
 export interface SelectTherapistInput {
   patientId: number;
@@ -82,7 +82,7 @@ export async function areAllBillsPaid(userId: number): Promise<boolean> {
   const result = await db
     .select({ status: billing.status })
     .from(billing)
-    .where(eq(billing.userId, userId));
+    .where(eq(billing.patientId, userId));
 
   return result.every((bill) => bill.status === "paid");
 }
@@ -99,10 +99,10 @@ export async function isUserTherapist(userId: number): Promise<boolean> {
 }
 
 export async function deleteUserRelatedData(userId: number): Promise<void> {
-  await db.delete(healthHabits).where(eq(healthHabits.patientId, userId));
-  await db.delete(journals).where(eq(journals.userId, userId));
+  await db.delete(initialQuestionnare).where(eq(initialQuestionnare.userId, userId));
+  await db.delete(journals).where(eq(journals.patientId, userId));
   await db.delete(therapistPatient).where(eq(therapistPatient.patientId, userId));
-  await db.delete(billing).where(eq(billing.userId, userId));
+  await db.delete(billing).where(eq(billing.patientId, userId));
 }
 
 export async function deleteUser(userId: number): Promise<boolean> {

@@ -11,6 +11,8 @@ import {
   varchar,
   integer,
   decimal,
+  date,
+  time,
 } from "drizzle-orm/pg-core";
 
 /**
@@ -23,7 +25,6 @@ export const createTable = pgTableCreator((name) => `betterhealth_${name}`);
 
 // Enums
 export const roleEnum = pgEnum("role", ["therapist", "member"]);
-export const surveyTypeEnum = pgEnum("survey_type", ["initial", "daily"]);
 export const relationshipStatusEnum = pgEnum("relationship_status", [
   "pending",
   "approved",
@@ -48,19 +49,43 @@ export const feelingEnum = pgEnum("feeling", [
   "Sad",
   "I don't know",
 ]);
+export const genderEnum = pgEnum("gender", ["Male", "Female", "Other"]);
+export const ageEnum = pgEnum("age", [
+  "18-24",
+  "25-34",
+  "35-44",
+  "45-54",
+  "55-64",
+  "65+",
+]);
+export const specialtyEnum = pgEnum("specialty", [
+  "Addiction Counseling",
+  "Family Therapy",
+  "Marriage Counseling",
+  "Stress Management",
+  "Anger Management",
+  "Grief Counseling",
+  "Life Coaching",
+  "Career Counseling",
+  "Trauma Therapy",
+  "Substance Abuse Counseling",
+  "Eating Disorders Counseling",
+  "Behavioral Therapy",
+  "Self-Esteem Building",
+]);
 
-// Users Table with Authentication Fields
+
 export const users = createTable(
-  "user",
+  "users",
   {
     userId: serial("user_id").primaryKey(),
     firstName: varchar("first_name", { length: 100 }).notNull(),
     lastName: varchar("last_name", { length: 100 }).notNull(),
+    age: integer("age"),
+    gender: genderEnum("gender"),
     email: varchar("email", { length: 255 }).notNull().unique(),
     password: varchar("password", { length: 255 }).notNull(),
     role: roleEnum("role").notNull(),
-    licenseNumber: varchar("license_number", { length: 12 }).unique(),
-    isVerified: boolean("is_verified").default(false),
     createdAt: timestamp("created_at")
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
@@ -73,17 +98,12 @@ export const users = createTable(
   }),
 );
 
-// HealthHabits Table
-export const healthHabits = createTable("health_habits", {
-  habitId: serial("habit_id").primaryKey(),
-  patientId: integer("user_id")
-    .notNull()
-    .references(() => users.userId),
-  date: timestamp("date").notNull(),
-  waterIntake: integer("water_intake").notNull(),
-  sleepHours: integer("sleep_hours").notNull(),
-  mealsEaten: integer("meals_eaten").notNull(),
-  feeling: feelingEnum("feeling").notNull(),
+// Therapist Table with Authentication Fields
+export const therapist = createTable("therapist", {
+  therapistId: serial("user_id").primaryKey(),
+  specialty: specialtyEnum("specialty").notNull(),
+  licenseNumber: varchar("license_number", { length: 12 }).unique(),
+  isVerified: boolean("is_verified").default(false),
   createdAt: timestamp("created_at")
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
@@ -92,15 +112,12 @@ export const healthHabits = createTable("health_habits", {
     .$onUpdate(() => sql`CURRENT_TIMESTAMP`),
 });
 
-// Surveys Table
-export const surveys = createTable("surveys", {
-  surveyId: serial("survey_id").primaryKey(),
-  userId: integer("user_id")
-    .notNull()
-    .references(() => users.userId),
-  surveyDate: timestamp("survey_date").notNull(),
-  surveyType: surveyTypeEnum("survey_type").notNull(),
-  surveyData: json("survey_data"),
+// Patient Table
+export const patient = createTable("patient", {
+  patientId: serial("user_id").primaryKey(),
+  agePreference: ageEnum("age").notNull(),
+  genderPreference: genderEnum("gender").notNull(),
+  specialtyPreference: specialtyEnum("specialty").notNull(),
   createdAt: timestamp("created_at")
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
@@ -108,16 +125,61 @@ export const surveys = createTable("surveys", {
     .default(sql`CURRENT_TIMESTAMP`)
     .$onUpdate(() => sql`CURRENT_TIMESTAMP`),
 });
+
+// Daily Survey Table
+export const survey = createTable("survey", {
+  surveyId: serial("survey_id").primaryKey(),
+  patientId: integer("patient_id")
+    .notNull()
+    .references(() => patient.patientId),
+  // number of glasses drank
+  waterIntake: integer("water_intake").notNull(),
+  // hours of sleep
+  sleepLength: integer("sleep_length").notNull(),
+  // stress level from 0-5
+  stressLevel: integer("stress_level").notNull(),
+  // how many meals eaten
+  foodIntake: integer("food_intake").notNull(),
+  sleepTime: integer("sleep_time").notNull(),
+  foodHealthQuality: integer("food_quality").notNull(),
+  sleepQuality: integer("sleep_quality").notNull(),
+  selfImage: integer("self_image").notNull(),
+  createdAt: timestamp("created_at")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+  updatedAt: timestamp("updated_at")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .$onUpdate(() => sql`CURRENT_TIMESTAMP`),
+});
+
+// Initial Questionnare Table
+export const initialQuestionnare = createTable(
+  "initial_questionnaire",
+  {
+    questionnaireId: serial("questionnaire_id").primaryKey(),
+    userId: integer("user_id")
+      .notNull()
+      .references(() => users.userId),
+    questionnaireDate: timestamp("questionnaire_date").notNull(),
+    questionnaireData: json("questionnaire_data"),
+    createdAt: timestamp("created_at")
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+    updatedAt: timestamp("updated_at")
+      .default(sql`CURRENT_TIMESTAMP`)
+      .$onUpdate(() => sql`CURRENT_TIMESTAMP`),
+  },
+);
 
 // TherapistPatient Relationship Table
 export const therapistPatient = createTable("therapist_patient", {
   relationshipId: serial("relationship_id").primaryKey(),
   patientId: integer("patient_id")
     .notNull()
-    .references(() => users.userId),
+    .references(() => patient.patientId),
   therapistId: integer("therapist_id")
     .notNull()
-    .references(() => users.userId),
+    .references(() => therapist.therapistId),
   status: relationshipStatusEnum("status").default("pending"),
   createdAt: timestamp("created_at")
     .default(sql`CURRENT_TIMESTAMP`)
@@ -132,10 +194,10 @@ export const therapistComments = createTable("therapist_comments", {
   commentId: serial("comment_id").primaryKey(),
   patientId: integer("patient_id")
     .notNull()
-    .references(() => users.userId),
+    .references(() => patient.patientId),
   therapistId: integer("therapist_id")
     .notNull()
-    .references(() => users.userId),
+    .references(() => therapist.therapistId),
   comment: text("comment"),
   createdAt: timestamp("created_at")
     .default(sql`CURRENT_TIMESTAMP`)
@@ -150,10 +212,10 @@ export const appointments = createTable("appointments", {
   appointmentId: serial("appointment_id").primaryKey(),
   patientId: integer("patient_id")
     .notNull()
-    .references(() => users.userId),
+    .references(() => patient.patientId),
   therapistId: integer("therapist_id")
     .notNull()
-    .references(() => users.userId),
+    .references(() => therapist.therapistId),
   appointmentDate: timestamp("appointment_date").notNull(),
   status: appointmentStatusEnum("status").default("pending").notNull(),
   notes: varchar("notes", { length: 500 }).notNull(),
@@ -168,9 +230,9 @@ export const appointments = createTable("appointments", {
 // Billing Table
 export const billing = createTable("billing", {
   billId: serial("bill_id").primaryKey(),
-  userId: integer("user_id")
+  patientId: integer("patient_id")
     .notNull()
-    .references(() => users.userId),
+    .references(() => patient.patientId),
   amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
   dueDate: timestamp("due_date").notNull(),
   status: billingStatusEnum("status").default("pending"),
@@ -185,9 +247,9 @@ export const billing = createTable("billing", {
 // Journals Table
 export const journals = createTable("journals", {
   journalId: serial("journal_id").primaryKey(),
-  userId: integer("user_id")
+  patientId: integer("patient_id")
     .notNull()
-    .references(() => users.userId),
+    .references(() => patient.patientId),
   entryDate: timestamp("entry_date").notNull(),
   content: text("content"),
   createdAt: timestamp("created_at")
@@ -196,52 +258,6 @@ export const journals = createTable("journals", {
   updatedAt: timestamp("updated_at")
     .default(sql`CURRENT_TIMESTAMP`)
     .$onUpdate(() => sql`CURRENT_TIMESTAMP`),
-});
-
-// Audit Tables
-export const healthHabitsAudit = createTable("health_habits_audit", {
-  auditId: serial("audit_id").primaryKey(),
-  habitId: integer("habit_id")
-    .notNull()
-    .references(() => healthHabits.habitId),
-  userId: integer("user_id")
-    .notNull()
-    .references(() => users.userId),
-  changeType: changeTypeEnum("change_type").notNull(),
-  changedAt: timestamp("changed_at")
-    .default(sql`CURRENT_TIMESTAMP`)
-    .notNull(),
-  previousData: json("previous_data"),
-});
-
-export const surveysAudit = createTable("surveys_audit", {
-  auditId: serial("audit_id").primaryKey(),
-  surveyId: integer("survey_id")
-    .notNull()
-    .references(() => surveys.surveyId),
-  userId: integer("user_id")
-    .notNull()
-    .references(() => users.userId),
-  changeType: changeTypeEnum("change_type").notNull(),
-  changedAt: timestamp("changed_at")
-    .default(sql`CURRENT_TIMESTAMP`)
-    .notNull(),
-  previousData: json("previous_data"),
-});
-
-export const billingAudit = createTable("billing_audit", {
-  auditId: serial("audit_id").primaryKey(),
-  billId: integer("bill_id")
-    .notNull()
-    .references(() => billing.billId),
-  userId: integer("user_id")
-    .notNull()
-    .references(() => users.userId),
-  changeType: changeTypeEnum("change_type").notNull(),
-  changedAt: timestamp("changed_at")
-    .default(sql`CURRENT_TIMESTAMP`)
-    .notNull(),
-  previousData: json("previous_data"),
 });
 
 // Messages Table
@@ -258,6 +274,23 @@ export const messages = createTable("message", {
   sentAt: timestamp("sent_at")
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
+  createdAt: timestamp("created_at")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+  updatedAt: timestamp("updated_at")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .$onUpdate(() => sql`CURRENT_TIMESTAMP`),
+});
+
+export const availability = createTable("availability", {
+  availabilityId: serial("availability_id").primaryKey(),
+  therapistId: integer("therapist_id")
+    .notNull()
+    .references(() => therapist.therapistId),
+  availableDate: date("date").notNull(),
+  startTime: time("start_time").notNull(),
+  endTime: time("end_time").notNull(),
+  isBooked: boolean("is_booked").default(false).notNull(),
   createdAt: timestamp("created_at")
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
