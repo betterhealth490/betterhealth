@@ -1,3 +1,4 @@
+import { promises as fs } from "fs"
 import { PageWrapper } from "../page-wrapper";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { currentUser } from "@clerk/nextjs/server";
@@ -11,6 +12,21 @@ import { OverviewContent } from "./overview/content";
 import { listAppointments } from "~/data-access/appointment";
 import { getPatientTherapist } from "~/data-access/patient";
 import { listBillsByPatient } from "~/data-access/billing";
+import { DataTable } from "./components/data-table";
+import path from "path";
+import { z } from "zod";
+import { taskSchema } from "./data/schema";
+import { columns } from "./components/columns";
+
+async function getTasks() {
+  const data = await fs.readFile(
+    path.join(process.cwd(), "src/app/(user)/dashboard/data/tasks.json")
+  )
+
+  const tasks = JSON.parse(data.toString())
+
+  return z.array(taskSchema).parse(tasks)
+}
 
 export default async function DashboardPage() {
   const user = await currentUser();
@@ -24,6 +40,7 @@ export default async function DashboardPage() {
 }
 
 async function PatientDashboard({ userId }: { userId: number }) {
+  const tasks = await getTasks()
   const surveys = await listSurveys({ patientId: userId });
   const dailySurveyCompleted = isDefined(
     surveys.find(
@@ -47,19 +64,11 @@ async function PatientDashboard({ userId }: { userId: number }) {
     }),
   );
   return (
-    <PageWrapper
-      actions={
-        !dailySurveyCompleted ? (
-          <DailySurveyButton userId={userId} />
-        ) : (
-          <Button disabled>Daily survey completed</Button>
-        )
-      }
-    >
-      <Tabs defaultValue="overview" className="p-4">
+    <PageWrapper>
+      <Tabs className="p-4">
         <TabsList>
           <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="surveys">Surveys</TabsTrigger>
+          <TabsTrigger value="tracking">Tracking</TabsTrigger>
           <TabsTrigger value="therapists">Therapists</TabsTrigger>
         </TabsList>
         <TabsContent value="overview">
@@ -77,7 +86,7 @@ async function PatientDashboard({ userId }: { userId: number }) {
         <TabsContent value="surveys">
           <PatientSurveys surveys={surveys} />
         </TabsContent>
-        <TabsContent value="therapists">Therapists</TabsContent>
+        <TabsContent value="therapists"><DataTable data={tasks} columns={columns}/></TabsContent>
       </Tabs>
     </PageWrapper>
   );
