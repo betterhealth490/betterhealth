@@ -117,7 +117,7 @@ function MemberSignUpForm({
             unsafeMetadata: {
               databaseId: data.userId,
               role: data.role,
-              initialSurveyCompleted: false,
+              questionnaireCompleted: false,
             },
           });
           if (signUpAttempt.status === "complete") {
