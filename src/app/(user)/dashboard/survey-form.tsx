@@ -93,7 +93,7 @@ export function DailySurveyButton({ userId }: { userId: number }) {
                   <FormControl>
                     <Slider
                       value={[field.value]}
-                      onValueChange={field.onChange}
+                      onValueChange={(val) => field.onChange(val[0])}
                       max={4}
                       step={1}
                     />
@@ -115,7 +115,7 @@ export function DailySurveyButton({ userId }: { userId: number }) {
                   <FormControl>
                     <Slider
                       value={[field.value]}
-                      onValueChange={field.onChange}
+                      onValueChange={(val) => field.onChange(val[0])}
                       max={4}
                       step={1}
                     />
@@ -137,7 +137,7 @@ export function DailySurveyButton({ userId }: { userId: number }) {
                   <FormControl>
                     <Slider
                       value={[field.value]}
-                      onValueChange={field.onChange}
+                      onValueChange={(val) => field.onChange(val[0])}
                       max={4}
                       step={1}
                     />
@@ -159,7 +159,7 @@ export function DailySurveyButton({ userId }: { userId: number }) {
                   <FormControl>
                     <Slider
                       value={[field.value]}
-                      onValueChange={field.onChange}
+                      onValueChange={(val) => field.onChange(val[0])}
                       max={4}
                       step={1}
                     />
@@ -181,7 +181,7 @@ export function DailySurveyButton({ userId }: { userId: number }) {
                   <FormControl>
                     <Slider
                       value={[field.value]}
-                      onValueChange={field.onChange}
+                      onValueChange={(val) => field.onChange(val[0])}
                       max={4}
                       step={1}
                     />
@@ -203,7 +203,7 @@ export function DailySurveyButton({ userId }: { userId: number }) {
                   <FormControl>
                     <Slider
                       value={[field.value]}
-                      onValueChange={field.onChange}
+                      onValueChange={(val) => field.onChange(val[0])}
                       max={4}
                       step={1}
                     />
@@ -225,7 +225,7 @@ export function DailySurveyButton({ userId }: { userId: number }) {
                   <FormControl>
                     <Slider
                       value={[field.value]}
-                      onValueChange={field.onChange}
+                      onValueChange={(val) => field.onChange(val[0])}
                       max={4}
                       step={1}
                     />
@@ -247,7 +247,7 @@ export function DailySurveyButton({ userId }: { userId: number }) {
                   <FormControl>
                     <Slider
                       value={[field.value]}
-                      onValueChange={field.onChange}
+                      onValueChange={(val) => field.onChange(val[0])}
                       max={4}
                       step={1}
                     />
