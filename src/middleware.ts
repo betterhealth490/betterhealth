@@ -12,19 +12,11 @@ const isPublicRoute = createRouteMatcher([
   "/clerk",
 ]);
 
-type MemberMetadata = {
+type UserMetadata = {
   role: "member";
   databaseId: string;
   questionnaireCompleted: boolean;
 };
-
-type TherapistMetadata = {
-  role: "therapist";
-  databaseId: string;
-  licenseNumber: string;
-};
-
-export type UserMetadata = MemberMetadata | TherapistMetadata;
 
 export default clerkMiddleware(async (auth, request) => {
   const { userId, sessionClaims, redirectToSignIn } = await auth();
@@ -37,7 +29,6 @@ export default clerkMiddleware(async (auth, request) => {
     // Redirect to the startup page if member hasn't completed the initial survey
     // otherwise redirect to the dashboard
     if (
-      userMetadata.role === "member" &&
       !userMetadata.questionnaireCompleted &&
       !request.url.includes("/startup")
     ) {
