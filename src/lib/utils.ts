@@ -46,3 +46,9 @@ export function containsQuery(value: string, query: string) {
 }
 
 export const doHyeon = Do_Hyeon({ weight: "400", subsets: ["latin"] });
+
+export function formatCamelCase(str: string) {
+  return str
+    .replace(/([a-z])([A-Z])/g, "$1 $2")
+    .replace(/^\w/, (c) => c.toUpperCase());
+}
