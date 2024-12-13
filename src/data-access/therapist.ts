@@ -1,7 +1,15 @@
-import { eq, and } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 import { db } from "~/db";
-import { therapistPatient, users, availability } from "~/db/schema";
+import {
+  users,
+  availability,
+  relationships,
+  type genderEnum,
+  type specialtyEnum,
+  therapists,
+} from "~/db/schema";
+import { isDefined } from "~/lib/utils";
 
 export async function listTherapistByPatient({
   patientId,
@@ -28,64 +36,48 @@ export async function listTherapistByPatient({
         lastName: therapists.lastName,
       },
     })
-    .from(therapistPatient)
-    .innerJoin(patients, eq(patients.userId, therapistPatient.patientId))
-    .innerJoin(therapists, eq(therapists.userId, therapistPatient.therapistId))
-    .where(eq(therapistPatient.patientId, patientId))
+    .from(relationships)
+    .innerJoin(patients, eq(patients.userId, relationships.patientId))
+    .innerJoin(therapists, eq(therapists.userId, relationships.therapistId))
+    .where(eq(relationships.patientId, patientId))
     .limit(limit)
     .offset(offset);
 }
 
 export async function listAvailability({
   therapistId,
-  date,
 }: {
   therapistId: number;
-  date: string;
 }) {
   return await db
     .select({
       availabilityId: availability.availabilityId,
+      day: availability.day,
       startTime: availability.startTime,
       endTime: availability.endTime,
-      isBooked: availability.isBooked,
     })
     .from(availability)
-    .where(
-      and(
-        eq(availability.therapistId, therapistId),
-        eq(availability.availableDate, date),
-        eq(availability.isBooked, false),
-      ),
-    );
+    .where(eq(availability.therapistId, therapistId));
 }
 
-export async function bookAvailabileSlot({
-  availabilityId,
-}: {
-  availabilityId: number;
-}) {
-  return await db
-    .update(availability)
-    .set({ isBooked: true })
-    .where(eq(availability.availabilityId, availabilityId));
-}
-
-export async function setTherapistAvailability({
+export async function updateTherapistProfile({
   therapistId,
-  availableDate,
-  startTime,
-  endTime,
+  values,
 }: {
   therapistId: number;
-  availableDate: string;
-  startTime: string;
-  endTime: string;
+  values: {
+    age: number | null;
+    gender: (typeof genderEnum.enumValues)[number] | null;
+    specialty: (typeof specialtyEnum.enumValues)[number] | undefined;
+  };
 }) {
-  return await db.insert(availability).values({
-    therapistId,
-    availableDate,
-    startTime,
-    endTime,
-  });
+  const [result] = await db
+    .update(therapists)
+    .set({ ...values, updatedAt: new Date() })
+    .where(eq(therapists.therapistId, therapistId))
+    .returning();
+  if (!isDefined(result)) {
+    throw new Error("Error updating therapist: " + therapistId);
+  }
+  return result;
 }

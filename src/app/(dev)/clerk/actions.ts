@@ -24,7 +24,6 @@ export const migrateUsersAction: () => Promise<ServerResponse> = async () => {
           unsafeMetadata: {
             role: user.role,
             databaseId: user.userId,
-            initialSurveyCompleted: true,
             questionnaireCompleted: true,
           },
         }),

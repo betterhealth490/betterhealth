@@ -23,11 +23,12 @@ import { createMemberAction, createTherapistAction } from "./actions";
 import { memberFormSchema, therapistFormSchema } from "./schema";
 import { isDefined } from "~/lib/utils";
 import { useState } from "react";
-import { Label } from "~/components/ui/label";
 import { Loader, Stethoscope, User } from "lucide-react";
 import { useSignUp } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { SignUpError } from "~/entities/errors";
+import { Loading } from "~/components/loading";
+import { useToast } from "~/hooks/use-toast";
 
 export function SignUpForm() {
   const [page, setPage] = useState<"start" | "member" | "therapist">("start");
@@ -95,7 +96,7 @@ function MemberSignUpForm({
 }) {
   const router = useRouter();
   const { isLoaded, signUp, setActive } = useSignUp();
-  const [message, setMessage] = useState("");
+  const { toast } = useToast();
   const memberForm = useForm<z.infer<typeof memberFormSchema>>({
     resolver: zodResolver(memberFormSchema),
   });
@@ -108,7 +109,11 @@ function MemberSignUpForm({
     try {
       const [data, error] = await createMemberAction(values);
       if (isDefined(error)) {
-        setMessage(error.message);
+        toast({
+          variant: "destructive",
+          title: "An error occurred during signup",
+          description: "Try again in a few moments",
+        });
       } else {
         if (isDefined(data)) {
           const signUpAttempt = await signUp.create({
@@ -129,7 +134,11 @@ function MemberSignUpForm({
         }
       }
     } catch (e) {
-      setMessage("An error occured during signup");
+      toast({
+        variant: "destructive",
+        title: "An error occurred during signup",
+        description: "Try again in a few moments",
+      });
     }
   };
 
@@ -211,7 +220,6 @@ function MemberSignUpForm({
                 Submit
               </Button>
             </div>
-            <Label className="text-destructive">{message}</Label>
           </CardFooter>
         </Card>
       </form>
@@ -226,20 +234,22 @@ function TherapistSignUpForm({
 }) {
   const router = useRouter();
   const { isLoaded, signUp, setActive } = useSignUp();
-  const [message, setMessage] = useState("");
+  const { toast } = useToast();
   const therapistForm = useForm<z.infer<typeof therapistFormSchema>>({
     resolver: zodResolver(therapistFormSchema),
   });
-
   if (!isLoaded) {
-    return <></>;
+    return <Loading />;
   }
-
   const onSubmit = async (values: z.infer<typeof therapistFormSchema>) => {
     try {
       const [data, error] = await createTherapistAction(values);
       if (isDefined(error)) {
-        setMessage(error.message);
+        toast({
+          variant: "destructive",
+          title: "An error occurred during signup",
+          description: "Try again in a few moments",
+        });
       } else {
         if (isDefined(data)) {
           const signUpAttempt = await signUp.create({
@@ -259,7 +269,11 @@ function TherapistSignUpForm({
         }
       }
     } catch (e) {
-      setMessage("An error occured during signup");
+      toast({
+        variant: "destructive",
+        title: "An error occurred during signup",
+        description: "Try again in a few moments",
+      });
     }
   };
 
@@ -354,7 +368,6 @@ function TherapistSignUpForm({
                 Submit
               </Button>
             </div>
-            <Label className="text-destructive">{message}</Label>
           </CardFooter>
         </Card>
       </form>

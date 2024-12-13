@@ -1,22 +1,13 @@
-import {
-  areAllBillsPaid,
-  isUserTherapist,
-  deleteUserRelatedData,
-  deleteUser,
-  type DeleteUserInput,
-  type DeleteUserResult,
-  type InitialSurveyData,
-  type ListTherapistPatientsInput,
-  type ListTherapistPatientsResult,
-} from "~/entities/patient";
-
 import { db } from "~/db";
 import { eq, and } from "drizzle-orm";
 import {
   users,
-  therapistPatient,
   therapistComments,
-  initialQuestionnare,
+  type ageEnum,
+  type genderEnum,
+  type specialtyEnum,
+  relationships,
+  patients,
 } from "~/db/schema";
 import {
   type SelectTherapistInput,
@@ -25,62 +16,7 @@ import {
   type ChangeTherapistResult,
 } from "~/entities/patient";
 import { alias } from "drizzle-orm/pg-core";
-
-export async function listTherapistPatients(
-  input: ListTherapistPatientsInput,
-): Promise<ListTherapistPatientsResult> {
-  const result = await db
-    .select({
-      patientId: therapistPatient.patientId,
-      firstName: users.firstName,
-      lastName: users.lastName,
-      status: therapistPatient.status,
-      createdAt: therapistPatient.createdAt,
-      updatedAt: therapistPatient.updatedAt,
-    })
-    .from(therapistPatient)
-    .innerJoin(users, eq(users.userId, therapistPatient.patientId))
-    .where(eq(therapistPatient.therapistId, input.therapistId));
-
-  return result;
-}
-
-export async function deleteUserall(
-  input: DeleteUserInput,
-): Promise<DeleteUserResult> {
-  const { userId } = input;
-
-  const therapist = await isUserTherapist(userId);
-  if (therapist) {
-    return {
-      success: false,
-      message: "Cannot delete the user because they are a therapist.",
-    };
-  }
-
-  const allBillsPaid = await areAllBillsPaid(userId);
-  if (!allBillsPaid) {
-    return {
-      success: false,
-      message: "Cannot delete the user because not all bills have been paid.",
-    };
-  }
-
-  await deleteUserRelatedData(userId);
-
-  const userDeleted = await deleteUser(userId);
-  if (!userDeleted) {
-    return {
-      success: false,
-      message: "Failed to delete the user.",
-    };
-  }
-
-  return {
-    success: true,
-    message: "User and all related data deleted successfully.",
-  };
-}
+import { isDefined } from "~/lib/utils";
 
 export async function selectTherapist(
   input: SelectTherapistInput,
@@ -88,7 +24,7 @@ export async function selectTherapist(
   const { patientId, therapistId } = input;
 
   const result = await db
-    .insert(therapistPatient)
+    .insert(relationships)
     .values({
       patientId,
       therapistId,
@@ -114,13 +50,8 @@ export async function selectTherapist(
 export async function changeTherapist(
   input: ChangeTherapistInput,
 ): Promise<ChangeTherapistResult> {
-  const {
-    patientId,
-    currentTherapistId,
-    newTherapistId,
-    shareComments,
-    redoInitialSurvey,
-  } = input;
+  const { patientId, currentTherapistId, newTherapistId, shareComments } =
+    input;
 
   let previousTherapistComments: string[] | undefined;
   if (shareComments) {
@@ -144,17 +75,17 @@ export async function changeTherapist(
   }
 
   await db
-    .update(therapistPatient)
+    .update(relationships)
     .set({ status: "declined", updatedAt: new Date() })
     .where(
       and(
-        eq(therapistPatient.patientId, patientId),
-        eq(therapistPatient.therapistId, currentTherapistId),
+        eq(relationships.patientId, patientId),
+        eq(relationships.therapistId, currentTherapistId),
       ),
     );
 
   const newRelationshipResult = await db
-    .insert(therapistPatient)
+    .insert(relationships)
     .values({
       patientId,
       therapistId: newTherapistId,
@@ -169,36 +100,9 @@ export async function changeTherapist(
     throw new Error("Failed to create new therapist-patient relationship");
   }
 
-  let initialSurveyData: InitialSurveyData | undefined;
-  if (redoInitialSurvey) {
-    const surveyResult = await db
-      .select({
-        surveyId:   initialQuestionnare.questionnaireId,
-        surveyData:   initialQuestionnare.questionnaireData,
-        createdAt:   initialQuestionnare.createdAt,
-      })
-      .from(  initialQuestionnare)
-      .where(
-        eq(initialQuestionnare.userId, patientId),
-      )
-      .limit(1);
-
-    const fetchedSurvey = surveyResult.at(0);
-    if (fetchedSurvey) {
-      initialSurveyData = {
-        surveyId: fetchedSurvey.surveyId,
-        surveyData: fetchedSurvey.surveyData as object,
-        createdAt: fetchedSurvey.createdAt,
-      };
-    }
-  }
-
   return {
     relationshipId: newRelationship.relationshipId,
     previousTherapistComments,
-    initialSurveyData: redoInitialSurvey
-      ? initialSurveyData?.surveyData
-      : undefined,
   };
 }
 
@@ -227,10 +131,32 @@ export async function listPatientsByTherapist({
         lastName: therapists.lastName,
       },
     })
-    .from(therapistPatient)
-    .innerJoin(patients, eq(patients.userId, therapistPatient.patientId))
-    .innerJoin(therapists, eq(therapists.userId, therapistPatient.therapistId))
-    .where(eq(therapistPatient.therapistId, therapistId))
+    .from(relationships)
+    .innerJoin(patients, eq(patients.userId, relationships.patientId))
+    .innerJoin(therapists, eq(therapists.userId, relationships.therapistId))
+    .where(eq(relationships.therapistId, therapistId))
     .limit(limit)
     .offset(offset);
+}
+
+export async function updatePreferences({
+  patientId,
+  values,
+}: {
+  patientId: number;
+  values: {
+    agePreference: (typeof ageEnum.enumValues)[number] | null;
+    genderPreference: (typeof genderEnum.enumValues)[number] | null;
+    specialtyPreference: (typeof specialtyEnum.enumValues)[number] | null;
+  };
+}) {
+  const [result] = await db
+    .update(patients)
+    .set({ ...values, updatedAt: new Date() })
+    .where(eq(patients.patientId, patientId))
+    .returning();
+  if (!isDefined(result)) {
+    throw new Error("Error updating patient: " + patientId);
+  }
+  return result;
 }
