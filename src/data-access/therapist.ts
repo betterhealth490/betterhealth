@@ -60,24 +60,50 @@ export async function listAvailability({
     .where(eq(availability.therapistId, therapistId));
 }
 
-export async function updateTherapistProfile({
-  therapistId,
-  values,
+export async function updateProfile({
+  userId,
+  options,
 }: {
-  therapistId: number;
-  values: {
-    age: number | null;
-    gender: (typeof genderEnum.enumValues)[number] | null;
-    specialty: (typeof specialtyEnum.enumValues)[number] | undefined;
+  userId: number;
+  options: {
+    firstName?: string;
+    lastName?: string;
+    email?: string;
+    age?: number | null;
+    gender?: (typeof genderEnum.enumValues)[number] | null;
   };
 }) {
   const [result] = await db
+    .update(users)
+    .set({
+      ...options,
+      updatedAt: new Date(),
+    })
+    .where(eq(users.userId, userId))
+    .returning();
+  if (!isDefined(result)) {
+    throw new Error("Error updating user: " + userId);
+  }
+  return result;
+}
+
+export async function updateSpecialty({
+  therapistId,
+  specialty,
+}: {
+  therapistId: number;
+  specialty: (typeof specialtyEnum.enumValues)[number] | undefined;
+}) {
+  const [result] = await db
     .update(therapists)
-    .set({ ...values, updatedAt: new Date() })
+    .set({
+      specialty,
+      updatedAt: new Date(),
+    })
     .where(eq(therapists.therapistId, therapistId))
     .returning();
   if (!isDefined(result)) {
-    throw new Error("Error updating therapist: " + therapistId);
+    throw new Error("Error updating therapist specialty: " + therapistId);
   }
   return result;
 }

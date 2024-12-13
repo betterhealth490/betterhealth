@@ -1,14 +1,14 @@
 "use server";
 
 import { unauthenticatedAction } from "~/lib/safe-action";
-import { createMemberUseCase, createTherapistUseCase } from "~/data-access/user";
+import { createMember, createTherapist } from "~/data-access/user";
 import { memberFormSchema, therapistFormSchema } from "./schema";
 
 export const createMemberAction = unauthenticatedAction
   .createServerAction()
   .input(memberFormSchema)
   .handler(async ({ input }) => {
-    return await createMemberUseCase(
+    return await createMember(
       input.firstName,
       input.lastName,
       input.email,
@@ -20,7 +20,7 @@ export const createTherapistAction = unauthenticatedAction
   .createServerAction()
   .input(therapistFormSchema)
   .handler(async ({ input }) => {
-    return await createTherapistUseCase(
+    return await createTherapist(
       input.firstName,
       input.lastName,
       input.licenseNumber,

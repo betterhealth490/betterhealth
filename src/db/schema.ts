@@ -84,11 +84,11 @@ export const users = createTable(
 
 // Therapist Table with Authentication Fields
 export const therapists = createTable("therapist", {
-  therapistId: serial("therapist_id")
+  therapistId: integer("therapist_id")
     .primaryKey()
     .notNull()
     .references(() => users.userId),
-  specialty: specialtyEnum("specialty").notNull(),
+  specialty: specialtyEnum("specialty"),
   licenseNumber: varchar("license_number", { length: 12 }).unique(),
   accepting: boolean("accepting").notNull().default(false),
   createdAt: timestamp("created_at")
@@ -101,7 +101,7 @@ export const therapists = createTable("therapist", {
 
 // Patient Table
 export const patients = createTable("patient", {
-  patientId: serial("patient_id")
+  patientId: integer("patient_id")
     .primaryKey()
     .notNull()
     .references(() => users.userId),

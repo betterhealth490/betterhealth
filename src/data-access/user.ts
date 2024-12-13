@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { db } from "~/db";
-import { users } from "~/db/schema";
+import { patients, therapists, users } from "~/db/schema";
 import {
   EmailInUseError,
   LicenseInUseError,
@@ -8,7 +8,7 @@ import {
 } from "~/entities/errors";
 import { isDefined } from "~/lib/utils";
 
-export async function createMemberUseCase(
+export async function createMember(
   firstName: string,
   lastName: string,
   email: string,
@@ -30,7 +30,14 @@ export async function createMemberUseCase(
     if (!isDefined(user)) {
       throw new SignUpError();
     }
-    return user;
+    const [patient] = await db
+      .insert(patients)
+      .values({ patientId: user.userId })
+      .returning();
+    if (!isDefined(patient)) {
+      throw new SignUpError();
+    }
+    return { user, patient };
   } catch (e) {
     const { success, data } = z.object({ constraint: z.string() }).safeParse(e);
     if (success && data.constraint === "betterhealth_user_email_unique") {
@@ -40,7 +47,7 @@ export async function createMemberUseCase(
   }
 }
 
-export async function createTherapistUseCase(
+export async function createTherapist(
   firstName: string,
   lastName: string,
   licenseNumber: string,
@@ -63,7 +70,15 @@ export async function createTherapistUseCase(
     if (!isDefined(user)) {
       throw new SignUpError();
     }
-    return user;
+    console.log(user);
+    const [therapist] = await db
+      .insert(therapists)
+      .values({ therapistId: user.userId })
+      .returning();
+    if (!isDefined(therapist)) {
+      throw new SignUpError();
+    }
+    return { user, therapist };
   } catch (e) {
     const { success, data } = z.object({ constraint: z.string() }).safeParse(e);
     if (success && data.constraint === "betterhealth_user_email_unique") {
