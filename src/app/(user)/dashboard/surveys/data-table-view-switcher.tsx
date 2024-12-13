@@ -1,6 +1,6 @@
 "use client";
 
-import { LineChart, PieChart, Table } from "lucide-react";
+import { LineChart, Table } from "lucide-react";
 
 import { Button } from "~/components/ui/button";
 

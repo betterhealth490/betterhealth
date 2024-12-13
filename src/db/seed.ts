@@ -71,6 +71,28 @@ async function seed() {
     await db.delete(patients);
     await db.delete(users);
 
+    await db.execute(
+      "ALTER SEQUENCE betterhealth_user_user_id_seq RESTART WITH 31",
+    );
+    await db.execute(
+      "ALTER SEQUENCE betterhealth_survey_survey_id_seq RESTART WITH 776",
+    );
+    await db.execute(
+      "ALTER SEQUENCE betterhealth_appointment_appointment_id_seq RESTART WITH 32",
+    );
+    await db.execute(
+      "ALTER SEQUENCE betterhealth_journal_journal_id_seq RESTART WITH 29",
+    );
+    await db.execute(
+      "ALTER SEQUENCE betterhealth_availability_availability_id_seq RESTART WITH 29",
+    );
+    await db.execute(
+      "ALTER SEQUENCE betterhealth_appointment_appointment_id_seq RESTART WITH 32",
+    );
+    await db.execute(
+      "ALTER SEQUENCE betterhealth_relationship_relationship_id_seq RESTART WITH 29",
+    );
+
     // Read and insert users
     console.log("Inserting users...");
     const userData = readCsvFile("users.csv");

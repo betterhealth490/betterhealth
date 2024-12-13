@@ -27,15 +27,7 @@ import {
 
 import { DataTableToolbar } from "./data-table-toolbar";
 import { type DateRange } from "react-day-picker";
-import {
-  CartesianGrid,
-  Line,
-  LineChart,
-  Pie,
-  PieChart,
-  XAxis,
-  YAxis,
-} from "recharts";
+import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 import {
   ChartContainer,
   ChartTooltip,
