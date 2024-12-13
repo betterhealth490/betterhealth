@@ -1,7 +1,7 @@
 import { eq, and } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 import { db } from "~/db";
-import { therapistPatient, users, availability } from "~/db/schema";
+import { relationships, users, availability } from "~/db/schema";
 
 export async function listTherapistByPatient({
   patientId,
@@ -28,10 +28,10 @@ export async function listTherapistByPatient({
         lastName: therapists.lastName,
       },
     })
-    .from(therapistPatient)
-    .innerJoin(patients, eq(patients.userId, therapistPatient.patientId))
-    .innerJoin(therapists, eq(therapists.userId, therapistPatient.therapistId))
-    .where(eq(therapistPatient.patientId, patientId))
+    .from(relationships)
+    .innerJoin(patients, eq(patients.userId, relationships.patientId))
+    .innerJoin(therapists, eq(therapists.userId, relationships.therapistId))
+    .where(eq(relationships.patientId, patientId))
     .limit(limit)
     .offset(offset);
 }
@@ -41,50 +41,39 @@ export async function listAvailability({
   date,
 }: {
   therapistId: number;
-  date: string;
+  date: number;
 }) {
   return await db
     .select({
       availabilityId: availability.availabilityId,
       startTime: availability.startTime,
       endTime: availability.endTime,
-      isBooked: availability.isBooked,
     })
     .from(availability)
     .where(
       and(
         eq(availability.therapistId, therapistId),
-        eq(availability.availableDate, date),
-        eq(availability.isBooked, false),
+        eq(availability.day, date),
       ),
     );
 }
 
-export async function bookAvailabileSlot({
-  availabilityId,
-}: {
-  availabilityId: number;
-}) {
-  return await db
-    .update(availability)
-    .set({ isBooked: true })
-    .where(eq(availability.availabilityId, availabilityId));
-}
+
 
 export async function setTherapistAvailability({
   therapistId,
-  availableDate,
+  day,
   startTime,
   endTime,
 }: {
   therapistId: number;
-  availableDate: string;
+  day: number;
   startTime: string;
   endTime: string;
 }) {
   return await db.insert(availability).values({
     therapistId,
-    availableDate,
+    day,
     startTime,
     endTime,
   });
