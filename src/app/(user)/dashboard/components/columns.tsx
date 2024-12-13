@@ -1,10 +1,25 @@
 "use client"
 
-import { ColumnDef } from "@tanstack/react-table"
+import { ColumnDef, FilterFn, RowData } from "@tanstack/react-table"
 import { Checkbox } from "~/components/ui/checkbox"
 import { DataTableColumnHeader } from "./data-table-column-header"
 import { Task } from "../data/schema"
 import { Button } from "~/components/ui/button"
+import { id } from "date-fns/locale"
+import { DataTableRowActions } from "./data-table-row-actions"
+import { status } from "../data/data"
+import { Badge } from "~/components/ui/badge"
+
+const customFn: FilterFn<any> = (
+  row,
+  columnId: string,
+  filterValue: [number, number][]
+) => {
+  const rowValue = row.getValue<number>(columnId);  
+  return filterValue.some(([min,max]) => 
+    rowValue >= min && rowValue <= max
+  );
+}
 
 export const columns: ColumnDef<Task>[] = [
   {
@@ -27,39 +42,46 @@ export const columns: ColumnDef<Task>[] = [
       <DataTableColumnHeader column={column} title="Age" />
     ),
     cell: ({ row }) => <div className="w-[80px]">{row.getValue("age")}</div>,
-    filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id))
-    },
+    filterFn: customFn
   },
   {
     accessorKey: "gender",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Gender" />
     ),
-    cell: ({ row }) => <div className="w-[80px]">{row.getValue("gender")}</div>,
-    filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id))
-    },
+    cell: ({ row }) => <div className="w-[80px] capitalize">{row.getValue("gender")}</div>,
+    filterFn: "arrIncludesSome"
   },
   {
     accessorKey: "specialty",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Specialty" />
     ),
-    cell: ({ row }) => <div className="w-[80px]">{row.getValue("specialty")}</div>,
-    filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id))
-    },
+    cell: ({ row }) => <div className="w-[80px] capitalize">{row.getValue("specialty")}</div>,
+    filterFn: "arrIncludesSome"
   },
   {
-    accessorKey: "available",
+    accessorKey: "status",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Request Therapist" />
+      <DataTableColumnHeader column={column} title="Status" />
     ),
     cell: ({ row }) => {
-      return (row.original.available === "true")
-      ? <Button>Request</Button> 
-      : <Button disabled={true} variant={"secondary"}>Unavailable</Button>
+      const label = status.find((label) => label.value === row.original.status)
+      switch(row.getValue("status")){
+        case "available":
+          return label && <Badge variant="outline">{label.label}</Badge>
+        case "current":
+          return label && <Badge variant="default">{label.label}</Badge>
+        case "pending":
+          return label && <Badge variant="secondary">{label.label}</Badge>
+        case "inactive":
+          return label && <Badge variant="secondary">{label.label}</Badge>
+      }
     },
+    filterFn: "arrIncludesSome"
+  },
+  {
+    id: "actions",
+    cell: ({row}) => <DataTableRowActions row={row}/>
   },
 ]

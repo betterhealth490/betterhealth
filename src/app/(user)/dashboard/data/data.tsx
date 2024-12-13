@@ -1,20 +1,3 @@
-
-  
-  export const labels = [
-    {
-      value: "bug",
-      label: "Bug",
-    },
-    {
-      value: "feature",
-      label: "Feature",
-    },
-    {
-      value: "documentation",
-      label: "Documentation",
-    },
-  ]
-  
   export const ages = [
     {
       value: "18-24",
@@ -41,7 +24,6 @@
       label: "65+",
     },
   ]
-  
   export const gender = [
     {
       label: "Male",
@@ -51,4 +33,44 @@
       label: "Female",
       value: "female",
     },
+  ]
+  export const specialization = [
+    {
+      label: "LGBTQ",
+      value: "lgbtq",
+    },
+    {
+      label: "Addiction",
+      value: "addiction",
+    },
+    {
+      label: "Health",
+      value: "health",
+    },
+    {
+      label: "Behavioral",
+      value: "behavioral",
+    },
+    {
+      label: "Counseling",
+      value: "counseling",
+    }
+  ]
+  export const status = [
+    {
+      label: "Current",
+      value: "current",
+    },
+    {
+      label: "Pending",
+      value: "pending",
+    },
+    {
+      label: "Available",
+      value: "available",
+    },
+    {
+      label: "Unavailable",
+      value: "inactive",
+    }
   ]
