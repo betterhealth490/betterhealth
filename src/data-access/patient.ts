@@ -20,6 +20,23 @@ import {
 import { alias } from "drizzle-orm/pg-core";
 import { isDefined } from "~/lib/utils";
 
+export async function getPatient({ patientId } : { patientId: number }) {
+  const result = await db
+    .select({
+      firstName: users.firstName,
+      lastName: users.lastName,
+      email: users.email,
+      password: users.password,
+      agePreference: patients.agePreference,
+      genderPreference: patients.genderPreference,
+      specialtyPreference: patients.specialtyPreference,
+    })
+    .from(users)
+    .innerJoin(patients, eq(users.userId, patients.patientId))
+    .where(eq(users.userId, patientId));
+  return result.at(0);
+}
+
 export async function selectTherapist(
   input: SelectTherapistInput,
 ): Promise<SelectTherapistResult> {
