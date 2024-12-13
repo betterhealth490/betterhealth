@@ -1,21 +1,44 @@
 import { PageWrapper } from "../page-wrapper";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
-import { DashboardSurveys } from "./surveys";
 import { currentUser } from "@clerk/nextjs/server";
+import { SurveysContent } from "./surveys/content";
+import { listSurveys } from "~/data-access/surveys";
+import { isDefined } from "~/lib/utils";
+import { Button } from "~/components/ui/button";
+import { DailySurveyButton } from "./survey-form";
 
 export default async function DashboardPage() {
   const user = await currentUser();
+  const userId = parseInt(user?.unsafeMetadata.databaseId as string);
   const role = user?.unsafeMetadata.role as string;
   return role === "member" ? (
-    <PatientDashboard />
+    <PatientDashboard userId={userId} />
   ) : (
     <div>Therapist dashboard</div>
   );
 }
 
-function PatientDashboard() {
+async function PatientDashboard({ userId }: { userId: number }) {
+  const surveys = (await listSurveys({ patientId: userId })).map((survey) => ({
+    id: survey.surveyId,
+    date: survey.createdAt,
+    ...survey,
+  }));
+  const dailySurveyCompleted = isDefined(
+    surveys.find(
+      ({ date }) => date.toDateString() === new Date().toDateString(),
+    ),
+  );
   return (
-    <PageWrapper>
+    <PageWrapper
+      actions={
+        !dailySurveyCompleted ? (
+          <DailySurveyButton userId={userId} />
+        ) : (
+          <Button disabled>Daily survey completed</Button>
+        )
+      }
+    >
       <Tabs defaultValue="overview" className="p-4">
         <TabsList>
           <TabsTrigger value="overview">Overview</TabsTrigger>
@@ -24,7 +47,7 @@ function PatientDashboard() {
         </TabsList>
         <TabsContent value="overview">Overview</TabsContent>
         <TabsContent value="surveys">
-          <DashboardSurveys />
+          <SurveysContent surveys={surveys} />
         </TabsContent>
         <TabsContent value="therapists">Therapists</TabsContent>
       </Tabs>
