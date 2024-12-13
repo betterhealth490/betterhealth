@@ -10,6 +10,9 @@ import {
   availability,
   appointments,
   journals,
+  surveys,
+  billings,
+  therapistComments,
 } from "./schema";
 import { parse } from "csv-parse/sync";
 import { readFileSync } from "fs";
@@ -57,6 +60,10 @@ async function seed() {
 
     // Clear existing data
     console.log("Clearing existing data...");
+    await db.delete(therapistComments);
+    await db.delete(billings);
+    await db.delete(surveys);
+    await db.delete(journals);
     await db.delete(appointments);
     await db.delete(availability);
     await db.delete(relationships);
@@ -180,6 +187,30 @@ async function seed() {
             entryDate: new Date(journal.entry_date),
             title: journal.title,
             content: journal.content,
+          };
+        }),
+      )
+      .returning();
+
+    // Read and insert surveys
+    console.log("Inserting surveys...");
+    const surveyData = readCsvFile("surveys.csv");
+    await db
+      .insert(surveys)
+      .values(
+        surveyData.map((survey: any) => {
+          return {
+            surveyId: survey.survey_id,
+            patientId: survey.patient_id,
+            createdAt: new Date(survey.created_at),
+            waterIntake: survey.water_intake,
+            foodIntake: survey.food_intake,
+            foodHealthQuality: survey.food_health_quality,
+            sleepTime: survey.sleep_time,
+            sleepQuality: survey.sleep_quality,
+            sleepLength: survey.sleep_length,
+            stressLevel: survey.stress_level,
+            selfImage: survey.self_image,
           };
         }),
       )
