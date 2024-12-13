@@ -9,6 +9,7 @@ import {
   CardTitle,
   CardContent,
   CardFooter,
+  CardDescription,
 } from "~/components/ui/card";
 import {
   Form,
@@ -30,9 +31,9 @@ import { useToast } from "~/hooks/use-toast";
 import { Loader } from "lucide-react";
 
 const formSchema = z.object({
-  agePreference: z.enum(ageEnum.enumValues).nullable(),
-  genderPreference: z.enum(genderEnum.enumValues).nullable(),
-  specialtyPreference: z.enum(specialtyEnum.enumValues).nullable(),
+  agePreference: z.enum(ageEnum.enumValues).optional(),
+  genderPreference: z.enum(genderEnum.enumValues).optional(),
+  specialtyPreference: z.enum(specialtyEnum.enumValues).optional(),
 });
 
 export function MemberForm() {
@@ -45,9 +46,13 @@ export function MemberForm() {
   if (!isLoaded || !isDefined(user)) {
     return <Loading />;
   }
-  const userId = parseInt(user.unsafeMetadata.databaseId as string);
+  const userId = user.unsafeMetadata.databaseId as number;
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const result = await memberQuestionnaireAction(userId, values);
+    const result = await memberQuestionnaireAction(userId, {
+      agePreference: values.agePreference ?? null,
+      genderPreference: values.genderPreference ?? null,
+      specialtyPreference: values.specialtyPreference ?? null,
+    });
     if (result.ok) {
       await user.update({
         unsafeMetadata: {
@@ -55,9 +60,8 @@ export function MemberForm() {
           questionnaireCompleted: true,
         },
       });
-      router.push("/dashboard");
+      router.push("/");
     } else {
-      console.log(result.error);
       toast({
         variant: "destructive",
         title: "An error occurred during signup",
@@ -72,6 +76,7 @@ export function MemberForm() {
         <Card className="w-[500px]">
           <CardHeader>
             <CardTitle>Help us find the right therapist for you</CardTitle>
+            <CardDescription>Select any preferences you have</CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-8">
             <FormField

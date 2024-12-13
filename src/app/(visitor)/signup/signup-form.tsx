@@ -116,12 +116,13 @@ function MemberSignUpForm({
         });
       } else {
         if (isDefined(data)) {
+          const { user } = data;
           const signUpAttempt = await signUp.create({
             ...values,
             emailAddress: values.email,
             unsafeMetadata: {
-              databaseId: data.userId,
-              role: data.role,
+              databaseId: user.userId,
+              role: user.role,
               questionnaireCompleted: false,
             },
           });
@@ -207,7 +208,11 @@ function MemberSignUpForm({
           </CardContent>
           <CardFooter className="flex flex-col items-start gap-2">
             <div className="flex w-full justify-between gap-2">
-              <Button variant="outline" onClick={() => onClick("start")}>
+              <Button
+                variant="outline"
+                type="button"
+                onClick={() => onClick("start")}
+              >
                 Back
               </Button>
               <Button
@@ -252,12 +257,13 @@ function TherapistSignUpForm({
         });
       } else {
         if (isDefined(data)) {
+          const { user } = data;
           const signUpAttempt = await signUp.create({
             ...values,
             emailAddress: values.email,
             unsafeMetadata: {
-              databaseId: data.userId,
-              role: data.role,
+              databaseId: user.userId,
+              role: user.role,
             },
           });
           if (signUpAttempt.status === "complete") {
@@ -355,7 +361,11 @@ function TherapistSignUpForm({
           </CardContent>
           <CardFooter className="flex flex-col items-start gap-2">
             <div className="flex w-full justify-between gap-2">
-              <Button variant="outline" onClick={() => onClick("start")}>
+              <Button
+                variant="outline"
+                type="button"
+                onClick={() => onClick("start")}
+              >
                 Back
               </Button>
               <Button

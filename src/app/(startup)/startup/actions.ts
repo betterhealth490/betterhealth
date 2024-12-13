@@ -1,7 +1,7 @@
 "use server";
 
 import { updatePreferences } from "~/data-access/patient";
-import { updateTherapistProfile } from "~/data-access/therapist";
+import { updateProfile, updateSpecialty } from "~/data-access/therapist";
 import { type ageEnum, type genderEnum, type specialtyEnum } from "~/db/schema";
 
 export const memberQuestionnaireAction = async (
@@ -33,11 +33,18 @@ export const therapistQuestionnaireAction = async (
   },
 ) => {
   try {
-    const result = await updateTherapistProfile({
-      therapistId: userId,
-      values,
+    const userResult = await updateProfile({
+      userId,
+      options: {
+        age: values.age,
+        gender: values.gender,
+      },
     });
-    return { ok: true, result };
+    const therapistResult = await updateSpecialty({
+      therapistId: userId,
+      specialty: values.specialty,
+    });
+    return { ok: true, result: [userResult, therapistResult] };
   } catch (err) {
     console.log(err);
     return { ok: false, error: JSON.stringify(err) };

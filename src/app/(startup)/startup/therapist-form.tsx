@@ -9,6 +9,7 @@ import {
   CardTitle,
   CardContent,
   CardFooter,
+  CardDescription,
 } from "~/components/ui/card";
 import {
   Form,
@@ -31,9 +32,9 @@ import { Input } from "~/components/ui/input";
 import { Loader } from "lucide-react";
 
 const formSchema = z.object({
-  age: z.coerce.number(),
-  gender: z.enum(genderEnum.enumValues).nullable(),
-  specialty: z.enum(specialtyEnum.enumValues).nullable(),
+  age: z.coerce.number().optional(),
+  gender: z.enum(genderEnum.enumValues).optional(),
+  specialty: z.enum(specialtyEnum.enumValues).optional(),
 });
 
 export function TherapistForm() {
@@ -49,8 +50,9 @@ export function TherapistForm() {
   const userId = parseInt(user.unsafeMetadata.databaseId as string);
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     const result = await therapistQuestionnaireAction(userId, {
-      ...values,
-      specialty: values.specialty ?? undefined,
+      age: values.age ?? null,
+      gender: values.gender ?? null,
+      specialty: values.specialty,
     });
     if (result.ok) {
       await user.update({
@@ -59,7 +61,7 @@ export function TherapistForm() {
           questionnaireCompleted: true,
         },
       });
-      router.push("/dashboard");
+      router.push("/");
     } else {
       console.log(result.error);
       toast({
@@ -75,6 +77,9 @@ export function TherapistForm() {
         <Card className="w-[500px]">
           <CardHeader>
             <CardTitle>Let patients know more about you</CardTitle>
+            <CardDescription>
+              Choose what information patients can see
+            </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-8">
             <FormField

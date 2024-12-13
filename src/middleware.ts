@@ -12,8 +12,28 @@ const isPublicRoute = createRouteMatcher([
   "/clerk",
 ]);
 
+const isMemberRoute = createRouteMatcher([
+  "/dashboard",
+  "/inbox",
+  "/journal",
+  "/appointments",
+  "/settings",
+  "/billing",
+]);
+
+const isTherapistRoute = createRouteMatcher([
+  "/dashboard",
+  "/inbox",
+  "/journal",
+  "/appointments",
+  "/settings",
+  "/billing",
+]);
+
+const isStartupRoute = createRouteMatcher(["/startup"]);
+
 type UserMetadata = {
-  role: "member";
+  role: "member" | "therapist";
   databaseId: string;
   questionnaireCompleted: boolean;
 };
@@ -24,17 +44,20 @@ export default clerkMiddleware(async (auth, request) => {
   if (!isDefined(userId) && !isPublicRoute(request)) {
     return redirectToSignIn();
   }
-  const userMetadata = sessionClaims?.unsafeMetadata as UserMetadata;
-  if (isDefined(userId) && isDefined(userMetadata)) {
-    // Redirect to the startup page if member hasn't completed the initial survey
-    // otherwise redirect to the dashboard
-    if (
-      !userMetadata.questionnaireCompleted &&
-      !request.url.includes("/startup")
-    ) {
-      return NextResponse.redirect(new URL("/startup", request.url));
-    } else if (isPublicRoute(request)) {
-      return NextResponse.redirect(new URL("/dashboard", request.url));
+  const metadata = sessionClaims?.unsafeMetadata as UserMetadata;
+  if (isDefined(userId) && isDefined(metadata)) {
+    const { role, questionnaireCompleted } = metadata;
+    if (questionnaireCompleted) {
+      if (role === "member" && !isMemberRoute(request)) {
+        return NextResponse.redirect(new URL("/dashboard", request.url));
+      }
+      if (role === "therapist" && !isTherapistRoute(request)) {
+        return NextResponse.redirect(new URL("/dashboard", request.url));
+      }
+    } else {
+      if (!isStartupRoute(request)) {
+        return NextResponse.redirect(new URL("/startup", request.url));
+      }
     }
   }
 });
