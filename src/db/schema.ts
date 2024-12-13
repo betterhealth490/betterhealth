@@ -119,7 +119,7 @@ export const patients = createTable("patient", {
 // Daily Survey Table
 export const surveys = createTable("survey", {
   surveyId: serial("survey_id").unique().primaryKey(),
-  patientId: serial("patient_id")
+  patientId: integer("patient_id")
     .notNull()
     .references(() => patients.patientId),
   // number of glasses drank
@@ -145,7 +145,7 @@ export const surveys = createTable("survey", {
 // Initial Questionnare Table
 export const questionnares = createTable("questionnaire", {
   questionnaireId: serial("questionnaire_id").unique().primaryKey(),
-  patientId: serial("patient_id")
+  patientId: integer("patient_id")
     .notNull()
     .references(() => patients.patientId),
   questionnaireDate: timestamp("questionnaire_date").notNull(),
@@ -161,7 +161,7 @@ export const questionnares = createTable("questionnaire", {
 // TherapistPatient Relationship Table
 export const relationships = createTable("relationship", {
   relationshipId: serial("relationship_id").unique().primaryKey(),
-  patientId: serial("patient_id")
+  patientId: integer("patient_id")
     .notNull()
     .references(() => patients.patientId),
   therapistId: serial("therapist_id")
@@ -197,7 +197,7 @@ export const therapistComments = createTable("therapist_comment", {
 // Appointments Table
 export const appointments = createTable("appointment", {
   appointmentId: serial("appointment_id").unique().primaryKey(),
-  patientId: serial("patient_id")
+  patientId: integer("patient_id")
     .notNull()
     .references(() => patients.patientId),
   therapistId: serial("therapist_id")
@@ -217,7 +217,7 @@ export const appointments = createTable("appointment", {
 // Billing Table
 export const billings = createTable("billing", {
   billId: serial("bill_id").unique().primaryKey(),
-  patientId: serial("patient_id")
+  patientId: integer("patient_id")
     .notNull()
     .references(() => patients.patientId),
   therapistId: serial("therapist_id")
@@ -237,7 +237,7 @@ export const billings = createTable("billing", {
 // Journals Table
 export const journals = createTable("journal", {
   journalId: serial("journal_id").unique().primaryKey(),
-  patientId: serial("patient_id")
+  patientId: integer("patient_id")
     .notNull()
     .references(() => patients.patientId),
   entryDate: timestamp("entry_date").notNull(),
@@ -253,7 +253,7 @@ export const journals = createTable("journal", {
 // Messages Table
 export const messages = createTable("message", {
   messageId: serial("message_id").unique().primaryKey(),
-  senderId: serial("sender_id")
+  senderId: integer("sender_id")
     .notNull()
     .references(() => users.userId),
   recipientId: serial("recipient_id")
@@ -274,7 +274,7 @@ export const messages = createTable("message", {
 
 export const availability = createTable("availability", {
   availabilityId: serial("availability_id").unique().primaryKey(),
-  therapistId: serial("therapist_id")
+  therapistId: integer("therapist_id")
     .notNull()
     .references(() => therapists.therapistId),
   day: integer("day").notNull(),
