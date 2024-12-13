@@ -6,7 +6,8 @@ import { Button } from "~/components/ui/button"
 import { Input } from "~/components/ui/input"
 import { DataTableFacetedFilter } from "./data-table-faceted-filter"
 import { DataTableViewOptions } from "./data-table-view-options"
-import { gender, ages } from "../data/data"
+import { gender, ages, specialization, status } from "../data/data"
+import { AgeDataTableFacetedFilter } from "./age-data-table-faceted-filter"
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>
@@ -22,17 +23,15 @@ export function DataTableToolbar<TData>({
       <div className="flex flex-1 items-center space-x-2">
         <Input
           placeholder="Filter therapists..."
-          value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
+          value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("title")?.setFilterValue(event.target.value)
+            table.getColumn("name")?.setFilterValue(event.target.value)
           }
           className="h-8 w-[150px] lg:w-[250px]"
         />
         {table.getColumn("age") && (
-          <DataTableFacetedFilter
+          <AgeDataTableFacetedFilter
             column={table.getColumn("age")}
-            title="Age"
-            options={ages}
           />
         )}
         {table.getColumn("gender") && (
@@ -40,6 +39,20 @@ export function DataTableToolbar<TData>({
             column={table.getColumn("gender")}
             title="Gender"
             options={gender}
+          />
+        )}
+          {table.getColumn("specialty") && (
+          <DataTableFacetedFilter
+            column={table.getColumn("specialty")}
+            title="Specialty"
+            options={specialization}
+          />
+        )}
+        {table.getColumn("status") && (
+          <DataTableFacetedFilter
+            column={table.getColumn("status")}
+            title="Status"
+            options={status}
           />
         )}
         {isFiltered && (

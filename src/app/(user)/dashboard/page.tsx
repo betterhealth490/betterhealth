@@ -64,11 +64,19 @@ async function PatientDashboard({ userId }: { userId: number }) {
     }),
   );
   return (
-    <PageWrapper>
-      <Tabs className="p-4">
+    <PageWrapper
+      actions={
+        !dailySurveyCompleted ? (
+          <DailySurveyButton userId={userId} />
+        ) : (
+          <Button disabled>Daily survey completed</Button>
+        )
+      }
+    >
+      <Tabs defaultValue="overview" className="p-4">
         <TabsList>
           <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="tracking">Tracking</TabsTrigger>
+          <TabsTrigger value="surveys">Surveys</TabsTrigger>
           <TabsTrigger value="therapists">Therapists</TabsTrigger>
         </TabsList>
         <TabsContent value="overview">

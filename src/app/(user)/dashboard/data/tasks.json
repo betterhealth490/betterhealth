@@ -2,161 +2,181 @@
     {
       "name": "Billy Bob",
       "email": "BillyBob@gmail.com",
-      "age": "34",
+      "age": 34,
       "gender": "male",
       "specialty": "addiction",
-      "available": "false"
+      "label": "available",
+      "status": "available"
     },
     {
       "name": "Billy Bob",
       "email": "BillyBob@gmail.com",
-      "age": "34",
+      "age": 33,
       "gender": "male",
       "specialty": "addiction",
-      "available": "true"
+      "label": "inactive",
+      "status": "inactive"
     },
     {
       "name": "Billy Bob",
       "email": "BillyBob@gmail.com",
-      "age": "34",
+      "age": 34,
       "gender": "male",
       "specialty": "addiction",
-      "available": "false"
+      "label": "pending",
+      "status": "pending"
     },
     {
       "name": "Billy Bob",
       "email": "BillyBob@gmail.com",
-      "age": "34",
+      "age": 34,
       "gender": "male",
       "specialty": "addiction",
-      "available": "false"
+      "label": "current",
+      "status": "current"
     },
     {
       "name": "Billy Bob",
       "email": "BillyBob@gmail.com",
-      "age": "34",
+      "age": 34,
       "gender": "male",
       "specialty": "addiction",
-      "available": "true"
+      "label": "inactive",
+      "status": "inactive"
     },
     {
       "name": "Billy Bob",
       "email": "BillyBob@gmail.com",
-      "age": "34",
+      "age": 34,
       "gender": "male",
       "specialty": "addiction",
-      "available": "true"
+      "label": "inactive",
+      "status": "inactive"
     },
     {
       "name": "Billy Bob",
       "email": "BillyBob@gmail.com",
-      "age": "34",
+      "age": 34,
       "gender": "male",
       "specialty": "addiction",
-      "available": "false"
+      "label": "available",
+      "status": "available"
     },
     {
       "name": "Billy Bob",
       "email": "BillyBob@gmail.com",
-      "age": "34",
+      "age": 34,
       "gender": "male",
       "specialty": "addiction",
-      "available": "true"
+      "label": "inactive",
+      "status": "inactive"
     },
     {
       "name": "Billy Bob",
       "email": "BillyBob@gmail.com",
-      "age": "34",
+      "age": 34,
       "gender": "male",
       "specialty": "addiction",
-      "available": "true"
+      "label": "inactive",
+      "status": "inactive"
     },
     {
       "name": "Billy Bob",
       "email": "BillyBob@gmail.com",
-      "age": "34",
+      "age": 34,
       "gender": "male",
       "specialty": "addiction",
-      "available": "true"
+      "label": "inactive",
+      "status": "inactive"
     },
     {
       "name": "Billy Bob",
       "email": "BillyBob@gmail.com",
-      "age": "34",
+      "age": 34,
       "gender": "male",
       "specialty": "addiction",
-      "available": "true"
+      "label": "inactive",
+      "status": "inactive"
     },
     {
       "name": "Billy Bob",
       "email": "BillyBob@gmail.com",
-      "age": "34",
+      "age": 34,
       "gender": "male",
       "specialty": "addiction",
-      "available": "true"
+      "label": "inactive",
+      "status": "inactive"
     },
     {
       "name": "Billy Bob",
       "email": "BillyBob@gmail.com",
-      "age": "34",
+      "age": 34,
       "gender": "male",
       "specialty": "addiction",
-      "available": "true"
+      "label": "inactive",
+      "status": "inactive"
     },
     {
       "name": "Billy Bob",
       "email": "BillyBob@gmail.com",
-      "age": "34",
+      "age": 34,
       "gender": "male",
       "specialty": "addiction",
-      "available": "true"
+      "label": "inactive",
+      "status": "inactive"
     },
     {
       "name": "Billy Bob",
       "email": "BillyBob@gmail.com",
-      "age": "34",
+      "age": 34,
       "gender": "male",
       "specialty": "addiction",
-      "available": "true"
+      "label": "inactive",
+      "status": "inactive"
     },
     {
       "name": "Billy Bob",
       "email": "BillyBob@gmail.com",
-      "age": "34",
+      "age": 34,
       "gender": "male",
       "specialty": "addiction",
-      "available": "true"
+      "label": "inactive",
+      "status": "inactive"
     },
     {
       "name": "Billy Bob",
       "email": "BillyBob@gmail.com",
-      "age": "34",
+      "age": 34,
       "gender": "male",
       "specialty": "addiction",
-      "available": "true"
+      "label": "inactive",
+      "status": "inactive"
     },
     {
       "name": "Billy Bob",
       "email": "BillyBob@gmail.com",
-      "age": "34",
+      "age": 34,
       "gender": "male",
       "specialty": "addiction",
-      "available": "true"
+      "label": "inactive",
+      "status": "inactive"
     },
     {
       "name": "Billy Bob",
       "email": "BillyBob@gmail.com",
-      "age": "34",
+      "age": 34,
       "gender": "male",
       "specialty": "addiction",
-      "available": "true"
+      "label": "inactive",
+      "status": "inactive"
     },
     {
       "name": "Billy Bob",
       "email": "BillyBob@gmail.com",
-      "age": "34",
+      "age": 34,
       "gender": "male",
       "specialty": "addiction",
-      "available": "true"
+      "label": "inactive",
+      "status": "inactive"
     }
   ]

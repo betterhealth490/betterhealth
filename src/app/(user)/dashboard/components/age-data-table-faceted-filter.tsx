@@ -10,28 +10,27 @@ import { Badge } from "~/components/ui/badge"
 
 interface DataTableFacetedFilterProps<TData, TValue> {
   column?: Column<TData, TValue>
-  title?: string
-  options: {
-    label: string
-    value: string
-    icon?: React.ComponentType<{ className?: string }>
-  }[]
 }
 
-export function DataTableFacetedFilter<TData, TValue>({
+const ageRanges: [number, number][] = [[18,24], [25,34], [35,44], [45,54], [55,64], [65,256]]
+
+function formatAgeRange([min, max]: [number, number]){
+  if (min >= 65) {return ("65+");}
+  return (min.toString() + "-" + max.toString());
+}
+
+export function AgeDataTableFacetedFilter<TData, TValue>({
   column,
-  title,
-  options,
 }: DataTableFacetedFilterProps<TData, TValue>) {
   const facets = column?.getFacetedUniqueValues()
-  const selectedValues = new Set(column?.getFilterValue() as string[])
+  const selectedValues = new Set(column?.getFilterValue() as [number, number][])
 
   return (
     <Popover>
       <PopoverTrigger asChild>
         <Button variant="outline" size="sm" className="h-8 border-dashed">
           <PlusCircle />
-          {title}
+          Age
           {selectedValues?.size > 0 && (
             <>
               <Separator orientation="vertical" className="mx-2 h-4" />
@@ -50,15 +49,15 @@ export function DataTableFacetedFilter<TData, TValue>({
                     {selectedValues.size} selected
                   </Badge>
                 ) : (
-                  options
-                    .filter((option) => selectedValues.has(option.value))
-                    .map((option) => (
+                  ageRanges
+                    .filter((ageRange) => selectedValues.has(ageRange))
+                    .map((ageRange) => (
                       <Badge
-                        key={option.value}
+                        key={formatAgeRange(ageRange)}
                         className="rounded-sm px-1 font-normal"
                         variant="secondary"
                       >
-                        {option.label}
+                        {formatAgeRange(ageRange)}
                       </Badge>
                     ))
                 )}
@@ -69,20 +68,20 @@ export function DataTableFacetedFilter<TData, TValue>({
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0" align="start">
         <Command>
-          <CommandInput placeholder={title} />
+          <CommandInput placeholder="Age" />
           <CommandList>
             <CommandEmpty>No results found.</CommandEmpty>
             <CommandGroup>
-              {options.map((option) => {
-                const isSelected = selectedValues.has(option.value)
+              {ageRanges.map((ageRange) => {
+                const isSelected = selectedValues.has(ageRange)
                 return (
                   <CommandItem
-                    key={option.value}
+                    key={formatAgeRange(ageRange)}
                     onSelect={() => {
                       if (isSelected) {
-                        selectedValues.delete(option.value)
+                        selectedValues.delete(ageRange)
                       } else {
-                        selectedValues.add(option.value)
+                        selectedValues.add(ageRange)
                       }
                       const filterValues = Array.from(selectedValues)
                       column?.setFilterValue(
@@ -100,13 +99,10 @@ export function DataTableFacetedFilter<TData, TValue>({
                     >
                       <Check />
                     </div>
-                    {option.icon && (
-                      <option.icon className="mr-2 h-4 w-4 text-muted-foreground" />
-                    )}
-                    <span>{option.label}</span>
-                    {facets?.get(option.value) && (
+                    <span>{formatAgeRange(ageRange)}</span>
+                    {facets?.get(ageRange) && (
                       <span className="ml-auto flex h-4 w-4 items-center justify-center font-mono text-xs">
-                        {facets.get(option.value)}
+                        {facets.get(ageRange)}
                       </span>
                     )}
                   </CommandItem>
