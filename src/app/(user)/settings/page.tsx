@@ -1,5 +1,6 @@
-import { Boilerplate } from "~/components/boilerplate";
+import { UserProfile } from '@clerk/nextjs'
 
-export default function SettingsPage() {
-    return <Boilerplate>Settings</Boilerplate>;
+const Profile = () => {
+  return <UserProfile />
 }
+export default Profile

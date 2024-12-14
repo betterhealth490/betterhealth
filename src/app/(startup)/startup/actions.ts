@@ -1,12 +1,12 @@
 "use server";
 
-import { createSurvey } from "~/data-access/questionnaire";
+import { createQuestionnaire } from "~/data-access/questionnaire";
 
 export const createInitialSurveyAction = async (
   userId: number,
   data: { answers: string[][] },
 ) => {
-  return await createSurvey({
+  return await createQuestionnaire({
     userId,
     type: "initial",
     date: new Date(),

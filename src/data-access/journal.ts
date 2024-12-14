@@ -6,11 +6,12 @@ import { type GetJournalInput, type GetJournalResult } from "~/entities/journal"
 import { type GetJournalUpdateInput, type GetJournalUpdateResult } from "~/entities/journal";
 import { type ListJournalInput, type ListJournalResult } from "~/entities/journal";
 
-export async function createJournal(input: { userId: number; entryDate: Date; content: string }): Promise<number> {
+export async function createJournal(input: { userId: number; title: string; entryDate: Date; content: string }): Promise<number> {
     const result = await db
         .insert(journals)
         .values({
             patientId: input.userId,
+            title: input.title,
             entryDate: input.entryDate,
             content: input.content,
             createdAt: new Date(),

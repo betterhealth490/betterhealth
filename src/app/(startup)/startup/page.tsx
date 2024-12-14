@@ -26,7 +26,7 @@ import { useUser } from "@clerk/nextjs";
 import { Loading } from "~/components/loading";
 import { createInitialSurveyAction } from "./actions";
 import { isDefined } from "~/lib/utils";
-import { type UserMetadata } from "~/middleware";
+import { UserMetadata } from "~/middleware";
 import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
