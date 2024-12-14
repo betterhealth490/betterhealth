@@ -11,7 +11,7 @@ from datetime import datetime, timedelta
 # Initialize Flask app
 app = Flask(__name__)
 CORS(app)
-CORS(app, resources={r"/*": {"origins": ["https://betterhealth.vercel.app"]}})
+CORS(app, resources={r"/*": {"origins": ["https://betterhealth-git-dev-tanvir-betterhealths-projects.vercel.app"]}})
 
 load_dotenv()
 
