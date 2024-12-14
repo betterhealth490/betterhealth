@@ -1,11 +1,11 @@
 import { promises as fs } from "fs"
 import { PageWrapper } from "../page-wrapper";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
-import { DataTable } from "./components/data-table";
+import { DataTable } from "./therapists/data-table";
 import path from "path";
 import { z } from "zod";
 import { taskSchema } from "./data/schema";
-import { columns } from "./components/columns";
+import { columns } from "./therapists/columns";
 import { currentUser } from "@clerk/nextjs/server";
 import { SurveysContent } from "./surveys/content";
 import { listSurveys } from "~/data-access/surveys";
@@ -62,11 +62,15 @@ async function PatientDashboard({ userId }: { userId: number }) {
           <TabsTrigger value="surveys">Surveys</TabsTrigger>
           <TabsTrigger value="therapists">Therapists</TabsTrigger>
         </TabsList>
-        <TabsContent value="overview">Overview</TabsContent>
+        <TabsContent value="overview">
+          Overview
+        </TabsContent>
         <TabsContent value="surveys">
           <SurveysContent surveys={surveys} />
         </TabsContent>
-        <TabsContent value="therapists"><DataTable data={tasks} columns={columns}/></TabsContent>
+        <TabsContent value="therapists">
+          <DataTable data={tasks} columns={columns}/>
+        </TabsContent>
       </Tabs>
     </PageWrapper>
   );
