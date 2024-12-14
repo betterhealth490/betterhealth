@@ -1,13 +1,59 @@
-import { eq, asc } from "drizzle-orm";
+import { eq, asc, and } from "drizzle-orm";
 import { db } from "~/db";
-import { surveys } from "~/db/schema";
+import { relationships, surveys, users } from "~/db/schema";
 import { isDefined } from "~/lib/utils";
 
 export async function listSurveys({ patientId }: { patientId: number }) {
   return await db
-    .select()
+    .select({
+      id: surveys.surveyId,
+      date: surveys.createdAt,
+      sleepTime: surveys.sleepTime,
+      sleepLength: surveys.sleepLength,
+      sleepQuality: surveys.sleepQuality,
+      waterIntake: surveys.waterIntake,
+      foodIntake: surveys.foodIntake,
+      foodHealthQuality: surveys.foodHealthQuality,
+      stressLevel: surveys.stressLevel,
+      selfImage: surveys.selfImage,
+    })
     .from(surveys)
     .where(eq(surveys.patientId, patientId))
+    .orderBy(asc(surveys.createdAt));
+}
+
+export async function listSurveysByTherapist({
+  therapistId,
+}: {
+  therapistId: number;
+}) {
+  return await db
+    .select({
+      id: surveys.surveyId,
+      patient: {
+        id: relationships.patientId,
+        firstName: users.firstName,
+        lastName: users.lastName,
+      },
+      date: surveys.createdAt,
+      sleepTime: surveys.sleepTime,
+      sleepLength: surveys.sleepLength,
+      sleepQuality: surveys.sleepQuality,
+      waterIntake: surveys.waterIntake,
+      foodIntake: surveys.foodIntake,
+      foodHealthQuality: surveys.foodHealthQuality,
+      stressLevel: surveys.stressLevel,
+      selfImage: surveys.selfImage,
+    })
+    .from(relationships)
+    .innerJoin(surveys, eq(surveys.patientId, relationships.patientId))
+    .innerJoin(users, eq(users.userId, relationships.patientId))
+    .where(
+      and(
+        eq(relationships.therapistId, therapistId),
+        eq(relationships.status, "approved"),
+      ),
+    )
     .orderBy(asc(surveys.createdAt));
 }
 

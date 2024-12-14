@@ -7,7 +7,7 @@ import { DataTable } from "./data-table";
 import { isDefined } from "~/lib/utils";
 import { addWeeks } from "date-fns";
 
-export function SurveysContent({
+export function PatientSurveys({
   surveys,
 }: {
   surveys: {
@@ -24,8 +24,8 @@ export function SurveysContent({
   }[];
 }) {
   const [date, setDate] = useState<DateRange | undefined>({
-    to: new Date(),
-    from: addWeeks(new Date(), -1),
+    to: new Date(new Date().toDateString()),
+    from: addWeeks(new Date(new Date().toDateString()), -1),
   });
   return (
     <DataTable
@@ -41,7 +41,7 @@ function inRange(range: DateRange | undefined, date: Date) {
   if (!isDefined(range)) {
     return true;
   }
-  const after = range.from ? new Date(date.toDateString()) >= range.from : true;
-  const before = range.to ? new Date(date.toDateString()) <= range.to : true;
+  const after = range.from ? date >= range.from : true;
+  const before = range.to ? date <= range.to : true;
   return after && before;
 }

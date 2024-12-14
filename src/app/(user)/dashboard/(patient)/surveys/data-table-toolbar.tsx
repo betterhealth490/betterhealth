@@ -1,7 +1,5 @@
-"use client";
-
 import { type Table } from "@tanstack/react-table";
-import { Filter, X } from "lucide-react";
+import { Columns, X } from "lucide-react";
 
 import { Button } from "~/components/ui/button";
 
@@ -9,8 +7,6 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 import { CalendarDateRangePicker } from "./date-range-picker";
@@ -39,16 +35,26 @@ export function DataTableToolbar<TData>({
     <div className="flex items-center justify-between">
       <div className="flex flex-1 items-center space-x-2">
         <CalendarDateRangePicker date={date} setDate={setDate} />
+        {isFiltered && (
+          <Button
+            variant="ghost"
+            onClick={() => table.resetColumnFilters()}
+            className="h-8 px-2 lg:px-3"
+          >
+            Reset
+            <X />
+          </Button>
+        )}
+      </div>
+      <div className="flex gap-2">
         <DropdownMenu>
           <DropdownMenuTrigger>
             <Button variant="outline" size="sm" className="h-8 font-normal">
-              <Filter />
-              Filter
+              <Columns />
+              Toggle Columns
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start">
-            <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
-            <DropdownMenuSeparator />
             {table
               .getAllColumns()
               .filter(
@@ -74,18 +80,8 @@ export function DataTableToolbar<TData>({
               })}
           </DropdownMenuContent>
         </DropdownMenu>
-        {isFiltered && (
-          <Button
-            variant="ghost"
-            onClick={() => table.resetColumnFilters()}
-            className="h-8 px-2 lg:px-3"
-          >
-            Reset
-            <X />
-          </Button>
-        )}
+        <DataTableViewSwitcher view={view} setView={setView} />
       </div>
-      <DataTableViewSwitcher view={view} setView={setView} />
     </div>
   );
 }
