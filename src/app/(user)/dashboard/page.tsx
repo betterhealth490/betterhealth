@@ -12,11 +12,11 @@ import { OverviewContent } from "./overview/content";
 import { listAppointments } from "~/data-access/appointment";
 import { getPatientTherapist } from "~/data-access/patient";
 import { listBillsByPatient } from "~/data-access/billing";
-import { DataTable } from "./components/data-table";
 import path from "path";
 import { z } from "zod";
 import { taskSchema } from "./data/schema";
-import { columns } from "./components/columns";
+import { DataTable } from "./therapists/data-table";
+import { columns } from "./therapists/columns";
 
 async function getTasks() {
   const data = await fs.readFile(
@@ -94,7 +94,9 @@ async function PatientDashboard({ userId }: { userId: number }) {
         <TabsContent value="surveys">
           <PatientSurveys surveys={surveys} />
         </TabsContent>
-        <TabsContent value="therapists"><DataTable data={tasks} columns={columns}/></TabsContent>
+        <TabsContent value="therapists">
+          <DataTable data={tasks} columns={columns}/>
+        </TabsContent>
       </Tabs>
     </PageWrapper>
   );
