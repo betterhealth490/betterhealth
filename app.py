@@ -4,13 +4,18 @@ from flask_cors import CORS
 from datetime import datetime
 from sqlalchemy import Column, Integer, Text, DateTime, Boolean, String, Float, ForeignKey
 from sqlalchemy.sql import func
+from dotenv import load_dotenv
 from datetime import datetime, timedelta
 
 
 # Initialize Flask app
 app = Flask(__name__)
 CORS(app)
-app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://default:R2giyEPBv5dY@ep-twilight-unit-a487ry8y.us-east-1.aws.neon.tech:5432/verceldb?sslmode=require"
+CORS(app, resources={r"/*": {"origins": ["https://betterhealth.vercel.app"]}})
+
+load_dotenv()
+
+app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("POSTGRES_URL")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 # Initialize SQLAlchemy
@@ -783,10 +788,5 @@ def get_therapist_availability(therapist_id):
         return jsonify({"error": str(e)}), 500
 
 
-
-
-
-
-# Run the app
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=int(os.getenv("FLASK_RUN_PORT", 8000)))
