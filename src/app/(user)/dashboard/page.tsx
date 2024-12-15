@@ -1,11 +1,12 @@
 import { PageWrapper } from "../page-wrapper";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { currentUser } from "@clerk/nextjs/server";
-import { SurveysContent } from "./surveys/content";
-import { listSurveys } from "~/data-access/surveys";
+import { PatientSurveys } from "./(patient)/surveys/content";
+import { listSurveys, listSurveysByTherapist } from "~/data-access/surveys";
 import { isDefined } from "~/lib/utils";
 import { Button } from "~/components/ui/button";
 import { DailySurveyButton } from "./survey-form";
+import { TherapistSurveys } from "./(therapist)/surveys/content";
 
 export default async function DashboardPage() {
   const user = await currentUser();
@@ -14,16 +15,12 @@ export default async function DashboardPage() {
   return role === "member" ? (
     <PatientDashboard userId={userId} />
   ) : (
-    <div>Therapist dashboard</div>
+    <TherapistDashboard userId={userId} />
   );
 }
 
 async function PatientDashboard({ userId }: { userId: number }) {
-  const surveys = (await listSurveys({ patientId: userId })).map((survey) => ({
-    id: survey.surveyId,
-    date: survey.createdAt,
-    ...survey,
-  }));
+  const surveys = await listSurveys({ patientId: userId });
   const dailySurveyCompleted = isDefined(
     surveys.find(
       ({ date }) => date.toDateString() === new Date().toDateString(),
@@ -47,9 +44,34 @@ async function PatientDashboard({ userId }: { userId: number }) {
         </TabsList>
         <TabsContent value="overview">Overview</TabsContent>
         <TabsContent value="surveys">
-          <SurveysContent surveys={surveys} />
+          <PatientSurveys surveys={surveys} />
         </TabsContent>
         <TabsContent value="therapists">Therapists</TabsContent>
+      </Tabs>
+    </PageWrapper>
+  );
+}
+
+async function TherapistDashboard({ userId }: { userId: number }) {
+  const surveys = await listSurveysByTherapist({ therapistId: userId });
+  const dailySurveyCompleted = isDefined(
+    surveys.find(
+      ({ date }) => date.toDateString() === new Date().toDateString(),
+    ),
+  );
+  return (
+    <PageWrapper>
+      <Tabs defaultValue="overview" className="p-4">
+        <TabsList>
+          <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="surveys">Surveys</TabsTrigger>
+          <TabsTrigger value="therapists">Patients</TabsTrigger>
+        </TabsList>
+        <TabsContent value="overview">Overview</TabsContent>
+        <TabsContent value="surveys">
+          <TherapistSurveys surveys={surveys} />
+        </TabsContent>
+        <TabsContent value="therapists">Patients</TabsContent>
       </Tabs>
     </PageWrapper>
   );
