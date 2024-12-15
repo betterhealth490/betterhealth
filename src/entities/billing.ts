@@ -1,57 +1,57 @@
 export interface CreateBillingInput {
-    patientId: number;
-    amount: number;
-    dueDate: Date;
-    status?: "pending" | "paid";
+  patientId: number;
+  amount: number;
+  dueDate: Date;
+  status?: "pending" | "paid";
 }
 
 export interface CreateBillingResult {
-    billId: number;
+  billId: number;
 }
 
 export interface GetBillingInput {
-    billId: number;
-    patientId: number;
+  billId: number;
+  patientId: number;
 }
 
 export interface GetBillingResult {
-    billId: number;
-    patientId: number;
-    amount: number;
-    dueDate: Date;
-    status: "pending" | "paid" | null;
-    createdAt: Date;
-    updatedAt: Date | null;
+  billId: number;
+  patientId: number;
+  amount: number;
+  dueDate: Date;
+  status: "pending" | "paid" | null;
+  createdAt: Date;
+  updatedAt: Date | null;
 }
 
 export interface UpdateBillingInput {
-    billId: number;
-    patientId: number;
-    amount: number;
-    status: "pending" | "paid"  | null;
+  billId: number;
+  patientId: number;
+  amount: number;
+  status: "pending" | "paid";
 }
 
 export interface UpdateBillingResult {
-    billId: number;
-    patientId: number;
-    amount: number;
-    status: "pending" | "paid"  | null;
-    createdAt: Date;
-    updatedAt: Date| null;
-    dueDate: Date;
+  billId: number;
+  patientId: number;
+  amount: number;
+  status: "pending" | "paid" | null;
+  createdAt: Date;
+  updatedAt: Date | null;
+  dueDate: Date;
 }
 
 export interface ListBillingInput {
-    patientId: number;
+  patientId: number;
 }
 
 export interface ListBillingItem {
-    billId: number;
-    patientId: number;
-    amount: number;
-    dueDate: Date;
-    status: "pending" | "paid"  | null;
-    updatedAt: Date;
+  billId: number;
+  patientId: number;
+  amount: number;
+  dueDate: Date;
+  status: "pending" | "paid";
+  updatedAt: Date;
 }
 
 export type ListBillingResult = ListBillingItem[];

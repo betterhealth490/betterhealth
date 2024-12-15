@@ -7,6 +7,10 @@ import { isDefined } from "~/lib/utils";
 import { Button } from "~/components/ui/button";
 import { DailySurveyButton } from "./survey-form";
 import { TherapistSurveys } from "./(therapist)/surveys/content";
+import { OverviewContent } from "./overview/content";
+import { listAppointments } from "~/data-access/appointment";
+import { getPatientTherapist } from "~/data-access/patient";
+import { listBillings } from "~/data-access/billing";
 
 export default async function DashboardPage() {
   const user = await currentUser();
@@ -26,6 +30,20 @@ async function PatientDashboard({ userId }: { userId: number }) {
       ({ date }) => date.toDateString() === new Date().toDateString(),
     ),
   );
+  const therapist = await getPatientTherapist({ patientId: userId });
+  const appointments = (await listAppointments({ userId })).map(
+    (appointment) => ({
+      id: appointment.appointmentId,
+      date: appointment.appointmentDate,
+      status: appointment.status,
+    }),
+  );
+  const bills = (await listBillings({ patientId: userId })).map((bill) => ({
+    id: bill.billId,
+    dueDate: bill.dueDate,
+    amount: bill.amount,
+    status: bill.status,
+  }));
   return (
     <PageWrapper
       actions={
@@ -42,7 +60,18 @@ async function PatientDashboard({ userId }: { userId: number }) {
           <TabsTrigger value="surveys">Surveys</TabsTrigger>
           <TabsTrigger value="therapists">Therapists</TabsTrigger>
         </TabsList>
-        <TabsContent value="overview">Overview</TabsContent>
+        <TabsContent value="overview">
+          <OverviewContent
+            therapist={
+              therapist
+                ? { ...therapist, id: therapist?.therapistId }
+                : undefined
+            }
+            appointments={appointments}
+            bills={bills}
+            surveys={surveys}
+          />
+        </TabsContent>
         <TabsContent value="surveys">
           <PatientSurveys surveys={surveys} />
         </TabsContent>

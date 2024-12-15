@@ -14,6 +14,8 @@ import {
   type SelectTherapistResult,
   type ChangeTherapistInput,
   type ChangeTherapistResult,
+  GetPatientTherapistInput,
+  GetPatientTherapistResult,
 } from "~/entities/patient";
 import { alias } from "drizzle-orm/pg-core";
 import { isDefined } from "~/lib/utils";
@@ -159,4 +161,26 @@ export async function updatePreferences({
     throw new Error("Error updating patient: " + patientId);
   }
   return result;
+}
+
+export async function getPatientTherapist(
+  input: GetPatientTherapistInput,
+): Promise<GetPatientTherapistResult> {
+  const { patientId } = input;
+  const result = await db
+    .select({
+      therapistId: relationships.therapistId,
+      firstName: users.firstName,
+      lastName: users.lastName,
+      email: users.email,
+    })
+    .from(relationships)
+    .innerJoin(users, eq(users.userId, relationships.therapistId))
+    .where(
+      and(
+        eq(relationships.patientId, patientId),
+        eq(relationships.status, "approved"),
+      ),
+    );
+  return result[0];
 }
