@@ -10,7 +10,7 @@ import { TherapistSurveys } from "./(therapist)/surveys/content";
 import { OverviewContent } from "./overview/content";
 import { listAppointments } from "~/data-access/appointment";
 import { getPatientTherapist } from "~/data-access/patient";
-import { listBillings } from "~/data-access/billing";
+import { listBillsByPatient } from "~/data-access/billing";
 
 export default async function DashboardPage() {
   const user = await currentUser();
@@ -38,12 +38,14 @@ async function PatientDashboard({ userId }: { userId: number }) {
       status: appointment.status,
     }),
   );
-  const bills = (await listBillings({ patientId: userId })).map((bill) => ({
-    id: bill.billId,
-    dueDate: bill.dueDate,
-    amount: bill.amount,
-    status: bill.status,
-  }));
+  const bills = (await listBillsByPatient({ patientId: userId })).map(
+    (bill) => ({
+      id: bill.id,
+      dueDate: bill.dueDate,
+      amount: bill.amount,
+      status: bill.status,
+    }),
+  );
   return (
     <PageWrapper
       actions={
