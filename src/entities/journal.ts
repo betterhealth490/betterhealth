@@ -15,11 +15,12 @@ export interface GetJournalInput {
 
 export interface GetJournalResult {
     journalId: number;
+    title: string,
     entryDate: Date;
     content: string;
     patientId: number;
     createdAt: Date;
-    updatedAt: Date;
+    updatedAt: Date | null;
 }
 
 export interface GetJournalUpdateInput {
@@ -30,6 +31,7 @@ export interface GetJournalUpdateInput {
 export interface GetJournalUpdateResult {
     journalId: number;
     patientId: number;
+    title: string,
     entryDate: Date;
     content: string;
     createdAt: Date;
@@ -44,7 +46,9 @@ export interface ListJournalInput {
 export interface ListJournalItem {
     journalId: number;
     patientId: number;
+    title: string,
     entryDate: Date;
+    content: string;
     updatedAt: Date;
 }
 
