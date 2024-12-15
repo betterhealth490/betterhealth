@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createSurvey } from "~/data-access/surveys";
+import { changeStatus } from "~/data-access/therapist";
 
 export const createSurveyAction = async (
   patientId: number,
@@ -23,6 +24,17 @@ export const createSurveyAction = async (
   } catch (err) {
     console.log(JSON.stringify(err));
 
+    return { ok: false, error: JSON.stringify(err) };
+  }
+};
+
+export const changeStatusAction = async (therapistId: number) => {
+  try {
+    const result = await changeStatus({ therapistId });
+    revalidatePath("/dashboard");
+    return { ok: true, result };
+  } catch (err) {
+    console.log(JSON.stringify(err));
     return { ok: false, error: JSON.stringify(err) };
   }
 };

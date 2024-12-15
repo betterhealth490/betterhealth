@@ -1,16 +1,21 @@
 import { PageWrapper } from "../page-wrapper";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { currentUser } from "@clerk/nextjs/server";
-import { PatientSurveys } from "./(patient)/surveys/content";
 import { listSurveys, listSurveysByTherapist } from "~/data-access/surveys";
 import { isDefined } from "~/lib/utils";
 import { Button } from "~/components/ui/button";
 import { DailySurveyButton } from "./survey-form";
 import { TherapistSurveys } from "./(therapist)/surveys/content";
-import { OverviewContent } from "./overview/content";
+import { PatientSurveys } from "./(patient)/surveys/content";
+import { PatientOverview } from "./(patient)/overview/content";
+import { TherapistOverview } from "./(therapist)/overview/content";
 import { listAppointments } from "~/data-access/appointment";
 import { getPatientTherapist } from "~/data-access/patient";
-import { listBillings } from "~/data-access/billing";
+import {
+  listBillsByPatient,
+  listBillsByTherapist,
+} from "~/data-access/billing";
+import { getTherapist } from "~/data-access/therapist";
 
 export default async function DashboardPage() {
   const user = await currentUser();
@@ -35,15 +40,18 @@ async function PatientDashboard({ userId }: { userId: number }) {
     (appointment) => ({
       id: appointment.appointmentId,
       date: appointment.appointmentDate,
+      patient: {
+        ...appointment.patient,
+        id: appointment.patient.userId,
+      },
+      therapist: {
+        ...appointment.therapist,
+        id: appointment.therapist.userId,
+      },
       status: appointment.status,
     }),
   );
-  const bills = (await listBillings({ patientId: userId })).map((bill) => ({
-    id: bill.billId,
-    dueDate: bill.dueDate,
-    amount: bill.amount,
-    status: bill.status,
-  }));
+  const bills = await listBillsByPatient({ patientId: userId });
   return (
     <PageWrapper
       actions={
@@ -61,7 +69,7 @@ async function PatientDashboard({ userId }: { userId: number }) {
           <TabsTrigger value="therapists">Therapists</TabsTrigger>
         </TabsList>
         <TabsContent value="overview">
-          <OverviewContent
+          <PatientOverview
             therapist={
               therapist
                 ? { ...therapist, id: therapist?.therapistId }
@@ -83,11 +91,23 @@ async function PatientDashboard({ userId }: { userId: number }) {
 
 async function TherapistDashboard({ userId }: { userId: number }) {
   const surveys = await listSurveysByTherapist({ therapistId: userId });
-  const dailySurveyCompleted = isDefined(
-    surveys.find(
-      ({ date }) => date.toDateString() === new Date().toDateString(),
-    ),
+  const { accepting: status } = await getTherapist(userId);
+  const appointments = (await listAppointments({ userId })).map(
+    (appointment) => ({
+      id: appointment.appointmentId,
+      date: appointment.appointmentDate,
+      patient: {
+        ...appointment.patient,
+        id: appointment.patient.userId,
+      },
+      therapist: {
+        ...appointment.therapist,
+        id: appointment.therapist.userId,
+      },
+      status: appointment.status,
+    }),
   );
+  const bills = await listBillsByTherapist(userId);
   return (
     <PageWrapper>
       <Tabs defaultValue="overview" className="p-4">
@@ -96,7 +116,15 @@ async function TherapistDashboard({ userId }: { userId: number }) {
           <TabsTrigger value="surveys">Surveys</TabsTrigger>
           <TabsTrigger value="therapists">Patients</TabsTrigger>
         </TabsList>
-        <TabsContent value="overview">Overview</TabsContent>
+        <TabsContent value="overview">
+          <TherapistOverview
+            userId={userId}
+            status={status}
+            appointments={appointments}
+            bills={bills}
+            surveys={surveys}
+          />
+        </TabsContent>
         <TabsContent value="surveys">
           <TherapistSurveys surveys={surveys} />
         </TabsContent>

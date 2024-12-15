@@ -49,6 +49,16 @@ interface OverviewContentProps {
   appointments: {
     id: number;
     date: Date;
+    patient: {
+      id: number;
+      firstName: string;
+      lastName: string;
+    };
+    therapist: {
+      id: number;
+      firstName: string;
+      lastName: string;
+    };
     status: "confirmed" | "pending" | "cancelled";
   }[];
   bills: {
@@ -71,7 +81,7 @@ interface OverviewContentProps {
   }[];
 }
 
-export function OverviewContent({
+export function PatientOverview({
   therapist,
   appointments,
   bills,
@@ -192,6 +202,7 @@ export function OverviewContent({
               <TableHeader>
                 <TableRow>
                   <TableHead>Date</TableHead>
+                  <TableHead>Therapist</TableHead>
                   <TableHead>Time</TableHead>
                   <TableHead>Status</TableHead>
                 </TableRow>
@@ -203,6 +214,7 @@ export function OverviewContent({
                       <TableCell>
                         {format(appointment.date, "MMMM dd, yyyy")}
                       </TableCell>
+                      <TableCell>{formatName(appointment.therapist)}</TableCell>
                       <TableCell>{format(appointment.date, "p")}</TableCell>
                       <TableCell>
                         <Badge
