@@ -1,5 +1,5 @@
 export interface GetAppointmentInput {
-    appointmentId: number;
+  appointmentId: number;
 }
 
 export interface GetAppointmentResult {
@@ -13,7 +13,6 @@ export interface GetAppointmentResult {
 
 export interface ListAppointmentsInput {
   userId: number;
-  date: Date;
 }
 
 export interface ListAppointmentsItem {
@@ -21,6 +20,7 @@ export interface ListAppointmentsItem {
   appointmentId: number;
   therapistId: number;
   patientId: number;
+  status: "pending" | "confirmed" | "cancelled";
 }
 
 export type ListAppointmentsResult = ListAppointmentsItem[];
