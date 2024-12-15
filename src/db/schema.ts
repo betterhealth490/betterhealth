@@ -225,7 +225,7 @@ export const billings = createTable("billing", {
     .references(() => therapists.therapistId),
   amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
   dueDate: timestamp("due_date").notNull(),
-  status: billingStatusEnum("status").default("pending").notNull(),
+  status: billingStatusEnum("status").notNull().default("pending"),
   createdAt: timestamp("created_at")
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),

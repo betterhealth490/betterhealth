@@ -1,25 +1,18 @@
 import { eq, and } from "drizzle-orm";
 import { db } from "~/db";
-import { billings } from "~/db/schema";
+import { billings, users, relationships } from "~/db/schema";
 
 import {
   type GetBillingInput,
   type GetBillingResult,
-} from "~/entities/billing";
-import {
   type CreateBillingInput,
   type CreateBillingResult,
-} from "~/entities/billing";
-import {
   type UpdateBillingInput,
   type UpdateBillingResult,
-} from "~/entities/billing";
-import {
   type ListBillingInput,
   type ListBillingResult,
 } from "~/entities/billing";
 
-// Create billing
 export async function createBilling(
   input: CreateBillingInput,
 ): Promise<CreateBillingResult> {
@@ -27,15 +20,13 @@ export async function createBilling(
     .insert(billings)
     .values({
       patientId: input.patientId,
-      amount: input.amount.toString(),
+      amount: input.amount.toFixed(2),
       dueDate: input.dueDate,
       status: input.status ?? "pending",
       createdAt: new Date(),
       updatedAt: new Date(),
     })
-    .returning({
-      billId: billings.billId,
-    });
+    .returning({ billId: billings.billId });
 
   const billingRecord = result.at(0);
 
@@ -46,7 +37,6 @@ export async function createBilling(
   return { billId: billingRecord.billId };
 }
 
-// Get billing by ID
 export async function getBilling(
   input: GetBillingInput,
 ): Promise<GetBillingResult> {
@@ -68,20 +58,23 @@ export async function getBilling(
   }
 
   return {
-    ...billingRecord,
+    billId: billingRecord.billId,
+    patientId: billingRecord.patientId,
     amount: parseFloat(billingRecord.amount),
+    dueDate: billingRecord.dueDate,
     status: billingRecord.status ?? "pending",
+    createdAt: billingRecord.createdAt,
+    updatedAt: billingRecord.updatedAt ?? null,
   };
 }
 
-// Update billing record
 export async function updateBilling(
   input: UpdateBillingInput,
 ): Promise<UpdateBillingResult> {
   const result = await db
     .update(billings)
     .set({
-      amount: input.amount.toString(),
+      amount: input.amount.toFixed(2),
       status: input.status,
       updatedAt: new Date(),
     })
@@ -94,36 +87,185 @@ export async function updateBilling(
     .returning();
 
   const updatedBilling = result.at(0);
-  if (updatedBilling) {
-    return {
-      ...updatedBilling,
-      amount: parseFloat(updatedBilling.amount),
-      status: updatedBilling.status ?? "pending", // Fallback to default status
-    };
-  } else {
+
+  if (!updatedBilling) {
     throw new Error("Failed to update billing record");
   }
+
+  return {
+    billId: updatedBilling.billId,
+    patientId: updatedBilling.patientId,
+    amount: parseFloat(updatedBilling.amount),
+    status: updatedBilling.status ?? "pending",
+    dueDate: updatedBilling.dueDate,
+    createdAt: updatedBilling.createdAt,
+    updatedAt: updatedBilling.updatedAt ?? null,
+  };
 }
 
-// List all billing records for a user
-export async function listBillings(
+export async function listBillsByPatient(
   input: ListBillingInput,
 ): Promise<ListBillingResult> {
+  return (
+    await db
+      .select({
+        id: billings.billId,
+        patientId: billings.patientId,
+        therapist: {
+          id: billings.therapistId,
+          firstName: users.firstName,
+          lastName: users.lastName,
+        },
+        amount: billings.amount,
+        dueDate: billings.dueDate,
+        status: billings.status,
+      })
+      .from(billings)
+      .innerJoin(users, eq(users.userId, billings.therapistId))
+      .where(eq(billings.patientId, input.patientId))
+  ).map((result) => ({ ...result, amount: parseFloat(result.amount) }));
+}
+
+export async function getTherapistNameByBillId(
+  billId: number,
+): Promise<string | null> {
   const result = await db
     .select({
-      billId: billings.billId,
-      patientId: billings.patientId,
-      amount: billings.amount,
-      dueDate: billings.dueDate,
-      status: billings.status,
-      updatedAt: billings.updatedAt,
+      therapistFirstName: users.firstName,
+      therapistLastName: users.lastName,
     })
     .from(billings)
-    .where(eq(billings.patientId, input.patientId));
+    .innerJoin(users, eq(billings.therapistId, users.userId))
+    .where(eq(billings.billId, billId))
+    .limit(1);
 
-  return result.map((billingRecord) => ({
-    ...billingRecord,
-    amount: parseFloat(billingRecord.amount),
-    updatedAt: billingRecord.updatedAt ?? new Date(),
-  }));
+  const therapist = result.at(0);
+
+  if (!therapist) {
+    return null;
+  }
+
+  return `${therapist.therapistFirstName} ${therapist.therapistLastName}`;
+}
+
+export async function listPatientsByTherapist(therapistId: number): Promise<
+  {
+    patientId: number;
+    firstName: string;
+    lastName: string;
+  }[]
+> {
+  const result = await db
+    .select({
+      patientId: relationships.patientId,
+      firstName: users.firstName,
+      lastName: users.lastName,
+    })
+    .from(relationships)
+    .innerJoin(users, eq(relationships.patientId, users.userId))
+    .where(
+      and(
+        eq(relationships.therapistId, therapistId),
+        eq(relationships.status, "approved"),
+      ),
+    );
+
+  return result;
+}
+
+export async function listBillsByTherapist(therapistId: number): Promise<
+  {
+    id: number;
+    therapistId: number;
+    patient: {
+      id: number;
+      firstName: string;
+      lastName: string;
+    };
+    amount: number;
+    dueDate: Date;
+    status: "pending" | "paid";
+  }[]
+> {
+  return (
+    await db
+      .select({
+        id: billings.billId,
+        therapistId: billings.therapistId,
+        patient: {
+          id: billings.patientId,
+          firstName: users.firstName,
+          lastName: users.lastName,
+        },
+        amount: billings.amount,
+        dueDate: billings.dueDate,
+        status: billings.status,
+      })
+      .from(billings)
+      .innerJoin(users, eq(billings.patientId, users.userId))
+      .where(eq(billings.therapistId, therapistId))
+  ).map((result) => ({ ...result, amount: parseFloat(result.amount) }));
+}
+
+export async function createBillForPatient({
+  therapistId,
+  patientId,
+  amount,
+  dueDate,
+}: {
+  therapistId: number;
+  patientId: number;
+  amount: number;
+  dueDate: Date;
+}): Promise<{ billId: number }> {
+  const result = await db
+    .insert(billings)
+    .values({
+      therapistId,
+      patientId,
+      amount: amount.toFixed(2),
+      dueDate,
+      status: "pending",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    })
+    .returning({
+      billId: billings.billId,
+    });
+
+  const bill = result.at(0);
+
+  if (!bill) {
+    throw new Error("Failed to create bill");
+  }
+
+  return { billId: bill.billId };
+}
+
+export async function deleteBillForPatient({
+  billId,
+}: {
+  billId: number;
+}): Promise<{
+  therapistId: number;
+  patientId: number;
+  amount: string;
+  dueDate: Date;
+  createdAt: Date;
+  updatedAt: Date | null;
+  status: "pending" | "paid";
+  billId: number;
+}> {
+  const result = await db
+    .delete(billings)
+    .where(eq(billings.billId, billId))
+    .returning();
+
+  const bill = result[0];
+
+  if (!bill) {
+    throw new Error("Failed to delete bill");
+  }
+
+  return bill;
 }

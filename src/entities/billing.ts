@@ -35,7 +35,7 @@ export interface UpdateBillingResult {
   billId: number;
   patientId: number;
   amount: number;
-  status: "pending" | "paid" | null;
+  status: "pending" | "paid";
   createdAt: Date;
   updatedAt: Date | null;
   dueDate: Date;
@@ -46,12 +46,16 @@ export interface ListBillingInput {
 }
 
 export interface ListBillingItem {
-  billId: number;
+  id: number;
   patientId: number;
-  amount: number;
   dueDate: Date;
+  therapist: {
+    id: number;
+    firstName: string;
+    lastName: string;
+  };
+  amount: number;
   status: "pending" | "paid";
-  updatedAt: Date;
 }
 
 export type ListBillingResult = ListBillingItem[];
