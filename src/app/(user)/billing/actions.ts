@@ -1,14 +1,15 @@
 "use server";
 
-import { 
-  createBilling, 
-  getBilling, 
-  updateBilling, 
-  listBillings,
+import { revalidatePath } from "next/cache";
+import {
+  createBilling,
+  getBilling,
+  updateBilling,
+  listBillsByPatient,
   getTherapistNameByBillId,
   listPatientsByTherapist,
   listBillsByTherapist,
-  createBillForPatient
+  createBillForPatient,
 } from "~/data-access/billing";
 
 import { isDefined } from "~/lib/utils";
@@ -17,7 +18,7 @@ export const createBillingAction = async (
   patientId: number,
   amount: number,
   dueDate: Date,
-  status?: "pending" | "paid"
+  status?: "pending" | "paid",
 ) => {
   const result = await createBilling({
     patientId,
@@ -32,14 +33,14 @@ export const createBillingAction = async (
 export const getBillingAction = async (billId: number, patientId: number) => {
   const result = await getBilling({ billId, patientId });
   console.log("Billing record fetched successfully:", isDefined(result));
-  return result; 
+  return result;
 };
 
 export const updateBillingAction = async (
   billId: number,
   patientId: number,
   amount: number,
-  status: "pending" | "paid"
+  status: "pending" | "paid",
 ) => {
   const result = await updateBilling({
     billId,
@@ -52,9 +53,9 @@ export const updateBillingAction = async (
 };
 
 export const listBillingsAction = async (patientId: number) => {
-  const result = await listBillings({ patientId });
+  const result = await listBillsByPatient({ patientId });
   console.log("Billing records fetched successfully:", isDefined(result));
-  return result; 
+  return result;
 };
 
 export const getTherapistNameByBillIdAction = async (billId: number) => {
@@ -85,7 +86,13 @@ export const createBillForPatientAction = async ({
   amount: number;
   dueDate: Date;
 }) => {
-  const result = await createBillForPatient({ therapistId, patientId, amount, dueDate });
+  const result = await createBillForPatient({
+    therapistId,
+    patientId,
+    amount,
+    dueDate,
+  });
+  revalidatePath("/billing");
   console.log("Bill created successfully:", result);
   return result;
 };
