@@ -242,7 +242,7 @@ export const journals = createTable("journal", {
     .references(() => patients.patientId),
   title: varchar("title", { length: 100 }).notNull(),
   entryDate: timestamp("entry_date").notNull(),
-  content: text("content"),
+  content: text("content").notNull(),
   createdAt: timestamp("created_at")
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
