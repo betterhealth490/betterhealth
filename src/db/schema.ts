@@ -91,6 +91,7 @@ export const therapists = createTable("therapist", {
   specialty: specialtyEnum("specialty"),
   licenseNumber: varchar("license_number", { length: 12 }).unique(),
   accepting: boolean("accepting").notNull().default(false),
+  active: boolean("active").default(true).notNull(),
   createdAt: timestamp("created_at")
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),

@@ -30,12 +30,15 @@ const isTherapistRoute = createRouteMatcher([
   "/billing",
 ]);
 
+const isInactiveRoute = createRouteMatcher(["/settings"]);
+
 const isStartupRoute = createRouteMatcher(["/startup"]);
 
 type UserMetadata = {
   role: "member" | "therapist";
   databaseId: string;
   questionnaireCompleted: boolean;
+  active: boolean;
 };
 
 export default clerkMiddleware(async (auth, request) => {
@@ -46,7 +49,10 @@ export default clerkMiddleware(async (auth, request) => {
   }
   const metadata = sessionClaims?.unsafeMetadata as UserMetadata;
   if (isDefined(userId) && isDefined(metadata)) {
-    const { role, questionnaireCompleted } = metadata;
+    const { role, questionnaireCompleted, active } = metadata;
+    if (!active && !isInactiveRoute(request)) {
+      return NextResponse.redirect(new URL("/settings", request.url));
+    }
     if (questionnaireCompleted) {
       if (role === "member" && !isMemberRoute(request)) {
         return NextResponse.redirect(new URL("/dashboard", request.url));

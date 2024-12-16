@@ -124,6 +124,7 @@ function MemberSignUpForm({
               databaseId: user.userId,
               role: user.role,
               questionnaireCompleted: false,
+              active: true,
             },
           });
           if (signUpAttempt.status === "complete") {
@@ -264,6 +265,8 @@ function TherapistSignUpForm({
             unsafeMetadata: {
               databaseId: user.userId,
               role: user.role,
+              questionnaireCompleted: false,
+              active: true,
             },
           });
           if (signUpAttempt.status === "complete") {
