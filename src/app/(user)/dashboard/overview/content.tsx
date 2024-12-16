@@ -1,7 +1,21 @@
 "use client";
-
-import { Avatar, AvatarFallback } from "~/components/ui/avatar";
-import { Calendar, FileText, Flame } from "lucide-react";
+import { Avatar, AvatarImage, AvatarFallback } from "~/components/ui/avatar";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogTitle,
+  DialogDescription,
+} from "@radix-ui/react-dialog";
+import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
+import {
+  CircleUser,
+  Calendar,
+  FileText,
+  Activity,
+  PlusCircle,
+  Flame,
+} from "lucide-react";
 import { Badge } from "~/components/ui/badge";
 import {
   Card,
@@ -18,8 +32,8 @@ import {
   TableBody,
   TableCell,
 } from "~/components/ui/table";
-import { formatInitials, formatName, isDefined } from "~/lib/utils";
-import { format, subDays } from "date-fns";
+import { formatInitials, formatName } from "~/lib/utils";
+import { format } from "date-fns";
 import { Button } from "~/components/ui/button";
 import Link from "next/link";
 
@@ -35,16 +49,6 @@ interface OverviewContentProps {
   appointments: {
     id: number;
     date: Date;
-    patient: {
-      id: number;
-      firstName: string;
-      lastName: string;
-    };
-    therapist: {
-      id: number;
-      firstName: string;
-      lastName: string;
-    };
     status: "confirmed" | "pending" | "cancelled";
   }[];
   bills: {
@@ -67,7 +71,7 @@ interface OverviewContentProps {
   }[];
 }
 
-export function PatientOverview({
+export function OverviewContent({
   therapist,
   appointments,
   bills,
@@ -178,8 +182,8 @@ export function PatientOverview({
           </CardContent>
         </Card>
       </div>
-      <div className="grid grid-cols-2 gap-4">
-        <Card className="h-fit">
+      <div className="flex gap-4">
+        <Card className="flex h-fit w-3/5 flex-col">
           <CardHeader>
             <CardTitle>Upcoming Appointments</CardTitle>
           </CardHeader>
@@ -188,7 +192,6 @@ export function PatientOverview({
               <TableHeader>
                 <TableRow>
                   <TableHead>Date</TableHead>
-                  <TableHead>Therapist</TableHead>
                   <TableHead>Time</TableHead>
                   <TableHead>Status</TableHead>
                 </TableRow>
@@ -200,7 +203,6 @@ export function PatientOverview({
                       <TableCell>
                         {format(appointment.date, "MMMM dd, yyyy")}
                       </TableCell>
-                      <TableCell>{formatName(appointment.therapist)}</TableCell>
                       <TableCell>{format(appointment.date, "p")}</TableCell>
                       <TableCell>
                         <Badge
@@ -230,7 +232,7 @@ export function PatientOverview({
             </Link>
           </CardFooter>
         </Card>
-        <Card className="h-fit">
+        <Card className="flex h-fit w-2/5 flex-col">
           <CardHeader>
             <CardTitle>Recent Billings</CardTitle>
           </CardHeader>
@@ -281,7 +283,6 @@ export function PatientOverview({
     </div>
   );
 }
-
 function generateSurveyStreak(
   surveys: {
     id: number;
@@ -296,31 +297,30 @@ function generateSurveyStreak(
     selfImage: number;
   }[],
 ) {
-  if (
-    !isDefined(
-      surveys.find(
-        ({ date }) =>
-          date.toDateString() === subDays(new Date(), 1).toDateString(),
-      ),
-    )
-  ) {
-    return 0;
-  }
+  let currentStreak = 0;
+  let longestStreak = 0;
+  let lastSurveyDate = null;
 
-  let currentStreak = 1;
-  let lastSurveyDate = new Date(subDays(new Date(), 1).toDateString());
-  for (const survey of surveys.slice(1)) {
-    const surveyDate = new Date(survey.date.toDateString());
+  surveys.sort(
+    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+  );
+  for (const survey of surveys) {
+    const surveyDate = new Date(survey.date);
     if (
-      surveyDate.toDateString() === subDays(lastSurveyDate, 1).toDateString()
+      lastSurveyDate &&
+      surveyDate.getTime() - lastSurveyDate.getTime() === 86400000
     ) {
+      // 86400000 is the number of milliseconds in a day
       currentStreak++;
-      lastSurveyDate = surveyDate;
     } else {
-      break;
+      currentStreak = 1;
     }
+    if (currentStreak > longestStreak) {
+      longestStreak = currentStreak;
+    }
+    lastSurveyDate = surveyDate;
   }
-  return currentStreak;
+  return longestStreak;
 }
 
 function generateStreakMessage(streak: number) {
