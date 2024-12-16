@@ -11,21 +11,6 @@ import {
 } from "~/db/schema";
 import { isDefined } from "~/lib/utils";
 
-export async function getTherapist(therapistId: number) {
-  const result = await db
-    .select()
-    .from(therapists)
-    .where(eq(therapists.therapistId, therapistId));
-
-  const therapist = result.at(0);
-
-  if (therapist) {
-    return therapist;
-  } else {
-    throw new Error("No journal found");
-  }
-}
-
 export async function listTherapistByPatient({
   patientId,
   limit = 5,
@@ -73,27 +58,6 @@ export async function listAvailability({
     })
     .from(availability)
     .where(eq(availability.therapistId, therapistId));
-}
-
-export async function changeStatus({
-  therapistId,
-  accepting,
-}: {
-  therapistId: number;
-  accepting: boolean;
-}) {
-  const [result] = await db
-    .update(therapists)
-    .set({
-      accepting,
-      updatedAt: new Date(),
-    })
-    .where(eq(therapists.therapistId, therapistId))
-    .returning();
-  if (!isDefined(result)) {
-    throw new Error("Error updating therapist: " + therapistId);
-  }
-  return result;
 }
 
 export async function updateProfile({

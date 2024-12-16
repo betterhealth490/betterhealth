@@ -1,4 +1,4 @@
-import { eq, asc, desc, and } from "drizzle-orm";
+import { eq, asc, and } from "drizzle-orm";
 import { db } from "~/db";
 import { relationships, surveys, users } from "~/db/schema";
 import { isDefined } from "~/lib/utils";
@@ -19,7 +19,7 @@ export async function listSurveys({ patientId }: { patientId: number }) {
     })
     .from(surveys)
     .where(eq(surveys.patientId, patientId))
-    .orderBy(desc(surveys.createdAt));
+    .orderBy(asc(surveys.createdAt));
 }
 
 export async function listSurveysByTherapist({

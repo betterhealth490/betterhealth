@@ -1,11 +1,11 @@
-import { eq, and, desc, or } from "drizzle-orm";
-import { alias } from "drizzle-orm/pg-core";
+import { eq, and, desc } from "drizzle-orm";
 import { db } from "~/db";
-import { appointments, users } from "~/db/schema";
+import { appointments } from "~/db/schema";
 import {
   type GetAppointmentInput,
   type GetAppointmentResult,
   type ListAppointmentsInput,
+  type ListAppointmentsItem,
   type ListAppointmentsResult,
   type UpdateAppointmentInput,
   type UpdateAppointmentResult,
@@ -77,25 +77,16 @@ export async function createAppointment(
 export async function listAppointments(
   input: ListAppointmentsInput,
 ): Promise<ListAppointmentsResult> {
-  const patients = alias(users, "patients");
-  const therapists = alias(users, "therapists");
   const result = await db
     .select({
       appointmentDate: appointments.appointmentDate,
       appointmentId: appointments.appointmentId,
-      patient: patients,
-      therapist: therapists,
+      therapistId: appointments.therapistId,
+      patientId: appointments.patientId,
       status: appointments.status,
     })
     .from(appointments)
-    .innerJoin(patients, eq(patients.userId, appointments.patientId))
-    .innerJoin(therapists, eq(therapists.userId, appointments.patientId))
-    .where(
-      or(
-        eq(appointments.patientId, input.userId),
-        eq(appointments.therapistId, input.userId),
-      ),
-    )
+    .where(and(eq(appointments.patientId, input.userId)))
     .orderBy(desc(appointments.appointmentDate));
 
   return result;

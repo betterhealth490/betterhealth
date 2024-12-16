@@ -18,16 +18,8 @@ export interface ListAppointmentsInput {
 export interface ListAppointmentsItem {
   appointmentDate: Date;
   appointmentId: number;
-  patient: {
-    userId: number;
-    firstName: string;
-    lastName: string;
-  };
-  therapist: {
-    userId: number;
-    firstName: string;
-    lastName: string;
-  };
+  therapistId: number;
+  patientId: number;
   status: "pending" | "confirmed" | "cancelled";
 }
 
