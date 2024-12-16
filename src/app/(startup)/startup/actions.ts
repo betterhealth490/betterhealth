@@ -1,7 +1,8 @@
 "use server";
 
 import { updatePreferences } from "~/data-access/patient";
-import { updateProfile, updateSpecialty } from "~/data-access/therapist";
+import { updateSpecialty } from "~/data-access/therapist";
+import { updateProfile } from "~/data-access/user";
 import { type ageEnum, type genderEnum, type specialtyEnum } from "~/db/schema";
 
 export const memberQuestionnaireAction = async (
