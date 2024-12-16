@@ -1,21 +1,7 @@
 "use client";
-import { Avatar, AvatarImage, AvatarFallback } from "~/components/ui/avatar";
-import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogTitle,
-  DialogDescription,
-} from "@radix-ui/react-dialog";
-import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
-import {
-  CircleUser,
-  Calendar,
-  FileText,
-  Activity,
-  PlusCircle,
-  Flame,
-} from "lucide-react";
+
+import { Avatar, AvatarFallback } from "~/components/ui/avatar";
+import { Calendar, FileText, Flame } from "lucide-react";
 import { Badge } from "~/components/ui/badge";
 import {
   Card,
@@ -32,8 +18,8 @@ import {
   TableBody,
   TableCell,
 } from "~/components/ui/table";
-import { formatInitials, formatName } from "~/lib/utils";
-import { format } from "date-fns";
+import { formatInitials, formatName, isDefined } from "~/lib/utils";
+import { format, subDays } from "date-fns";
 import { Button } from "~/components/ui/button";
 import Link from "next/link";
 
@@ -192,8 +178,8 @@ export function PatientOverview({
           </CardContent>
         </Card>
       </div>
-      <div className="flex gap-4">
-        <Card className="flex h-fit w-3/5 flex-col">
+      <div className="grid grid-cols-2 gap-4">
+        <Card className="h-fit">
           <CardHeader>
             <CardTitle>Upcoming Appointments</CardTitle>
           </CardHeader>
@@ -244,7 +230,7 @@ export function PatientOverview({
             </Link>
           </CardFooter>
         </Card>
-        <Card className="flex h-fit w-2/5 flex-col">
+        <Card className="h-fit">
           <CardHeader>
             <CardTitle>Recent Billings</CardTitle>
           </CardHeader>
@@ -295,6 +281,7 @@ export function PatientOverview({
     </div>
   );
 }
+
 function generateSurveyStreak(
   surveys: {
     id: number;
@@ -309,30 +296,31 @@ function generateSurveyStreak(
     selfImage: number;
   }[],
 ) {
-  let currentStreak = 0;
-  let longestStreak = 0;
-  let lastSurveyDate = null;
-
-  surveys.sort(
-    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
-  );
-  for (const survey of surveys) {
-    const surveyDate = new Date(survey.date);
-    if (
-      lastSurveyDate &&
-      surveyDate.getTime() - lastSurveyDate.getTime() === 86400000
-    ) {
-      // 86400000 is the number of milliseconds in a day
-      currentStreak++;
-    } else {
-      currentStreak = 1;
-    }
-    if (currentStreak > longestStreak) {
-      longestStreak = currentStreak;
-    }
-    lastSurveyDate = surveyDate;
+  if (
+    !isDefined(
+      surveys.find(
+        ({ date }) =>
+          date.toDateString() === subDays(new Date(), 1).toDateString(),
+      ),
+    )
+  ) {
+    return 0;
   }
-  return longestStreak;
+
+  let currentStreak = 1;
+  let lastSurveyDate = new Date(subDays(new Date(), 1).toDateString());
+  for (const survey of surveys.slice(1)) {
+    const surveyDate = new Date(survey.date.toDateString());
+    if (
+      surveyDate.toDateString() === subDays(lastSurveyDate, 1).toDateString()
+    ) {
+      currentStreak++;
+      lastSurveyDate = surveyDate;
+    } else {
+      break;
+    }
+  }
+  return currentStreak;
 }
 
 function generateStreakMessage(streak: number) {

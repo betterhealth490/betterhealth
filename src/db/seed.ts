@@ -13,6 +13,7 @@ import {
   surveys,
   billings,
   therapistComments,
+  messages,
 } from "./schema";
 import { parse } from "csv-parse/sync";
 import { readFileSync } from "fs";
@@ -65,6 +66,7 @@ async function seed() {
     await db.delete(surveys);
     await db.delete(journals);
     await db.delete(appointments);
+    await db.delete(messages);
     await db.delete(availability);
     await db.delete(relationships);
     await db.delete(therapists);

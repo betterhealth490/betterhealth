@@ -14,6 +14,7 @@ import { getPatientTherapist } from "~/data-access/patient";
 import {
   listBillsByPatient,
   listBillsByTherapist,
+  listPatientsByTherapist,
 } from "~/data-access/billing";
 import { getTherapist } from "~/data-access/therapist";
 
@@ -108,6 +109,7 @@ async function TherapistDashboard({ userId }: { userId: number }) {
     }),
   );
   const bills = await listBillsByTherapist(userId);
+  const patients = await listPatientsByTherapist(userId);
   return (
     <PageWrapper>
       <Tabs defaultValue="overview" className="p-4">
@@ -122,7 +124,7 @@ async function TherapistDashboard({ userId }: { userId: number }) {
             status={status}
             appointments={appointments}
             bills={bills}
-            surveys={surveys}
+            patients={patients}
           />
         </TabsContent>
         <TabsContent value="surveys">
