@@ -9,7 +9,10 @@ import { TherapistSurveys } from "./(therapist)/surveys/content";
 import { PatientSurveys } from "./(patient)/surveys/content";
 import { PatientOverview } from "./(patient)/overview/content";
 import { TherapistOverview } from "./(therapist)/overview/content";
-import { listAppointments } from "~/data-access/appointment";
+import {
+  listAppointments,
+  listAppointmentsWithDetails,
+} from "~/data-access/appointment";
 import { getPatientTherapist } from "~/data-access/patient";
 import {
   listBillsByPatient,
@@ -39,7 +42,7 @@ async function PatientDashboard({ userId }: { userId: number }) {
     ),
   );
   const therapist = await getPatientTherapist({ patientId: userId });
-  const appointments = (await listAppointments({ userId })).map(
+  const appointments = (await listAppointmentsWithDetails({ userId })).map(
     (appointment) => ({
       id: appointment.appointmentId,
       date: appointment.appointmentDate,
@@ -97,7 +100,7 @@ async function PatientDashboard({ userId }: { userId: number }) {
 async function TherapistDashboard({ userId }: { userId: number }) {
   const surveys = await listSurveysByTherapist({ therapistId: userId });
   const { accepting: status } = await getTherapist(userId);
-  const appointments = (await listAppointments({ userId })).map(
+  const appointments = (await listAppointmentsWithDetails({ userId })).map(
     (appointment) => ({
       id: appointment.appointmentId,
       date: appointment.appointmentDate,

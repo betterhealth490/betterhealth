@@ -24,6 +24,24 @@ export interface ListAppointmentsItem {
 }
 
 export type ListAppointmentsResult = ListAppointmentsItem[];
+export type ListAppointmentsWithDetailsResult =
+  ListAppointmentsWithDetailsItem[];
+
+export interface ListAppointmentsWithDetailsItem {
+  appointmentDate: Date;
+  appointmentId: number;
+  patient: {
+    userId: number;
+    firstName: string;
+    lastName: string;
+  };
+  therapist: {
+    userId: number;
+    firstName: string;
+    lastName: string;
+  };
+  status: "pending" | "confirmed" | "cancelled";
+}
 
 export interface UpdateAppointmentInput {
   appointmentDate: Date;
@@ -58,11 +76,11 @@ export interface CreateAppointmentResult {
 
 export interface GetTherapistAvailabilityInput {
   therapistId: number;
-  day: number; 
+  day: number;
   date: string;
 }
 
 export interface GetTherapistAvailabilityResult {
   day: number;
-  availableSlots: string[]; 
+  availableSlots: string[];
 }
