@@ -55,3 +55,14 @@ export interface CreateAppointmentResult {
   notes: string;
   status: "pending" | "confirmed" | "cancelled";
 }
+
+export interface GetTherapistAvailabilityInput {
+  therapistId: number;
+  day: number; // Day of the week: 0 (Sunday) to 6 (Saturday)
+  date: string; // Date in "YYYY-MM-DD" format
+}
+
+export interface GetTherapistAvailabilityResult {
+  day: number;
+  availableSlots: string[]; // Array of available time slots in HH:MM format
+}
