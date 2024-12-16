@@ -1,6 +1,11 @@
 import { promises as fs } from "fs"
 import { PageWrapper } from "../page-wrapper";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
+import { DataTable } from "./therapists/data-table";
+import path from "path";
+import { z } from "zod";
+import { taskSchema } from "./data/schema";
+import { columns } from "./therapists/columns";
 import { currentUser } from "@clerk/nextjs/server";
 import { PatientSurveys } from "./(patient)/surveys/content";
 import { listSurveys, listSurveysByTherapist } from "~/data-access/surveys";
@@ -12,18 +17,29 @@ import { OverviewContent } from "./overview/content";
 import { listAppointments } from "~/data-access/appointment";
 import { getPatientTherapist } from "~/data-access/patient";
 import { listBillsByPatient } from "~/data-access/billing";
-import path from "path";
-import { z } from "zod";
-import { taskSchema } from "./data/schema";
-import { DataTable } from "./therapists/data-table";
-import { columns } from "./therapists/columns";
+import { getTherapistData } from "~/data-access/therapist";
+
+interface Therapist{
+  name: string,
+  email: string,
+  age: number,
+  gender: string,
+  specialty: string,
+  label: string,
+  status: string
+}
 
 async function getTasks() {
-  const data = await fs.readFile(
-    path.join(process.cwd(), "src/app/(user)/dashboard/data/tasks.json")
-  )
+  const therapistData = await getTherapistData()
+  const therapistList : Therapist[] = []
+  therapistData.forEach(therapist => {
+    if (therapist.accepting){
+
+    } else {}
+  });
 
   const tasks = JSON.parse(data.toString())
+  console.log(tasks)
 
   return z.array(taskSchema).parse(tasks)
 }

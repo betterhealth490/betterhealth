@@ -72,7 +72,6 @@ export default function HomePage() {
 
         <ScreenFour>
           <ScreenFourText />
-          <ScreenFourInput />
         </ScreenFour>
       </div>
     </main>
@@ -104,9 +103,6 @@ function ScreenOneButtons() {
     <div className="flex w-full justify-center gap-x-2.5">
       <Button variant={"landingDefault"} asChild>
         <Link href="/signup">Get Started</Link>
-      </Button>
-      <Button variant={"landingOutline"}>
-        <Link href="/about">Learn More</Link>
       </Button>
     </div>
   );
@@ -177,7 +173,7 @@ function ScreenThreeCard(props: { text: string; name: string }) {
   );
 }
 
-function ScreenFour(props: { children: React.ReactNode[] }) {
+function ScreenFour(props: { children: React.ReactNode }) {
   return (
     <div className="flex h-[500px] w-full flex-col items-center justify-center gap-y-4 text-white">
       {props.children}
@@ -195,50 +191,5 @@ function ScreenFourText() {
         mental health.
       </h2>
     </div>
-  );
-}
-function ScreenFourInput() {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      email: "",
-    },
-  });
-  const router = useRouter();
-
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    router.push("/signup?email=" + values.email);
-  }
-  return (
-    <Form {...form}>
-      <form
-        className="flex w-full justify-center gap-x-2.5"
-        onSubmit={form.handleSubmit(onSubmit)}
-      >
-        <FormField
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormControl>
-                <div className="flex flex-col gap-y-2.5">
-                  <div className="flex justify-center gap-x-2.5">
-                    <Input
-                      placeholder="Enter your email"
-                      className="w-fit text-foreground"
-                      {...field}
-                    />
-                    <Button variant={"landingDefault"}>
-                      Sign Up
-                      <ArrowRight className="h-6 w-6" />
-                    </Button>
-                  </div>
-                  <FormMessage className="text-white" />
-                </div>
-              </FormControl>
-            </FormItem>
-          )}
-        />
-      </form>
-    </Form>
   );
 }

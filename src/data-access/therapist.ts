@@ -11,6 +11,25 @@ import {
 } from "~/db/schema";
 import { isDefined } from "~/lib/utils";
 
+export async function getTherapistData(){
+  return await db
+    .select({
+      userId: users.userId,
+      firstName: users.firstName,
+      lastName: users.lastName,
+      age: users.age,
+      gender: users.gender,
+      email: users.email,
+      specialty: therapists.specialty,
+      accepting: therapists.accepting,
+      relationshipId: relationships.relationshipId,
+      status: relationships.status
+    })
+    .from(users)
+    .innerJoin(therapists, eq(users.userId, therapists.therapistId))
+    .innerJoin(relationships, eq(users.userId, relationships.relationshipId))
+}
+
 export async function listTherapistByPatient({
   patientId,
   limit = 5,

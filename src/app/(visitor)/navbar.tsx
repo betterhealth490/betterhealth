@@ -36,33 +36,6 @@ export function Navbar() {
               betterhealth
             </span>
           </Link>
-
-          <Link href="/about">
-            <Button
-              variant="link"
-              className={`${scroll ? "bg-white text-primary" : "bg-primary text-white"} transition-none`}
-            >
-              About
-            </Button>
-          </Link>
-
-          <Link href="/faq">
-            <Button
-              variant="link"
-              className={`${scroll ? "bg-white text-primary" : "bg-primary text-white"} transition-none`}
-            >
-              FAQ
-            </Button>
-          </Link>
-
-          <Link href="/contact">
-            <Button
-              variant="link"
-              className={`${scroll ? "bg-white text-primary" : "bg-primary text-white"} transition-none`}
-            >
-              Contact Us
-            </Button>
-          </Link>
         </div>
 
         <div className="flex w-full justify-end gap-x-5 space-x-1">
