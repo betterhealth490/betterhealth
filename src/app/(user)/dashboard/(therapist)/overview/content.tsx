@@ -63,7 +63,6 @@ export function TherapistOverview({
   patients,
 }: OverviewContentProps) {
   const [active, setActive] = useState<boolean>(status);
-  const [optActive, setOptActive] = useOptimistic<boolean>(active);
   const { toast } = useToast();
   const usdFormatter = new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -79,23 +78,22 @@ export function TherapistOverview({
           </CardHeader>
           <CardContent className="flex items-center gap-2">
             <Switch
-              checked={optActive}
+              checked={active}
               onCheckedChange={async (checked) => {
-                setOptActive((prev) => !prev);
+                setActive(!active);
                 const result = await changeStatusAction(userId, checked);
-                if (result.ok && isDefined(result.result?.accepting)) {
-                  setActive(result.result.accepting);
-                } else {
+                if (!result.ok || !isDefined(result.result?.accepting)) {
                   toast({
                     variant: "destructive",
                     title: "An error occurred",
                     description: "Try again in a few moments",
                   });
+                  setActive(active);
                 }
               }}
             />
             <span className="text-sm text-muted-foreground">
-              {optActive ? "Accepting patients" : "Not accepting patients"}
+              {active ? "Accepting patients" : "Not accepting patients"}
             </span>
           </CardContent>
         </Card>

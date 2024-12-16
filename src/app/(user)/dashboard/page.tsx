@@ -18,6 +18,8 @@ import {
 } from "~/data-access/billing";
 import { getTherapist } from "~/data-access/therapist";
 
+export const dynamic = "force-dynamic";
+
 export default async function DashboardPage() {
   const user = await currentUser();
   const userId = parseInt(user?.unsafeMetadata.databaseId as string);

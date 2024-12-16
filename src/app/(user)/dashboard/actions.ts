@@ -34,6 +34,7 @@ export const changeStatusAction = async (
 ) => {
   try {
     const result = await changeStatus({ therapistId, accepting });
+    revalidatePath("/dashboard");
     return { ok: true, result };
   } catch (err) {
     console.log("err", JSON.stringify(err));
