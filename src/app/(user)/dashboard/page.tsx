@@ -52,7 +52,9 @@ async function PatientDashboard({ userId }: { userId: number }) {
       status: appointment.status,
     }),
   );
+
   const bills = await listBillsByPatient({ patientId: userId });
+
   return (
     <PageWrapper
       actions={
