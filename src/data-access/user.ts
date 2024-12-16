@@ -1,6 +1,7 @@
+import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "~/db";
-import { patients, therapists, users } from "~/db/schema";
+import { billings, genderEnum, patients, therapists, users } from "~/db/schema";
 import {
   EmailInUseError,
   LicenseInUseError,
@@ -45,6 +46,60 @@ export async function createMember(
     }
     throw new SignUpError();
   }
+}
+
+export async function deleteMember(
+  userId: number
+) {
+  const result = await db
+    .delete(users)
+    .where(eq(users.userId, userId))
+  if (!isDefined(result)) {
+    throw new Error("Error deleting user: " + userId)
+  }
+}
+
+export async function checkMember(
+  userId: number
+) {
+  const result = await db
+    .select({
+      status: billings.status,
+    })
+    .from(billings)
+    .where(eq(billings.patientId, userId))
+  if (!isDefined(result)){
+    throw new Error("Error checking user: " + userId)
+  }
+  return result
+}
+
+export async function updateProfile({
+  userId,
+  options,
+}: {
+  userId: number;
+  options: {
+    firstName?: string;
+    lastName?: string;
+    email?: string;
+    age?: number | null;
+    gender?: (typeof genderEnum.enumValues)[number] | null;
+    password?: string;
+  };
+}) {
+  const [result] = await db
+    .update(users)
+    .set({
+      ...options,
+      updatedAt: new Date(),
+    })
+    .where(eq(users.userId, userId))
+    .returning();
+  if (!isDefined(result)) {
+    throw new Error("Error updating user: " + userId);
+  }
+  return result;
 }
 
 export async function createTherapist(
