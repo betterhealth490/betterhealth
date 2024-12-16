@@ -56,7 +56,7 @@ async function PatientDashboard({ userId }: { userId: number }) {
         )
       }
     >
-      <Tabs defaultValue="overview" className="p-4">
+      <Tabs defaultValue="overview" className="w-full p-4">
         <TabsList>
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="surveys">Surveys</TabsTrigger>

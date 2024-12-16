@@ -1,15 +1,43 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 import { db } from "~/db";
 import {
   users,
   availability,
   relationships,
-  type genderEnum,
   type specialtyEnum,
   therapists,
 } from "~/db/schema";
 import { isDefined } from "~/lib/utils";
+
+export async function changeTherapistStatus({
+  therapistId,
+  active,
+}: {
+  therapistId: number;
+  active: boolean;
+}) {
+  const [therapist] = await db
+    .update(therapists)
+    .set({
+      active,
+      updatedAt: new Date(),
+    })
+    .where(and(eq(therapists.therapistId, therapistId)))
+    .returning();
+
+  if (!therapist) {
+    throw new Error("Failed to update therapist");
+  }
+  if (active) {
+    return therapists;
+  }
+
+  await db
+    .delete(relationships)
+    .where(and(eq(relationships.therapistId, therapistId)))
+    .returning();
+}
 
 export async function listTherapistByPatient({
   patientId,
@@ -60,33 +88,6 @@ export async function listAvailability({
     .where(eq(availability.therapistId, therapistId));
 }
 
-export async function updateProfile({
-  userId,
-  options,
-}: {
-  userId: number;
-  options: {
-    firstName?: string;
-    lastName?: string;
-    email?: string;
-    age?: number | null;
-    gender?: (typeof genderEnum.enumValues)[number] | null;
-  };
-}) {
-  const [result] = await db
-    .update(users)
-    .set({
-      ...options,
-      updatedAt: new Date(),
-    })
-    .where(eq(users.userId, userId))
-    .returning();
-  if (!isDefined(result)) {
-    throw new Error("Error updating user: " + userId);
-  }
-  return result;
-}
-
 export async function updateSpecialty({
   therapistId,
   specialty,
@@ -100,7 +101,9 @@ export async function updateSpecialty({
       specialty,
       updatedAt: new Date(),
     })
-    .where(eq(therapists.therapistId, therapistId))
+    .where(
+      and(eq(therapists.therapistId, therapistId), eq(therapists.active, true)),
+    )
     .returning();
   if (!isDefined(result)) {
     throw new Error("Error updating therapist specialty: " + therapistId);

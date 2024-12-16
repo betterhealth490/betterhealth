@@ -25,6 +25,7 @@ export const migrateUsersAction: () => Promise<ServerResponse> = async () => {
             role: user.role,
             databaseId: user.userId,
             questionnaireCompleted: true,
+            active: true,
           },
         }),
       );

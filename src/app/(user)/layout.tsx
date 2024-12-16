@@ -1,7 +1,6 @@
 import { cookies } from "next/headers";
 import { AppSidebar } from "~/components/app-sidebar";
-import { SidebarInset, SidebarProvider } from "~/components/ui/sidebar";
-import { Breadcrumbs } from "~/components/user/breadcrumbs";
+import { SidebarProvider } from "~/components/ui/sidebar";
 
 export default function UserLayout({
   children,

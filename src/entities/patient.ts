@@ -8,6 +8,16 @@ import {
   relationships,
 } from "~/db/schema";
 
+export interface GetPatientResult{
+  firstName: string;
+  lastName: string;
+  age: string;
+  email: string;
+  agePreference: string;
+  genderPreference: string;
+  specialtyPreference: string;
+}
+
 export interface SelectTherapistInput {
   patientId: number;
   therapistId: number;

@@ -103,6 +103,15 @@ export async function updateBilling(
   };
 }
 
+export async function listPendingBills({ patientId }: { patientId: number }) {
+  return await db
+    .select()
+    .from(billings)
+    .where(
+      and(eq(billings.patientId, patientId), eq(billings.status, "pending")),
+    );
+}
+
 export async function listBillsByPatient(
   input: ListBillingInput,
 ): Promise<ListBillingResult> {
