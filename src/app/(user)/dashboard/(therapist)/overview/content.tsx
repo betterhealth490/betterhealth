@@ -1,22 +1,6 @@
 "use client";
 
-import { Avatar, AvatarImage, AvatarFallback } from "~/components/ui/avatar";
-import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogTitle,
-  DialogDescription,
-} from "@radix-ui/react-dialog";
-import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
-import {
-  CircleUser,
-  Calendar,
-  FileText,
-  Activity,
-  PlusCircle,
-  Flame,
-} from "lucide-react";
+import { Calendar, Users, CircleCheck, CreditCard } from "lucide-react";
 import { Badge } from "~/components/ui/badge";
 import {
   Card,
@@ -33,12 +17,14 @@ import {
   TableBody,
   TableCell,
 } from "~/components/ui/table";
-import { formatInitials, formatName } from "~/lib/utils";
+import { formatName, isDefined } from "~/lib/utils";
 import { format } from "date-fns";
 import { Button } from "~/components/ui/button";
 import Link from "next/link";
 import { Switch } from "~/components/ui/switch";
 import { changeStatusAction } from "../../actions";
+import { useOptimistic, useState } from "react";
+import { useToast } from "~/hooks/use-toast";
 
 interface OverviewContentProps {
   status: boolean;
@@ -64,17 +50,8 @@ interface OverviewContentProps {
     amount: number;
     status: "pending" | "paid";
   }[];
-  surveys: {
-    id: number;
-    date: Date;
-    sleepTime: number;
-    sleepLength: number;
-    sleepQuality: number;
-    waterIntake: number;
-    foodIntake: number;
-    foodHealthQuality: number;
-    stressLevel: number;
-    selfImage: number;
+  patients: {
+    patientId: number;
   }[];
 }
 
@@ -83,29 +60,42 @@ export function TherapistOverview({
   status,
   appointments,
   bills,
-  surveys,
+  patients,
 }: OverviewContentProps) {
-  const streak = generateSurveyStreak(surveys);
+  const [active, setActive] = useState<boolean>(status);
+  const [optActive, setOptActive] = useOptimistic<boolean>(active);
+  const { toast } = useToast();
   const usdFormatter = new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
   });
-  const nextUnpaidBill = bills.find((bill) => bill.status === "pending");
   return (
     <div className="flex flex-col gap-4">
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Status</CardTitle>
-            <Calendar className="h-4 w-4 text-muted-foreground" />
+            <CircleCheck className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent className="flex items-center gap-2">
             <Switch
-              checked={status}
-              onCheckedChange={async () => await changeStatusAction(userId)}
+              checked={optActive}
+              onCheckedChange={async (checked) => {
+                setOptActive((prev) => !prev);
+                const result = await changeStatusAction(userId, checked);
+                if (result.ok && isDefined(result.result?.accepting)) {
+                  setActive(result.result.accepting);
+                } else {
+                  toast({
+                    variant: "destructive",
+                    title: "An error occurred",
+                    description: "Try again in a few moments",
+                  });
+                }
+              }}
             />
             <span className="text-sm text-muted-foreground">
-              {status ? "Accepting patients" : "Not accepting patients"}
+              {optActive ? "Accepting patients" : "Not accepting patients"}
             </span>
           </CardContent>
         </Card>
@@ -135,46 +125,27 @@ export function TherapistOverview({
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Next Bill</CardTitle>
-            <FileText className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">Pending Bills</CardTitle>
+            <CreditCard className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            {nextUnpaidBill ? (
-              <div className="flex flex-col">
-                <p className="text-2xl font-bold">
-                  {usdFormatter.format(bills[0]!.amount)}
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  Due {format(bills[0]!.dueDate, "LLLL dd, yyyy")}
-                </p>
-              </div>
-            ) : (
-              <span className="text-sm text-muted-foreground">
-                No unpaid bills
-              </span>
-            )}
+            <span className="text-2xl font-bold">
+              {bills.filter((bill) => bill.status === "pending").length}
+            </span>
+            <span className="text-sm text-muted-foreground">
+              {" "}
+              pending bill(s)
+            </span>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Survey Streak</CardTitle>
-            <Flame className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">Patient Count</CardTitle>
+            <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            {streak > 0 ? (
-              <div className="flex flex-col">
-                <p className="text-2xl font-bold">
-                  {streak} day{streak > 1 && "s"}
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  {generateStreakMessage(streak)}
-                </p>
-              </div>
-            ) : (
-              <span className="text-sm text-muted-foreground">
-                Complete a daily survey to start a streak!
-              </span>
-            )}
+            <span className="text-2xl font-bold">{patients.length}</span>
+            <span className="text-sm text-muted-foreground"> patient(s)</span>
           </CardContent>
         </Card>
       </div>
@@ -280,51 +251,4 @@ export function TherapistOverview({
       </div>
     </div>
   );
-}
-function generateSurveyStreak(
-  surveys: {
-    id: number;
-    date: Date;
-    sleepTime: number;
-    sleepLength: number;
-    sleepQuality: number;
-    waterIntake: number;
-    foodIntake: number;
-    foodHealthQuality: number;
-    stressLevel: number;
-    selfImage: number;
-  }[],
-) {
-  let currentStreak = 0;
-  let longestStreak = 0;
-  let lastSurveyDate = null;
-
-  surveys.sort(
-    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
-  );
-  for (const survey of surveys) {
-    const surveyDate = new Date(survey.date);
-    if (
-      lastSurveyDate &&
-      surveyDate.getTime() - lastSurveyDate.getTime() === 86400000
-    ) {
-      // 86400000 is the number of milliseconds in a day
-      currentStreak++;
-    } else {
-      currentStreak = 1;
-    }
-    if (currentStreak > longestStreak) {
-      longestStreak = currentStreak;
-    }
-    lastSurveyDate = surveyDate;
-  }
-  return longestStreak;
-}
-
-function generateStreakMessage(streak: number) {
-  if (streak === 1) {
-    return `You've completed a survey! Keep going to start a streak!`;
-  } else {
-    return `${streak} in a row! Keep the streak alive!`;
-  }
 }

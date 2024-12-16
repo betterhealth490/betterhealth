@@ -28,13 +28,15 @@ export const createSurveyAction = async (
   }
 };
 
-export const changeStatusAction = async (therapistId: number) => {
+export const changeStatusAction = async (
+  therapistId: number,
+  accepting: boolean,
+) => {
   try {
-    const result = await changeStatus({ therapistId });
-    revalidatePath("/dashboard");
+    const result = await changeStatus({ therapistId, accepting });
     return { ok: true, result };
   } catch (err) {
-    console.log(JSON.stringify(err));
+    console.log("err", JSON.stringify(err));
     return { ok: false, error: JSON.stringify(err) };
   }
 };

@@ -1,4 +1,4 @@
-import { eq, and, desc } from "drizzle-orm";
+import { eq, and, desc, or } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 import { db } from "~/db";
 import { appointments, users } from "~/db/schema";
@@ -6,7 +6,6 @@ import {
   type GetAppointmentInput,
   type GetAppointmentResult,
   type ListAppointmentsInput,
-  type ListAppointmentsItem,
   type ListAppointmentsResult,
   type UpdateAppointmentInput,
   type UpdateAppointmentResult,
@@ -91,7 +90,12 @@ export async function listAppointments(
     .from(appointments)
     .innerJoin(patients, eq(patients.userId, appointments.patientId))
     .innerJoin(therapists, eq(therapists.userId, appointments.patientId))
-    .where(and(eq(appointments.patientId, input.userId)))
+    .where(
+      or(
+        eq(appointments.patientId, input.userId),
+        eq(appointments.therapistId, input.userId),
+      ),
+    )
     .orderBy(desc(appointments.appointmentDate));
 
   return result;

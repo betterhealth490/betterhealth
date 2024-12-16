@@ -75,11 +75,18 @@ export async function listAvailability({
     .where(eq(availability.therapistId, therapistId));
 }
 
-export async function changeStatus({ therapistId }: { therapistId: number }) {
+export async function changeStatus({
+  therapistId,
+  accepting,
+}: {
+  therapistId: number;
+  accepting: boolean;
+}) {
   const [result] = await db
     .update(therapists)
     .set({
-      accepting: !therapists.accepting,
+      accepting,
+      updatedAt: new Date(),
     })
     .where(eq(therapists.therapistId, therapistId))
     .returning();
