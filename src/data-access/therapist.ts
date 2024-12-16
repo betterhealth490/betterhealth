@@ -60,33 +60,6 @@ export async function listAvailability({
     .where(eq(availability.therapistId, therapistId));
 }
 
-export async function updateProfile({
-  userId,
-  options,
-}: {
-  userId: number;
-  options: {
-    firstName?: string;
-    lastName?: string;
-    email?: string;
-    age?: number | null;
-    gender?: (typeof genderEnum.enumValues)[number] | null;
-  };
-}) {
-  const [result] = await db
-    .update(users)
-    .set({
-      ...options,
-      updatedAt: new Date(),
-    })
-    .where(eq(users.userId, userId))
-    .returning();
-  if (!isDefined(result)) {
-    throw new Error("Error updating user: " + userId);
-  }
-  return result;
-}
-
 export async function updateSpecialty({
   therapistId,
   specialty,

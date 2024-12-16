@@ -3,10 +3,13 @@ import ProfileTab from "./profile-tab"
 import PreferencesTab from "./preferences-tab"
 import AccountTab from "./account-tab"
 import IdentityTab from "./identity-tab"
-import { getPatientAction } from "./actions"
+import { getPatientAction, getTherapistAction } from "./actions"
+import { ageEnum, genderEnum, specialtyEnum } from "~/db/schema"
+
 
 export async function SettingsContent({ role, userId } : { role: string, userId: number }) {
     const patientInfo = (await getPatientAction(userId));
+    const therapistInfo = (await getTherapistAction(userId))
 
   return (
     <Tabs defaultValue="profile">
@@ -19,24 +22,50 @@ export async function SettingsContent({ role, userId } : { role: string, userId:
             )}
             <TabsTrigger value="account">Account</TabsTrigger>
         </TabsList>
-        <TabsContent value="profile">
-            <ProfileTab 
-            firstName={patientInfo.result?.firstName}
-            lastName={patientInfo.result?.lastName}
-            email={patientInfo.result?.email}
-            password={patientInfo.result?.password}/>
-        </TabsContent>
+        {role === "member" ? (
+            <TabsContent value="profile">
+                <ProfileTab
+                userId={userId} 
+                firstName={patientInfo.result?.firstName}
+                lastName={patientInfo.result?.lastName}
+                email={patientInfo.result?.email}
+                password={patientInfo.result?.password}/>
+            </TabsContent>
+        ) : (
+            <TabsContent value="profile">
+                <ProfileTab
+                userId={userId} 
+                firstName={therapistInfo.result?.firstName}
+                lastName={therapistInfo.result?.lastName}
+                email={therapistInfo.result?.email}
+                password={therapistInfo.result?.password}/>
+            </TabsContent>
+        )}
         {role === "member" ? (
             <TabsContent value="preferences">
-                <PreferencesTab/>
+                <PreferencesTab
+                patientId={userId}
+                agePreference={patientInfo.result?.agePreference ?? null}
+                genderPreference={patientInfo.result?.genderPreference ?? null}
+                specialtyPreference={patientInfo.result?.specialtyPreference ?? null}/>
             </TabsContent>
         ) : (
             <TabsContent value="identity">
-                <IdentityTab/>
+                <IdentityTab
+                gender={therapistInfo.result?.gender ?? undefined}
+                specialty={therapistInfo.result?.gender ?? undefined}/>
             </TabsContent>
         )}
         <TabsContent value="account">
-            <AccountTab/>
+            {role === "member" ? (
+                <AccountTab 
+                password={patientInfo.result?.password}
+                userId={userId}/>
+            ) : (
+                <AccountTab 
+                password={therapistInfo.result?.password}
+                userId={userId}/>
+            )}
         </TabsContent>
     </Tabs>
   )

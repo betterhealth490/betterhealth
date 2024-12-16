@@ -23,19 +23,13 @@ const identityFormSchema = z.object({
   
 type identityFormValues = z.infer<typeof identityFormSchema>
 
-// This can come from your database or API.
-const defaultValues: Partial<identityFormValues> = {
-//   specialty: "specialty",
-//   identity: [
-//     { value: "https://shadcn.com" },
-//     { value: "http://twitter.com/shadcn" },
-//   ],
-}
-
-export default function IdentityTab(){
+export default function IdentityTab({ gender, specialty } : { gender: string | undefined, specialty: string | undefined }){
     const form = useForm<identityFormValues>({
         resolver: zodResolver(identityFormSchema),
-        defaultValues,
+        defaultValues: {
+            gender,
+            specialty
+        },
         mode: "onChange",
     })
     
