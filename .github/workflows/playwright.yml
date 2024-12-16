@@ -1,4 +1,4 @@
-name: Playwright Tests
+name: Run Playwright Tests
 on:
   push:
     branches: [ main, master ]
@@ -7,7 +7,7 @@ on:
 jobs:
   test:
     timeout-minutes: 60
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4

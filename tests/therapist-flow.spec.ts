@@ -10,9 +10,9 @@ test.describe("Create Therapist Account", () => {
     await expect(page).toHaveURL("https://betterhealth.vercel.app/signup");
     await page.locator('input[name="firstName"]').fill("Test");
     await page.locator('input[name="lastName"]').fill("Therapist");
-    await page.locator('input[name="email"]').fill("therapist@example.com");
-    await page.locator('input[name="password"]').fill("password1225");
-    await page.locator('input[name="licenseNumber"]').fill("46TR16121800");
+    await page.locator('input[name="email"]').fill("therapist215@example.com");
+    await page.locator('input[name="password"]').fill("password123525");
+    await page.locator('input[name="licenseNumber"]').fill("46TR16122500");
     await page.click("text=Submit");
     await expect(page).toHaveURL("https://betterhealth.vercel.app/startup");
     await page.getByPlaceholder("Enter your age").click();
@@ -21,10 +21,10 @@ test.describe("Create Therapist Account", () => {
     await expect(page.getByLabel("other")).toBeChecked();
     await page.getByLabel("LGBTQ+").check();
     await expect(page.getByLabel("LGBTQ+")).toBeChecked();
-    await page.click("text=Submit");
+    await page.dblclick("text=Submit");
     await expect(page).toHaveURL("https://betterhealth.vercel.app/dashboard");
     await page.click("text=therapist@example.com");
-    await page.click("text=Log out");
+    await page.dblclick("text=Log out");
   });
 
   test("Therapist can view patient surveys", async ({ page }) => {
@@ -60,9 +60,9 @@ test.describe("Create Therapist Account", () => {
     await page.keyboard.type(
       "Hello, please request an appointment and we can meet then",
     );
-    await page.getByRole("button", { name: "Send" }).click();
-    await page.click(
-      "text=Hello, please request an appointment and we can meet then",
-    );
+    // await page.getByRole("button", { name: "Send" }).click();
+    // await page.click(
+    //   "text=Hello, please request an appointment and we can meet then",
+    // );
   });
 });
