@@ -12,13 +12,12 @@ import {
   type GetAppointmentInput,
   type GetAppointmentResult,
   type ListAppointmentsInput,
-  type ListAppointmentsItem,
   type ListAppointmentsResult,
   type UpdateAppointmentInput,
   type UpdateAppointmentResult,
   type CreateAppointmentInput,
   type CreateAppointmentResult,
-  ListAppointmentsWithDetailsResult,
+  type ListAppointmentsWithDetailsResult,
 } from "~/entities/appointment";
 
 export interface Appointment {

@@ -1,6 +1,14 @@
 import { eq, and } from "drizzle-orm";
 import { db } from "~/db";
-import { billings, users, relationships } from "~/db/schema";
+import {
+  billings,
+  users,
+  relationships,
+  type ageEnum,
+  type genderEnum,
+  type specialtyEnum,
+  patients,
+} from "~/db/schema";
 
 import {
   type GetBillingInput,
@@ -150,27 +158,34 @@ export async function getTherapistNameByBillId(
 
 export async function listPatientsByTherapist(therapistId: number): Promise<
   {
-    patientId: number;
+    id: number;
     firstName: string;
     lastName: string;
+    agePreference: (typeof ageEnum.enumValues)[number] | null;
+    genderPreference: (typeof genderEnum.enumValues)[number] | null;
+    specialtyPreference: (typeof specialtyEnum.enumValues)[number] | null;
+    status: "current" | "pending";
   }[]
 > {
   const result = await db
     .select({
-      patientId: relationships.patientId,
+      id: relationships.patientId,
       firstName: users.firstName,
       lastName: users.lastName,
+      status: relationships.status,
+      agePreference: patients.agePreference,
+      genderPreference: patients.genderPreference,
+      specialtyPreference: patients.specialtyPreference,
     })
     .from(relationships)
     .innerJoin(users, eq(relationships.patientId, users.userId))
-    .where(
-      and(
-        eq(relationships.therapistId, therapistId),
-        eq(relationships.status, "approved"),
-      ),
-    );
+    .innerJoin(patients, eq(relationships.patientId, patients.patientId))
+    .where(and(eq(relationships.therapistId, therapistId)));
 
-  return result;
+  return result.map((rel) => ({
+    ...rel,
+    status: rel.status === "approved" ? "current" : "pending",
+  }));
 }
 
 export async function listBillsByTherapist(therapistId: number): Promise<
