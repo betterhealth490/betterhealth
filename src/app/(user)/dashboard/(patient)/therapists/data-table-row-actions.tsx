@@ -84,7 +84,7 @@ function DropAction({
   };
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DropdownMenu>
+      <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
           <Button
             variant="ghost"
@@ -155,7 +155,7 @@ function RequestAction({
   };
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DropdownMenu>
+      <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
           <Button
             variant="ghost"
@@ -225,7 +225,7 @@ function WithdrawAction({
   };
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DropdownMenu>
+      <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
           <Button
             variant="ghost"
