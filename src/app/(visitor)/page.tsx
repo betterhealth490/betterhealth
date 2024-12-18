@@ -30,7 +30,7 @@ export default function HomePage() {
           <ScreenOneText />
           <ScreenOneButtons />
         </ScreenOne>
-
+        {process.env.VERCEL_ENV ?? "bruh"}
         <ScreenTwo>
           <ScreenTwoHeading />
           <ScreenTwoContent>

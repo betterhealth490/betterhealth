@@ -10,6 +10,7 @@ const isPublicRoute = createRouteMatcher([
   "/login(.*)",
   "/signup(.*)",
   "/clerk",
+  "/vercel",
 ]);
 
 const isMemberRoute = createRouteMatcher([
