@@ -92,8 +92,8 @@ export function DailySurveyButton({ userId }: { userId: number }) {
                   <FormLabel>How much water did you drink?</FormLabel>
                   <FormControl>
                     <Slider
-                      value={[field.value]}
-                      onValueChange={(val) => field.onChange(val[0])}
+                      value={[field.value - 1]}
+                      onValueChange={(val) => field.onChange(val[0]! + 1)}
                       max={4}
                       step={1}
                     />
@@ -114,8 +114,8 @@ export function DailySurveyButton({ userId }: { userId: number }) {
                   <FormLabel>How much food did you eat?</FormLabel>
                   <FormControl>
                     <Slider
-                      value={[field.value]}
-                      onValueChange={(val) => field.onChange(val[0])}
+                      value={[field.value - 1]}
+                      onValueChange={(val) => field.onChange(val[0]! + 1)}
                       max={4}
                       step={1}
                     />
@@ -136,8 +136,8 @@ export function DailySurveyButton({ userId }: { userId: number }) {
                   <FormLabel>How healthy was your food?</FormLabel>
                   <FormControl>
                     <Slider
-                      value={[field.value]}
-                      onValueChange={(val) => field.onChange(val[0])}
+                      value={[field.value - 1]}
+                      onValueChange={(val) => field.onChange(val[0]! + 1)}
                       max={4}
                       step={1}
                     />
@@ -158,8 +158,8 @@ export function DailySurveyButton({ userId }: { userId: number }) {
                   <FormLabel>What time did you go to sleep?</FormLabel>
                   <FormControl>
                     <Slider
-                      value={[field.value]}
-                      onValueChange={(val) => field.onChange(val[0])}
+                      value={[field.value - 1]}
+                      onValueChange={(val) => field.onChange(val[0]! + 1)}
                       max={4}
                       step={1}
                     />
@@ -180,8 +180,8 @@ export function DailySurveyButton({ userId }: { userId: number }) {
                   <FormLabel>How long did you sleep?</FormLabel>
                   <FormControl>
                     <Slider
-                      value={[field.value]}
-                      onValueChange={(val) => field.onChange(val[0])}
+                      value={[field.value - 1]}
+                      onValueChange={(val) => field.onChange(val[0]! + 1)}
                       max={4}
                       step={1}
                     />
@@ -202,8 +202,8 @@ export function DailySurveyButton({ userId }: { userId: number }) {
                   <FormLabel>How was the quality of your sleep?</FormLabel>
                   <FormControl>
                     <Slider
-                      value={[field.value]}
-                      onValueChange={(val) => field.onChange(val[0])}
+                      value={[field.value - 1]}
+                      onValueChange={(val) => field.onChange(val[0]! + 1)}
                       max={4}
                       step={1}
                     />
@@ -224,8 +224,8 @@ export function DailySurveyButton({ userId }: { userId: number }) {
                   <FormLabel>How stressed did you feel?</FormLabel>
                   <FormControl>
                     <Slider
-                      value={[field.value]}
-                      onValueChange={(val) => field.onChange(val[0])}
+                      value={[field.value - 1]}
+                      onValueChange={(val) => field.onChange(val[0]! + 1)}
                       max={4}
                       step={1}
                     />
@@ -246,8 +246,8 @@ export function DailySurveyButton({ userId }: { userId: number }) {
                   <FormLabel>How do you feel about yourself?</FormLabel>
                   <FormControl>
                     <Slider
-                      value={[field.value]}
-                      onValueChange={(val) => field.onChange(val[0])}
+                      value={[field.value - 1]}
+                      onValueChange={(val) => field.onChange(val[0]! + 1)}
                       max={4}
                       step={1}
                     />
