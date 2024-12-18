@@ -4,7 +4,7 @@ export async function signupTherapist(driver) {
   const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
   try {
-    await driver.get("https://betterhealth.vercel.app/");
+    await driver.get("http://localhost:3000/");
     console.log("Navigated to the website");
     await sleep(2000);
     await driver.findElement(By.xpath("//button[text()='Sign Up']")).click();
@@ -41,14 +41,14 @@ export async function signupTherapist(driver) {
     await sleep(2000);
 
     const genderButton = await driver.findElement(
-      By.xpath("//button[@value='male']"),
+      By.xpath("/html/body/div[1]/div/form/div/div[2]/div[2]/div/div[1]/label"),
     );
     await genderButton.click();
     console.log("Selected Gender: Male");
     await sleep(2000);
 
     const specialtyButton = await driver.findElement(
-      By.xpath("//button[@value='addiction']"),
+      By.xpath("/html/body/div[1]/div/form/div/div[2]/div[3]/div/div[2]/label"),
     );
     await specialtyButton.click();
     console.log("Selected Specialty: Addiction");

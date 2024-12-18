@@ -38,28 +38,18 @@ jobs:
           npm install chromedriver@latest --save-dev
           npx chromedriver --version
 
-      # Install Required System Dependencies
-      - name: Install System Dependencies
-        run: |
-          sudo apt-get install -y \
-            libnss3 \
-            libatk-bridge2.0-0 \
-            libx11-xcb1 \
-            libxcomposite1 \
-            libxcursor1 \
-            libxdamage1 \
-            libxrandr2 \
-            libgbm1 \
-            libasound2 \
-            libcups2 \
-            libpangocairo-1.0-0 \
-            libpangoft2-1.0-0 \
-            libpango-1.0-0
-
       # Install project dependencies
       - name: Install Dependencies
         run: npm install
+
+      - name: Reset dev database
+        run: npm run db:seed
+
+      - name: Start server
+        run: npm run build
+
       - name: Run Selenium Tests
         run: |
-          npm run test:patient
+          npm run start &
+          npm run test:patient &&
           npm run test:therapist

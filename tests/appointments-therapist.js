@@ -9,13 +9,13 @@ export async function checkappointment(driver) {
     await sleep(2000);
 
     const pendingAppointment = await driver.findElement(
-      By.xpath("//*[contains(text(), 'pending')]")
+      By.xpath("//*[contains(text(), 'pending')]"),
     );
     if (pendingAppointment) {
       console.log("Found a pending appointment");
 
       const confirmButton = await driver.findElement(
-        By.xpath("//button[contains(@class, 'bg-green-500')]")
+        By.xpath("//button[contains(@class, 'bg-green-500')]"),
       );
       await confirmButton.click();
       console.log("Clicked 'Confirm' button for the appointment");
@@ -23,7 +23,7 @@ export async function checkappointment(driver) {
 
       const updatedStatus = await driver.wait(
         until.elementLocated(By.xpath("//*[contains(text(), 'confirmed')]")),
-        5000
+        5000,
       );
       if (updatedStatus) {
         console.log("Appointment confirmed successfully");
@@ -33,7 +33,7 @@ export async function checkappointment(driver) {
     }
 
     const cancelButton = await driver.findElement(
-      By.xpath("//button[contains(@class, 'bg-red-500')]")
+      By.xpath("//button[contains(@class, 'bg-red-500')]"),
     );
     if (cancelButton) {
       console.log("Found an appointment to cancel");
@@ -43,7 +43,7 @@ export async function checkappointment(driver) {
 
       const updatedStatus = await driver.wait(
         until.elementLocated(By.xpath("//*[contains(text(), 'cancelled')]")),
-        5000
+        5000,
       );
       if (updatedStatus) {
         console.log("Appointment cancelled successfully");
