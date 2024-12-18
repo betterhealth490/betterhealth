@@ -54,13 +54,15 @@ export function MemberForm() {
       specialtyPreference: values.specialtyPreference ?? null,
     });
     if (result.ok) {
-      await user.update({
+      const res = await user.update({
         unsafeMetadata: {
           ...user.unsafeMetadata,
           questionnaireCompleted: true,
         },
       });
-      router.push("/");
+      if (res.unsafeMetadata.questionnaireCompleted) {
+        router.refresh();
+      }
     } else {
       toast({
         variant: "destructive",

@@ -32,7 +32,7 @@ async function PatientPage({ patientId }: { patientId: number }) {
 }
 async function TherapistPage({ therapistId }: { therapistId: number }) {
   const billings = await listBillsByTherapist(therapistId);
-  const patients = await listPatientsByTherapist(therapistId);
+  const patients = await listPatientsByTherapist(therapistId, "current");
   return (
     <PageWrapper
       actions={

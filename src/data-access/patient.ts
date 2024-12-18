@@ -15,13 +15,13 @@ import {
   type SelectTherapistResult,
   type ChangeTherapistInput,
   type ChangeTherapistResult,
-  GetPatientTherapistInput,
-  GetPatientTherapistResult,
+  type GetPatientTherapistInput,
+  type GetPatientTherapistResult,
 } from "~/entities/patient";
 import { alias } from "drizzle-orm/pg-core";
 import { isDefined } from "~/lib/utils";
 
-export async function getPatient({ patientId } : { patientId: number }) {
+export async function getPatient({ patientId }: { patientId: number }) {
   const result = await db
     .select({
       firstName: users.firstName,
@@ -38,7 +38,7 @@ export async function getPatient({ patientId } : { patientId: number }) {
   return result.at(0);
 }
 
-export async function getTherapist({ therapistId } : { therapistId: number }) {
+export async function getTherapist({ therapistId }: { therapistId: number }) {
   const result = await db
     .select({
       firstName: users.firstName,
@@ -197,7 +197,7 @@ export async function updatePreferences({
   return result;
 }
 
-export async function getPatientTherapist(
+export async function getCurrentTherapist(
   input: GetPatientTherapistInput,
 ): Promise<GetPatientTherapistResult> {
   const { patientId } = input;
@@ -217,4 +217,102 @@ export async function getPatientTherapist(
       ),
     );
   return result[0];
+}
+
+interface TherapistWithStatus {
+  id: number;
+  firstName: string;
+  lastName: string;
+  age: number | null;
+  gender: "male" | "female" | "other" | null;
+  specialty: (typeof specialtyEnum.enumValues)[number] | null;
+  status: "current" | "accepting" | "not accepting" | "pending";
+}
+
+export async function listTherapistsForPatient({
+  patientId,
+}: {
+  patientId: number;
+}): Promise<TherapistWithStatus[]> {
+  const result = [];
+  const list = await db
+    .select()
+    .from(therapists)
+    .innerJoin(users, eq(users.userId, therapists.therapistId));
+
+  for (const { therapist, user } of list) {
+    const map: TherapistWithStatus = {
+      id: therapist.therapistId,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      age: user.age,
+      gender: user.gender,
+      specialty: therapist.specialty,
+      status: therapist.accepting ? "accepting" : "not accepting",
+    };
+    const [relationship] = await db
+      .select()
+      .from(relationships)
+      .where(
+        and(
+          eq(relationships.patientId, patientId),
+          eq(relationships.therapistId, therapist.therapistId),
+        ),
+      );
+    if (relationship?.status === "approved") {
+      map.status = "current";
+    } else if (relationship?.status === "pending") {
+      map.status = "pending";
+    }
+    result.push(map);
+  }
+  return result;
+}
+
+export async function requestTherapist({
+  therapistId,
+  patientId,
+}: {
+  therapistId: number;
+  patientId: number;
+}) {
+  const oldRequests = await db
+    .delete(relationships)
+    .where(eq(relationships.patientId, patientId))
+    .returning();
+  if (!isDefined(oldRequests)) {
+    throw new Error("Error deleting relationships");
+  }
+  const request = await db
+    .insert(relationships)
+    .values({
+      patientId,
+      therapistId,
+      status: "pending",
+    })
+    .returning();
+  if (!isDefined(request)) {
+    throw new Error("Error creating relationship");
+  }
+}
+
+export async function dropTherapist({
+  therapistId,
+  patientId,
+}: {
+  therapistId: number;
+  patientId: number;
+}) {
+  const oldTherapist = await db
+    .delete(relationships)
+    .where(
+      and(
+        eq(relationships.patientId, patientId),
+        eq(relationships.therapistId, therapistId),
+      ),
+    )
+    .returning();
+  if (!isDefined(oldTherapist)) {
+    throw new Error("Error deleting relationship");
+  }
 }

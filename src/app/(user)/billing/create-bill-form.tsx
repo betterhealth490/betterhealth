@@ -67,7 +67,7 @@ export function CreateBillForm({
   patients,
 }: {
   therapistId: number;
-  patients: { patientId: number; firstName: string; lastName: string }[];
+  patients: { id: number; firstName: string; lastName: string }[];
 }) {
   const form = useForm<z.infer<typeof billSchema>>({
     resolver: zodResolver(billSchema),
@@ -125,8 +125,8 @@ export function CreateBillForm({
                     <SelectContent>
                       {patients.map((patient) => (
                         <SelectItem
-                          key={patient.patientId}
-                          value={patient.patientId.toString()}
+                          key={patient.id}
+                          value={patient.id.toString()}
                         >
                           {formatName(patient)}
                         </SelectItem>

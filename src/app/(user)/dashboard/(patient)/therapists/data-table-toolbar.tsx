@@ -9,32 +9,70 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
-import { CalendarDateRangePicker } from "./date-range-picker";
-import { type DateRange } from "react-day-picker";
-import { DataTableViewSwitcher } from "./data-table-view-switcher";
 import { formatCamelCase } from "~/lib/utils";
+import { DataTableFacetedFilter } from "./data-table-faceted-filter";
+import { Input } from "~/components/ui/input";
+import { DataTableAgeFilter } from "./data-table-age-filter";
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
-  view: "table" | "line";
-  setView: (view: "table" | "line") => void;
-  date: DateRange | undefined;
-  setDate: (value: DateRange | undefined) => void;
 }
 
 export function DataTableToolbar<TData>({
   table,
-  date,
-  setDate,
-  view,
-  setView,
 }: DataTableToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0;
 
   return (
     <div className="flex items-center justify-between">
       <div className="flex flex-1 items-center space-x-2">
-        <CalendarDateRangePicker date={date} setDate={setDate} />
+        <Input
+          placeholder="Filter therapists..."
+          value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+          onChange={(event) =>
+            table.getColumn("name")?.setFilterValue(event.target.value)
+          }
+          className="h-8 w-[150px] lg:w-[250px]"
+        />
+        {table.getColumn("age") && (
+          <DataTableAgeFilter column={table.getColumn("age")} />
+        )}
+        {table.getColumn("gender") && (
+          <DataTableFacetedFilter
+            title="Gender"
+            column={table.getColumn("gender")}
+            options={[
+              { label: "Male", value: "male" },
+              { label: "Female", value: "female" },
+              { label: "Other", value: "other" },
+            ]}
+          />
+        )}
+        {table.getColumn("specialty") && (
+          <DataTableFacetedFilter
+            title="Specialty"
+            column={table.getColumn("specialty")}
+            options={[
+              { label: "Addiction", value: "addiction" },
+              { label: "Behavioral", value: "behavioral" },
+              { label: "Counseling", value: "counseling" },
+              { label: "Health", value: "health" },
+              { label: "LGBTQ+", value: "lgbtq" },
+            ]}
+          />
+        )}
+        {table.getColumn("status") && (
+          <DataTableFacetedFilter
+            title="Status"
+            column={table.getColumn("status")}
+            options={[
+              { label: "Current", value: "current" },
+              { label: "Accepting", value: "accepting" },
+              { label: "Not Accepting", value: "not accepting" },
+              { label: "Pending", value: "pending" },
+            ]}
+          />
+        )}
         {isFiltered && (
           <Button
             variant="ghost"
@@ -48,7 +86,7 @@ export function DataTableToolbar<TData>({
       </div>
       <div className="flex gap-2">
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
+          <DropdownMenuTrigger>
             <Button variant="outline" size="sm" className="h-8 font-normal">
               <Columns />
               Toggle Columns
@@ -80,7 +118,6 @@ export function DataTableToolbar<TData>({
               })}
           </DropdownMenuContent>
         </DropdownMenu>
-        <DataTableViewSwitcher view={view} setView={setView} />
       </div>
     </div>
   );
