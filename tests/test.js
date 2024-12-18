@@ -2,11 +2,7 @@ import { Builder, By, Key, until } from "selenium-webdriver";
 
 async function testLoginAndLogout() {
   let driver = new Builder().forBrowser("chrome").build();
-  await driver.manage().setTimeouts({
-    implicit: 10000,
-    pageLoad: 30000,
-    script: 15000,
-  });
+  
   const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
   try {
@@ -62,11 +58,7 @@ async function testLoginAndLogout() {
 
 async function testTakeAndShowSurveyData() {
   let driver = new Builder().forBrowser("chrome").build();
-  await driver.manage().setTimeouts({
-    implicit: 10000,
-    pageLoad: 30000,
-    script: 15000,
-  });
+  
   const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
   try {
@@ -153,11 +145,7 @@ async function testTakeAndShowSurveyData() {
 
 async function testShowSurveyGraph() {
   let driver = new Builder().forBrowser("chrome").build();
-  await driver.manage().setTimeouts({
-    implicit: 10000,
-    pageLoad: 30000,
-    script: 15000,
-  });
+  
 
   const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -277,11 +265,7 @@ async function testShowSurveyGraph() {
 }
 async function testCreateJournalEntry() {
   let driver = new Builder().forBrowser("chrome").build();
-  await driver.manage().setTimeouts({
-    implicit: 10000,
-    pageLoad: 30000,
-    script: 15000,
-  });
+  
 
   const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -450,11 +434,7 @@ async function testSignup() {
 
 async function testCreateBilling() {
   let driver = new Builder().forBrowser("chrome").build();
-  await driver.manage().setTimeouts({
-    implicit: 10000,
-    pageLoad: 30000,
-    script: 15000,
-  });
+  
   const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
   try {
