@@ -36,7 +36,7 @@ import { createBillForPatientAction } from "./actions";
 import { useToast } from "~/hooks/use-toast";
 import {
   Popover,
-  PopoverContent,
+  PopoverDialogContent,
   PopoverTrigger,
 } from "~/components/ui/popover";
 import { CalendarIcon, Loader } from "lucide-react";
@@ -49,7 +49,7 @@ const billSchema = z
     dueDate: z.date(),
   })
   .refine((data) => parseInt(data.amount) >= 1, {
-    message: "Please an amount greater than or equal to $1.00",
+    message: "Please enter an amount greater than or equal to $1.00",
     path: ["amount"],
   })
   .refine(
@@ -67,7 +67,7 @@ export function CreateBillForm({
   patients,
 }: {
   therapistId: number;
-  patients: { patientId: number; firstName: string; lastName: string }[];
+  patients: { id: number; firstName: string; lastName: string }[];
 }) {
   const form = useForm<z.infer<typeof billSchema>>({
     resolver: zodResolver(billSchema),
@@ -97,7 +97,7 @@ export function CreateBillForm({
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={setOpen} modal={false}>
       <DialogTrigger asChild>
         <Button>Create Bill</Button>
       </DialogTrigger>
@@ -125,8 +125,8 @@ export function CreateBillForm({
                     <SelectContent>
                       {patients.map((patient) => (
                         <SelectItem
-                          key={patient.patientId}
-                          value={patient.patientId.toString()}
+                          key={patient.id}
+                          value={patient.id.toString()}
                         >
                           {formatName(patient)}
                         </SelectItem>
@@ -156,7 +156,7 @@ export function CreateBillForm({
               render={({ field }) => (
                 <FormItem className="flex flex-col gap-2">
                   <FormLabel>Due Date</FormLabel>
-                  <Popover>
+                  <Popover modal={false}>
                     <PopoverTrigger asChild>
                       <Button
                         id="date"
@@ -174,7 +174,7 @@ export function CreateBillForm({
                         )}
                       </Button>
                     </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="end">
+                    <PopoverDialogContent className="w-auto p-0" align="end">
                       <FormControl>
                         <Calendar
                           selected={field.value}
@@ -182,7 +182,7 @@ export function CreateBillForm({
                           mode="single"
                         />
                       </FormControl>
-                    </PopoverContent>
+                    </PopoverDialogContent>
                   </Popover>
                   <FormMessage />
                 </FormItem>

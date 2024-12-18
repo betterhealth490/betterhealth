@@ -23,7 +23,7 @@ import { Button } from "~/components/ui/button";
 import Link from "next/link";
 import { Switch } from "~/components/ui/switch";
 import { changeStatusAction } from "../../actions";
-import { useOptimistic, useState } from "react";
+import { useState } from "react";
 import { useToast } from "~/hooks/use-toast";
 
 interface OverviewContentProps {
@@ -51,7 +51,7 @@ interface OverviewContentProps {
     status: "pending" | "paid";
   }[];
   patients: {
-    patientId: number;
+    id: number;
   }[];
 }
 

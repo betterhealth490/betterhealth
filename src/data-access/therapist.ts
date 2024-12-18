@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 import { db } from "~/db";
 import {
@@ -22,7 +22,7 @@ export async function getTherapist(therapistId: number) {
   if (therapist) {
     return therapist;
   } else {
-    throw new Error("No journal found");
+    throw new Error("No therapist found");
   }
 }
 
@@ -142,4 +142,51 @@ export async function updateSpecialty({
     throw new Error("Error updating therapist specialty: " + therapistId);
   }
   return result;
+}
+
+export async function acceptPatient({
+  therapistId,
+  patientId,
+}: {
+  therapistId: number;
+  patientId: number;
+}) {
+  const [result] = await db
+    .update(relationships)
+    .set({
+      status: "approved",
+      updatedAt: new Date(),
+    })
+    .where(
+      and(
+        eq(relationships.therapistId, therapistId),
+        eq(relationships.patientId, patientId),
+      ),
+    )
+    .returning();
+  if (!isDefined(result)) {
+    throw new Error("Error accepting request: " + patientId);
+  }
+  return result;
+}
+
+export async function declinePatient({
+  therapistId,
+  patientId,
+}: {
+  therapistId: number;
+  patientId: number;
+}) {
+  const request = await db
+    .delete(relationships)
+    .where(
+      and(
+        eq(relationships.patientId, patientId),
+        eq(relationships.therapistId, therapistId),
+      ),
+    )
+    .returning();
+  if (!isDefined(request)) {
+    throw new Error("Error deleting relationship");
+  }
 }

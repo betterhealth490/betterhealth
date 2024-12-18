@@ -9,17 +9,19 @@ import { TherapistSurveys } from "./(therapist)/surveys/content";
 import { PatientSurveys } from "./(patient)/surveys/content";
 import { PatientOverview } from "./(patient)/overview/content";
 import { TherapistOverview } from "./(therapist)/overview/content";
+import { listAppointmentsWithDetails } from "~/data-access/appointment";
 import {
-  listAppointments,
-  listAppointmentsWithDetails,
-} from "~/data-access/appointment";
-import { getPatientTherapist } from "~/data-access/patient";
+  getCurrentTherapist,
+  listTherapistsForPatient,
+} from "~/data-access/patient";
 import {
   listBillsByPatient,
   listBillsByTherapist,
   listPatientsByTherapist,
 } from "~/data-access/billing";
 import { getTherapist } from "~/data-access/therapist";
+import { PatientTherapistList } from "./(patient)/therapists/content";
+import { TherapistPatientList } from "./(therapist)/patients/content";
 
 export const dynamic = "force-dynamic";
 
@@ -41,7 +43,7 @@ async function PatientDashboard({ userId }: { userId: number }) {
       ({ date }) => date.toDateString() === new Date().toDateString(),
     ),
   );
-  const therapist = await getPatientTherapist({ patientId: userId });
+  const currentTherapist = await getCurrentTherapist({ patientId: userId });
   const appointments = (await listAppointmentsWithDetails({ userId })).map(
     (appointment) => ({
       id: appointment.appointmentId,
@@ -57,9 +59,8 @@ async function PatientDashboard({ userId }: { userId: number }) {
       status: appointment.status,
     }),
   );
-
   const bills = await listBillsByPatient({ patientId: userId });
-
+  const therapists = await listTherapistsForPatient({ patientId: userId });
   return (
     <PageWrapper
       actions={
@@ -79,8 +80,8 @@ async function PatientDashboard({ userId }: { userId: number }) {
         <TabsContent value="overview">
           <PatientOverview
             therapist={
-              therapist
-                ? { ...therapist, id: therapist?.therapistId }
+              currentTherapist
+                ? { ...currentTherapist, id: currentTherapist?.therapistId }
                 : undefined
             }
             appointments={appointments}
@@ -91,7 +92,9 @@ async function PatientDashboard({ userId }: { userId: number }) {
         <TabsContent value="surveys">
           <PatientSurveys surveys={surveys} />
         </TabsContent>
-        <TabsContent value="therapists">Therapists</TabsContent>
+        <TabsContent value="therapists">
+          <PatientTherapistList therapists={therapists} />
+        </TabsContent>
       </Tabs>
     </PageWrapper>
   );
@@ -123,7 +126,7 @@ async function TherapistDashboard({ userId }: { userId: number }) {
         <TabsList>
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="surveys">Surveys</TabsTrigger>
-          <TabsTrigger value="therapists">Patients</TabsTrigger>
+          <TabsTrigger value="patients">Patients</TabsTrigger>
         </TabsList>
         <TabsContent value="overview">
           <TherapistOverview
@@ -137,7 +140,9 @@ async function TherapistDashboard({ userId }: { userId: number }) {
         <TabsContent value="surveys">
           <TherapistSurveys surveys={surveys} />
         </TabsContent>
-        <TabsContent value="therapists">Patients</TabsContent>
+        <TabsContent value="patients">
+          <TherapistPatientList patients={patients} />
+        </TabsContent>
       </Tabs>
     </PageWrapper>
   );

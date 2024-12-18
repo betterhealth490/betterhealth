@@ -1,6 +1,14 @@
 import { eq, and } from "drizzle-orm";
 import { db } from "~/db";
-import { billings, users, relationships } from "~/db/schema";
+import {
+  billings,
+  users,
+  relationships,
+  type ageEnum,
+  type genderEnum,
+  type specialtyEnum,
+  patients,
+} from "~/db/schema";
 
 import {
   type GetBillingInput,
@@ -12,6 +20,7 @@ import {
   type ListBillingInput,
   type ListBillingResult,
 } from "~/entities/billing";
+import { isDefined } from "~/lib/utils";
 
 export async function createBilling(
   input: CreateBillingInput,
@@ -148,29 +157,44 @@ export async function getTherapistNameByBillId(
   return `${therapist.therapistFirstName} ${therapist.therapistLastName}`;
 }
 
-export async function listPatientsByTherapist(therapistId: number): Promise<
+export async function listPatientsByTherapist(
+  therapistId: number,
+  status?: "current" | "pending",
+): Promise<
   {
-    patientId: number;
+    id: number;
     firstName: string;
     lastName: string;
+    agePreference: (typeof ageEnum.enumValues)[number] | null;
+    genderPreference: (typeof genderEnum.enumValues)[number] | null;
+    specialtyPreference: (typeof specialtyEnum.enumValues)[number] | null;
+    status: "current" | "pending";
   }[]
 > {
+  const whereStatus = isDefined(status)
+    ? status === "current"
+      ? eq(relationships.status, "approved")
+      : eq(relationships.status, "pending")
+    : undefined;
   const result = await db
     .select({
-      patientId: relationships.patientId,
+      id: relationships.patientId,
       firstName: users.firstName,
       lastName: users.lastName,
+      status: relationships.status,
+      agePreference: patients.agePreference,
+      genderPreference: patients.genderPreference,
+      specialtyPreference: patients.specialtyPreference,
     })
     .from(relationships)
     .innerJoin(users, eq(relationships.patientId, users.userId))
-    .where(
-      and(
-        eq(relationships.therapistId, therapistId),
-        eq(relationships.status, "approved"),
-      ),
-    );
+    .innerJoin(patients, eq(relationships.patientId, patients.patientId))
+    .where(and(eq(relationships.therapistId, therapistId), whereStatus));
 
-  return result;
+  return result.map((rel) => ({
+    ...rel,
+    status: rel.status === "approved" ? "current" : "pending",
+  }));
 }
 
 export async function listBillsByTherapist(therapistId: number): Promise<

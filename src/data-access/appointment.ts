@@ -12,13 +12,12 @@ import {
   type GetAppointmentInput,
   type GetAppointmentResult,
   type ListAppointmentsInput,
-  type ListAppointmentsItem,
   type ListAppointmentsResult,
   type UpdateAppointmentInput,
   type UpdateAppointmentResult,
   type CreateAppointmentInput,
   type CreateAppointmentResult,
-  ListAppointmentsWithDetailsResult,
+  type ListAppointmentsWithDetailsResult,
 } from "~/entities/appointment";
 
 export interface Appointment {
@@ -108,7 +107,7 @@ export async function listAppointmentsWithDetails(
     })
     .from(appointments)
     .innerJoin(patients, eq(patients.userId, appointments.patientId))
-    .innerJoin(therapists, eq(therapists.userId, appointments.patientId))
+    .innerJoin(therapists, eq(therapists.userId, appointments.therapistId))
     .where(
       or(
         eq(appointments.patientId, input.userId),
