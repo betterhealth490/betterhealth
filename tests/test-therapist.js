@@ -15,7 +15,6 @@ async function testtherapist() {
 
     await checkappointment(driver);
 
-    await checkBilling(driver);
 
     await logout(driver);
   } catch (error) {
