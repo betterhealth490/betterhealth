@@ -49,11 +49,9 @@ export async function bookAppointment(driver) {
     console.log("Submitted the appointment");
     await sleep(3000);
 
-        await driver
-        .findElement(By.xpath("//button[@name='day' and text()='28']"))
-        .click();
-      console.log("Selected day: 28");
-      await sleep(2000);
+    await driver.findElement(By.xpath("//button[@aria-label='Friday, December 28th, 2024']")).click();
+    console.log("Selected day: 28");
+    await sleep(2000);
   
       const therapistDropdown2 = await driver.findElement(
         By.xpath("//select[contains(@class, 'w-full')][1]")
