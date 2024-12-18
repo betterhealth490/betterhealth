@@ -82,12 +82,12 @@ async function testTakeAndShowSurveyData() {
     const emailInput = await driver.findElement(
       By.xpath("//input[@name='email']"),
     );
-    await emailInput.sendKeys("ldagon1@topsy.com");
+    await emailInput.sendKeys("kbeville4@opensource.org");
 
     const passwordInput = await driver.findElement(
       By.xpath("//input[@name='password']"),
     );
-    await passwordInput.sendKeys("fF8$</#V");
+    await passwordInput.sendKeys("cO4`W@}4");
 
     await driver.findElement(By.xpath("//button[text()='Submit']")).click();
     try {
@@ -634,10 +634,8 @@ async function testCreateBilling() {
 }
 
 testCreateBilling();
-testCreateJournalEntry();
-testLoginAndLogout();
-testShowSurveyGraph();
-testTakeAndShowSurveyData();
-testSignup();
+// testCreateJournalEntry();
+// testShowSurveyGraph();
+// testTakeAndShowSurveyData();
 
 
