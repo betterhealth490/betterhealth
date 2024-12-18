@@ -8,9 +8,7 @@ export async function bookAppointment(driver) {
     console.log("Navigated to Appointments page");
     await sleep(2000);
 
-    await driver
-      .findElement(By.xpath("//button[@name='day' and text()='27']"))
-      .click();
+    await driver.findElement(By.xpath("//button[@aria-label='Friday, December 27th, 2024']")).click();
     console.log("Selected day: 27");
     await sleep(2000);
 
