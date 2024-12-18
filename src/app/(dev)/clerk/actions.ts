@@ -28,7 +28,7 @@ export const migrateUsersAction: () => Promise<ServerResponse> = async () => {
           },
         }),
       );
-      await new Promise((resolve) => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 150));
     }
     return { ok: true, result: clerkUsers };
   } catch (err) {

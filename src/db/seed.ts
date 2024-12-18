@@ -17,10 +17,11 @@ import {
 } from "./schema";
 import { parse } from "csv-parse/sync";
 import { readFileSync } from "fs";
-import "dotenv/config";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
 import { format } from "date-fns";
+import { clerkClient } from "@clerk/clerk-sdk-node";
+import "dotenv/config";
 
 // Helper function to read CSV
 function readCsvFile(filename: string) {
@@ -57,6 +58,10 @@ function createTimeDate(time: string) {
 
 async function seed() {
   try {
+    console.log("Checking environment");
+    if (process.env.DB_ENV === "production") {
+      throw new Error("Do not seed in production");
+    }
     console.log("🌱 Seeding database...");
 
     // Clear existing data
@@ -74,26 +79,34 @@ async function seed() {
     await db.delete(users);
 
     await db.execute(
-      "ALTER SEQUENCE betterhealth_user_user_id_seq RESTART WITH 31",
+      "ALTER SEQUENCE betterhealth_dev_user_user_id_seq RESTART WITH 31",
     );
     await db.execute(
-      "ALTER SEQUENCE betterhealth_survey_survey_id_seq RESTART WITH 776",
+      "ALTER SEQUENCE betterhealth_dev_survey_survey_id_seq RESTART WITH 776",
     );
     await db.execute(
-      "ALTER SEQUENCE betterhealth_appointment_appointment_id_seq RESTART WITH 32",
+      "ALTER SEQUENCE betterhealth_dev_appointment_appointment_id_seq RESTART WITH 32",
     );
     await db.execute(
-      "ALTER SEQUENCE betterhealth_journal_journal_id_seq RESTART WITH 29",
+      "ALTER SEQUENCE betterhealth_dev_journal_journal_id_seq RESTART WITH 29",
     );
     await db.execute(
-      "ALTER SEQUENCE betterhealth_availability_availability_id_seq RESTART WITH 29",
+      "ALTER SEQUENCE betterhealth_dev_availability_availability_id_seq RESTART WITH 29",
     );
     await db.execute(
-      "ALTER SEQUENCE betterhealth_appointment_appointment_id_seq RESTART WITH 32",
+      "ALTER SEQUENCE betterhealth_dev_appointment_appointment_id_seq RESTART WITH 32",
     );
     await db.execute(
-      "ALTER SEQUENCE betterhealth_relationship_relationship_id_seq RESTART WITH 29",
+      "ALTER SEQUENCE betterhealth_dev_relationship_relationship_id_seq RESTART WITH 29",
     );
+
+    console.log("Clearing Clerk users...");
+    const client = clerkClient;
+    const clerkUsers = await client.users.getUserList({ limit: 100 });
+    const promises = clerkUsers.data.map((user) =>
+      client.users.deleteUser(user.id),
+    );
+    await Promise.all(promises);
 
     // Read and insert users
     console.log("Inserting users...");
@@ -239,6 +252,25 @@ async function seed() {
         }),
       )
       .returning();
+
+    console.log("Migrating users to Clerk...");
+    for (const user of userData) {
+      await client.users.createUser({
+        firstName: user.first_name,
+        lastName: user.last_name,
+        password: user.password,
+        emailAddress: [user.email],
+        createdAt: new Date(user.created_at),
+        unsafeMetadata: {
+          role: user.role,
+          databaseId: user.user_id,
+          questionnaireCompleted: true,
+        },
+      });
+      await new Promise((resolve) => setTimeout(resolve, 300));
+      process.stdout.write("Creating users: " + user.user_id + "/30\r");
+    }
+    console.log("All users migrated to Clerk!");
 
     console.log("✅ Seed completed successfully");
   } catch (error) {

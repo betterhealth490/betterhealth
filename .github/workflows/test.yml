@@ -1,22 +1,65 @@
-name: Run Unit Tests
+name: Run Selenium Tests
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
   pull_request:
-    branches: [main]
+    branches:
+      - main
 
 jobs:
-  build:
+  run-selenium:
     runs-on: ubuntu-latest
 
     env:
       POSTGRES_URL: ${{secrets.POSTGRES_URL}}
 
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set Up Node.js
+        uses: actions/setup-node@v3
         with:
-          node-version: 18
-      - run: npm ci
-      - run: npm run test
+          node-version: "20"
+
+      # Install Google Chrome
+      - name: Install Google Chrome
+        run: |
+          wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+          sudo apt-get update
+          sudo apt-get install -y ./google-chrome-stable_current_amd64.deb
+          google-chrome --version
+
+      # Install Chromedriver
+      - name: Install Chromedriver
+        run: |
+          npm install chromedriver@latest --save-dev
+          npx chromedriver --version
+
+      # Install Required System Dependencies
+      - name: Install System Dependencies
+        run: |
+          sudo apt-get install -y \
+            libnss3 \
+            libatk-bridge2.0-0 \
+            libx11-xcb1 \
+            libxcomposite1 \
+            libxcursor1 \
+            libxdamage1 \
+            libxrandr2 \
+            libgbm1 \
+            libasound2 \
+            libcups2 \
+            libpangocairo-1.0-0 \
+            libpangoft2-1.0-0 \
+            libpango-1.0-0
+
+      # Install project dependencies
+      - name: Install Dependencies
+        run: npm install
+      - name: Run Selenium Tests
+        run: |
+          npm run test:patient
+          npm run test:therapist

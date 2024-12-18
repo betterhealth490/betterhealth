@@ -20,7 +20,11 @@ import {
  *
  * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
  */
-export const createTable = pgTableCreator((name) => `betterhealth_${name}`);
+export const createTable = pgTableCreator((name) =>
+  process.env.DB_ENV === "production"
+    ? `betterhealth_${name}`
+    : `betterhealth_dev_${name}`,
+);
 
 // Enums
 export const roleEnum = pgEnum("role", ["therapist", "member"]);
