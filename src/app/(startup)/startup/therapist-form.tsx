@@ -32,7 +32,7 @@ import { Input } from "~/components/ui/input";
 import { Loader } from "lucide-react";
 
 const formSchema = z.object({
-  age: z.coerce.number().optional(),
+  age: z.coerce.number().min(18).optional(),
   gender: z.enum(genderEnum.enumValues).optional(),
   specialty: z.enum(specialtyEnum.enumValues).optional(),
 });
@@ -55,13 +55,15 @@ export function TherapistForm() {
       specialty: values.specialty,
     });
     if (result.ok) {
-      await user.update({
+      const res = await user.update({
         unsafeMetadata: {
           ...user.unsafeMetadata,
           questionnaireCompleted: true,
         },
       });
-      router.push("/");
+      if (res.unsafeMetadata.questionnaireCompleted) {
+        router.refresh();
+      }
     } else {
       console.log(result.error);
       toast({

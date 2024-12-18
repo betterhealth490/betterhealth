@@ -5,11 +5,11 @@ import { type DateRange } from "react-day-picker";
 import { columns, type TherapistSurvey } from "./columns";
 import { DataTable } from "./data-table";
 import { formatName, isDefined } from "~/lib/utils";
-import { addWeeks } from "date-fns";
+import { addDays, addWeeks } from "date-fns";
 
 export function TherapistSurveys({ surveys }: { surveys: TherapistSurvey[] }) {
   const [date, setDate] = useState<DateRange | undefined>({
-    to: new Date(new Date().toDateString()),
+    to: addDays(new Date(new Date().toDateString()).getTime() - 1, 1),
     from: addWeeks(new Date(new Date().toDateString()), -1),
   });
   const patients = new Map();

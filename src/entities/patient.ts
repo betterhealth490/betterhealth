@@ -1,6 +1,22 @@
 import { eq, and, sql } from "drizzle-orm";
 import { db } from "~/db";
-import { users, billing, initialQuestionnare, journals, therapistPatient } from "~/db/schema";
+import {
+  users,
+  billings,
+  questionnaires,
+  journals,
+  relationships,
+} from "~/db/schema";
+
+export interface GetPatientResult{
+  firstName: string;
+  lastName: string;
+  age: string;
+  email: string;
+  agePreference: string;
+  genderPreference: string;
+  specialtyPreference: string;
+}
 
 export interface SelectTherapistInput {
   patientId: number;
@@ -78,11 +94,24 @@ export interface DeleteUserResult {
   message: string;
 }
 
+export interface GetPatientTherapistInput {
+  patientId: number;
+}
+
+export type GetPatientTherapistResult =
+  | {
+      therapistId: number;
+      firstName: string;
+      lastName: string;
+      email: string;
+    }
+  | undefined;
+
 export async function areAllBillsPaid(userId: number): Promise<boolean> {
   const result = await db
-    .select({ status: billing.status })
-    .from(billing)
-    .where(eq(billing.patientId, userId));
+    .select({ status: billings.status })
+    .from(billings)
+    .where(eq(billings.patientId, userId));
 
   return result.every((bill) => bill.status === "paid");
 }
@@ -99,14 +128,14 @@ export async function isUserTherapist(userId: number): Promise<boolean> {
 }
 
 export async function deleteUserRelatedData(userId: number): Promise<void> {
-  await db.delete(initialQuestionnare).where(eq(initialQuestionnare.userId, userId));
+  await db.delete(questionnaires).where(eq(questionnaires.patientId, userId));
   await db.delete(journals).where(eq(journals.patientId, userId));
-  await db.delete(therapistPatient).where(eq(therapistPatient.patientId, userId));
-  await db.delete(billing).where(eq(billing.patientId, userId));
+  await db.delete(relationships).where(eq(relationships.patientId, userId));
+  await db.delete(billings).where(eq(billings.patientId, userId));
 }
 
 export async function deleteUser(userId: number): Promise<boolean> {
-    const result = await db.delete(users).where(eq(users.userId, userId));
-    
-    return result.rowCount !== null && result.rowCount > 0;
+  const result = await db.delete(users).where(eq(users.userId, userId));
+
+  return result.rowCount !== null && result.rowCount > 0;
 }

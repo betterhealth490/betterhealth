@@ -48,7 +48,7 @@ export function DataTableToolbar<TData>({
       </div>
       <div className="flex gap-2">
         <DropdownMenu>
-          <DropdownMenuTrigger>
+          <DropdownMenuTrigger asChild>
             <Button variant="outline" size="sm" className="h-8 font-normal">
               <Columns />
               Toggle Columns

@@ -143,7 +143,7 @@ export const surveys = createTable("survey", {
 });
 
 // Initial Questionnare Table
-export const questionnares = createTable("questionnaire", {
+export const questionnaires = createTable("questionnaire", {
   questionnaireId: serial("questionnaire_id").unique().primaryKey(),
   patientId: integer("patient_id")
     .notNull()
@@ -225,7 +225,7 @@ export const billings = createTable("billing", {
     .references(() => therapists.therapistId),
   amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
   dueDate: timestamp("due_date").notNull(),
-  status: billingStatusEnum("status").default("pending"),
+  status: billingStatusEnum("status").notNull().default("pending"),
   createdAt: timestamp("created_at")
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
@@ -242,7 +242,7 @@ export const journals = createTable("journal", {
     .references(() => patients.patientId),
   title: varchar("title", { length: 100 }).notNull(),
   entryDate: timestamp("entry_date").notNull(),
-  content: text("content"),
+  content: text("content").notNull(),
   createdAt: timestamp("created_at")
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
