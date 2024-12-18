@@ -633,6 +633,11 @@ async function testCreateBilling() {
   }
 }
 
-
+testCreateBilling();
+testCreateJournalEntry();
+testLoginAndLogout();
+testShowSurveyGraph();
+testTakeAndShowSurveyData();
+testSignup();
 
 
