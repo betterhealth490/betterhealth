@@ -399,7 +399,7 @@ async function testSignup() {
     await sleep(2000);
     await driver
       .findElement(By.name("email"))
-      .sendKeys("johndoe2352@example.com");
+      .sendKeys("johndoe212452@example.com");
     await sleep(2000);
     await driver.findElement(By.name("password")).sendKeys("Password123523!");
     console.log("Filled out the form");
