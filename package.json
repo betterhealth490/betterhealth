@@ -13,8 +13,8 @@
     "dev": "next dev --turbopack",
     "lint": "next lint",
     "start": "next start",
-    "test": "jest",
-    "test:watch": "jest --watchAll"
+    "test:patient": "node tests/test-patient.js",
+    "test:therapist": "node tests/test-therapist.js"
   },
   "dependencies": {
     "@clerk/clerk-sdk-node": "^5.1.0",
@@ -60,6 +60,7 @@
     "react-hook-form": "^7.53.2",
     "react-resizable-panels": "^2.1.7",
     "recharts": "^2.15.0",
+    "selenium-webdriver": "^4.27.0",
     "tailwind-merge": "^2.5.4",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.23.8",
@@ -76,6 +77,7 @@
     "@types/node": "^20.14.10",
     "@types/react": "19.0.1",
     "@types/react-dom": "19.0.2",
+    "@types/selenium-webdriver": "^4.1.27",
     "@typescript-eslint/eslint-plugin": "^8.1.0",
     "@typescript-eslint/parser": "^8.1.0",
     "drizzle-kit": "^0.29.0",
